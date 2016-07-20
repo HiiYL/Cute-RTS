@@ -1,0 +1,39 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin/$(Platform)
+/intermediateDir:obj/$(Platform)
+/platform:Windows
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+/reference:..\..\..\..\..\..\Downloads\Nez-master\Nez.PipelineImporter\bin\Debug\Ionic.ZLib.dll
+/reference:..\..\..\..\..\..\Downloads\Nez-master\Nez.PipelineImporter\bin\Debug\Nez.PipelineImporter.dll
+/reference:..\..\..\..\..\..\Downloads\Nez-master\Nez.PipelineImporter\bin\Debug\Nez.dll
+/reference:..\..\..\..\..\..\Downloads\Nez-master\Nez.PipelineImporter\bin\Debug\Newtonsoft.Json.dll
+
+#---------------------------------- Content ---------------------------------#
+
+#begin moon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:moon.png
+
+#begin FirstAtlas.xml
+/importer:XmlImporter
+/processor:TextureAtlasProcessor
+/processorParam:compressTexture=False
+/processorParam:animationFPS=10
+/processorParam:flattenPaths=True
+/build:FirstAtlas.xml
+
