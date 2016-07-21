@@ -37,3 +37,66 @@
 /processorParam:flattenPaths=True
 /build:FirstAtlas.xml
 
+#begin desert-palace-lamp.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:desert-palace-lamp.png
+
+#begin desert-palace-tiles.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:desert-palace-tiles.png
+
+#begin desert-palace.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:desert-palace.tmx
+
+#begin snow.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:snow.tmx
+
+#begin mapPack_tilesheet_2X.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:mapPack_tilesheet_2X.png
+
+#begin desert-palace-tiles2x.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:desert-palace-tiles2x.png
+
+#begin destructable-map.tmx
+/importer:TiledMapImporter
+/processor:TiledMapProcessor
+/build:destructable-map.tmx
+
