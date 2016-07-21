@@ -61,7 +61,7 @@ namespace Cute_RTS
                 _astarSearchPath = _astarGraph.search(_start, _end);
 
 
-                //Core.startCoroutine(moveTowardsNextNode(_astarSearchPath));
+                Core.startCoroutine(moveTowardsNextNode(_astarSearchPath));
                 
             }
         }

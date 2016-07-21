@@ -69,6 +69,9 @@ namespace Cute_RTS
                 .setVelocity(velocity);
 
 
+            rigidbody.shouldUseGravity = false;
+
+
             var entityTwo = myScene.createEntity("some-dude");
 
             entityTwo.transform.position = new Vector2(50, 50);
