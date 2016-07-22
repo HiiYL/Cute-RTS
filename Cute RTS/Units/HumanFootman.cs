@@ -118,19 +118,7 @@ namespace Cute_RTS.Units
         }
         void IUpdatable.update()
         {
-            if(Input.leftMouseButtonReleased)
-            {
-                Collider v = Physics.overlapRectangle(new RectangleF(Input.mousePosition.X, Input.mousePosition.Y, 5, 5));
-                if (v != null)
-                {
-                    var humanFootman = v.entity.getComponent<HumanFootman>();
-                    if (humanFootman != null)
-                    {
-                        if (!humanFootman.interactable)
-                            humanFootman.interactable = true;
-                    }
-                }
-            }
+
 
             if (Input.rightMouseButtonPressed && interactable)
             {

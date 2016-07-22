@@ -20,7 +20,7 @@ namespace Cute_RTS
     {
         Scene.SceneResolutionPolicy policy;
 
-        public Game1() : base(isFullScreen: false, enableEntitySystems: false)
+        public Game1() : base(isFullScreen: false, enableEntitySystems: true)
         {
             policy = Scene.SceneResolutionPolicy.ShowAllPixelPerfect;
             Scene.setDefaultDesignResolution(1280, 720, policy);
@@ -44,6 +44,8 @@ namespace Cute_RTS
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
             var myScene = Scene.createWithDefaultRenderer(Color.CornflowerBlue);
             var moon = myScene.content.Load<Texture2D>("moon");
+
+            myScene.addEntityProcessor(new SelectionProcessingSystem());
 
             var entity = myScene.createEntity("first-sprite");
             entity.addComponent(new Sprite(moon));
