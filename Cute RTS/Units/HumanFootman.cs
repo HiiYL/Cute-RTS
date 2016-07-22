@@ -93,12 +93,12 @@ namespace Cute_RTS.Units
             //TODO: Figure out how to flip X of animation
             _animation.addAnimation(Animations.WalkRight, atlas.getSpriteAnimation("move-front-left"));
 
+
             var attack_anim_left = atlas.getSpriteAnimation("attack-left");
             attack_anim_left.loop = false;
             _animation.addAnimation(Animations.AttackLeft, attack_anim_left);
 
             entity.addComponent(_animation);
-;
             //setupInput();
         }
 

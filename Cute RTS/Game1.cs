@@ -44,10 +44,6 @@ namespace Cute_RTS
 
             myScene.addEntityProcessor(new SelectionProcessingSystem());
 
-            var entity = myScene.createEntity("first-sprite");
-            entity.addComponent(new Sprite(moon));
-            entity.transform.position = new Vector2(400, 400);
-
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
