@@ -62,14 +62,17 @@ namespace Cute_RTS
                         Y_begin = Input.mousePosition.Y;
                         Y_length = (initialPos.Y - Input.mousePosition.Y);
                     }
-                    Collider v = Physics.overlapRectangle(new RectangleF(X_begin, Y_begin, X_length, Y_length));
-                    if (v != null)
+                    var colliders = new HashSet<Collider>(Physics.boxcastBroadphase(new RectangleF(X_begin, Y_begin, X_length, Y_length)));
+                    if (colliders != null)
                     {
-                        var humanFootman = v.entity.getComponent<HumanFootman>();
-                        if (humanFootman != null)
-                        {
-                            humanFootman.interactable = !humanFootman.interactable;
+                        foreach(var v in colliders) {
+                            var humanFootman = v.entity.getComponent<HumanFootman>();
+                            if (humanFootman != null)
+                            {
+                                humanFootman.interactable = !humanFootman.interactable;
+                            }
                         }
+
                     }
                     initialPos = Vector2.Zero;
                 }
