@@ -46,6 +46,7 @@
     <Compile Include="PathFinder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenes\BaseScene.cs" />
     <Compile Include="SelectionProcessingSystem.cs" />
     <Compile Include="SimpleMover.cs" />
     <Compile Include="Units\HumanFootman.cs" />

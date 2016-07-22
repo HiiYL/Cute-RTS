@@ -1,4 +1,5 @@
-﻿using Cute_RTS.Units;
+﻿using Cute_RTS.Scenes;
+using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,10 +13,6 @@ namespace Cute_RTS
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public enum Animation
-    {
-        WalkUp
-    }
     public class Game1 : Core
     {
         Scene.SceneResolutionPolicy policy;
@@ -42,7 +39,7 @@ namespace Cute_RTS
             Window.AllowUserResizing = true;
 
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
-            var myScene = Scene.createWithDefaultRenderer(Color.CornflowerBlue);
+            var myScene = new BaseScene(true);
             var moon = myScene.content.Load<Texture2D>("moon");
 
             myScene.addEntityProcessor(new SelectionProcessingSystem());
