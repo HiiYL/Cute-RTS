@@ -69,8 +69,12 @@ namespace Cute_RTS
             Vector2 velocity = new Vector2(0, 0);
 
             var playerEntity = myScene.createEntity("player");
-            playerEntity.addComponent(new HumanFootman(tiledmap));
+            playerEntity.addComponent(new HumanFootman(tiledmap, false));
             var collider = playerEntity.colliders.add(new BoxCollider(-42,-42,84,84));
+
+            var npc = myScene.createEntity("npc");
+            npc.addComponent(new HumanFootman(tiledmap,false));
+            var colliderNPC = npc.colliders.add(new BoxCollider(-42, -42, 84, 84));
 
             /*
 

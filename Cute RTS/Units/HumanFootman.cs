@@ -44,6 +44,8 @@ namespace Cute_RTS.Units
         VirtualIntegerAxis _yAxisInput;
         private TiledMap _tilemap;
 
+        public bool interactable = true;
+
         WeightedGridGraph _astarGraph;
         List<Point> _astarSearchPath;
 
@@ -54,8 +56,9 @@ namespace Cute_RTS.Units
         Point _start, _end;
         private Vector2 moveDir;
 
-        public HumanFootman(TiledMap tilemap)
+        public HumanFootman(TiledMap tilemap, bool interactable = true)
         {
+            this.interactable = interactable;
             _tilemap = tilemap;
             var layer = tilemap.getLayer<TiledTileLayer>("Stuff");
 
@@ -99,28 +102,6 @@ namespace Cute_RTS.Units
             //setupInput();
         }
 
-        /*
-        void setupInput()
-        {
-            // setup input for shooting a fireball. we will allow z on the keyboard or a on the gamepad
-            _fireInput = new VirtualButton();
-            _fireInput.nodes.Add(new Nez.VirtualButton.KeyboardKey(Keys.Z));
-            _fireInput.nodes.Add(new Nez.VirtualButton.GamePadButton(0, Buttons.A));
-
-            // horizontal input from dpad, left stick or keyboard left/right
-            _xAxisInput = new VirtualIntegerAxis();
-            _xAxisInput.nodes.Add(new Nez.VirtualAxis.GamePadDpadLeftRight());
-            _xAxisInput.nodes.Add(new Nez.VirtualAxis.GamePadLeftStickX());
-            _xAxisInput.nodes.Add(new Nez.VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Left, Keys.Right));
-
-            // vertical input from dpad, left stick or keyboard up/down
-            _yAxisInput = new VirtualIntegerAxis();
-            _yAxisInput.nodes.Add(new Nez.VirtualAxis.GamePadDpadUpDown());
-            _yAxisInput.nodes.Add(new Nez.VirtualAxis.GamePadLeftStickY());
-            _yAxisInput.nodes.Add(new Nez.VirtualAxis.KeyboardKeys(VirtualInput.OverlapBehavior.TakeNewer, Keys.Up, Keys.Down));
-        }
-        */
-
         public void onTriggerEnter(Collider other, Collider local)
         {
             throw new NotImplementedException();
@@ -137,8 +118,21 @@ namespace Cute_RTS.Units
         }
         void IUpdatable.update()
         {
+            if(Input.leftMouseButtonReleased)
+            {
+                Collider v = Physics.overlapRectangle(new RectangleF(Input.mousePosition.X, Input.mousePosition.Y, 5, 5));
+                if (v != null)
+                {
+                    var humanFootman = v.entity.getComponent<HumanFootman>();
+                    if (humanFootman != null)
+                    {
+                        if (!humanFootman.interactable)
+                            humanFootman.interactable = true;
+                    }
+                }
+            }
 
-            if (Input.rightMouseButtonPressed)
+            if (Input.rightMouseButtonPressed && interactable)
             {
                 _start = _tilemap.worldToTilePosition(this.entity.transform.position);
 
@@ -149,6 +143,7 @@ namespace Cute_RTS.Units
                     current_node = 0;
                 }
                 _astarSearchPath = _astarGraph.search(_start, _end);
+
 
                 isDone = false;
             }
@@ -203,40 +198,6 @@ namespace Cute_RTS.Units
                 animation = Animations.Idle;
             }
 
-                /*
-
-                // handle firing a projectile
-                if (_fireInput.isPressed)
-                {
-                    animation = Animations.AttackLeft;
-                    // fire a projectile in the direction we are facing
-                    var dir = Vector2.Zero;
-                    switch (_animation.currentAnimation)
-                    {
-                        case Animations.WalkUp:
-                            dir.Y = -1;
-                            break;
-                        case Animations.WalkDown:
-                            dir.Y = 1;
-                            break;
-                        case Animations.WalkRight:
-                            dir.X = 1;
-                            break;
-                        case Animations.WalkLeft:
-                            dir.X = -1;
-                            break;
-                    }
-
-                    var ninjaScene = entity.scene;
-                    //ninjaScene.createProjectiles(entity.transform.position, _projectileVelocity * dir);
-                }
-
-                */
-
-                
-
-
-
             if ((!_animation.isAnimationPlaying(animation) && !_animation.isAnimationPlaying(Animations.AttackLeft)) ||
             (_animation.isAnimationPlaying(Animations.AttackLeft) && !_animation.isPlaying))
             {
@@ -255,6 +216,13 @@ namespace Cute_RTS.Units
 
                     graphics.batcher.drawPixel(x - 1, y - 1, Color.Blue, 4);
                 }
+            }
+            if(interactable)
+            {
+                _animation.color = Color.Red;
+            }else
+            {
+                _animation.color = Color.White;
             }
         }
     }
