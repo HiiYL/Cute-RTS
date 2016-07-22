@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Units;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -50,8 +51,13 @@ namespace Cute_RTS
 
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
-            var tiledmap = content.Load<TiledMap>("destructable-map");
-            tiledEntity.addComponent(new TiledMapComponent(tiledmap,"main"));
+            var tiledmap = content.Load<TiledMap>("cute-map");
+            var tiledMapComponent = tiledEntity.addComponent(new TiledMapComponent(tiledmap,"Stuff"));
+
+            tiledMapComponent.renderLayer = 10;
+
+            //tiledMapDetailsComp.material = Material.stencilWrite();
+            //tiledMapDetailsComp.material.effect = content.loadNezEffect<SpriteAlphaTestEffect>();
 
             var atlas = myScene.content.Load<TextureAtlas>("FirstAtlas");
             var anim = atlas.getSpriteAnimation("run");
@@ -59,19 +65,19 @@ namespace Cute_RTS
             var friction = 0.3f;
             var elasticity = 0.4f;
             var mass = 1f;
-            Vector2 velocity = new Vector2(150, 0);
+
+            Vector2 velocity = new Vector2(0, 0);
+
+            var playerEntity = myScene.createEntity("player");
+            playerEntity.addComponent(new HumanFootman(tiledmap));
+            var collider = playerEntity.colliders.add(new BoxCollider(-42,-42,84,84));
+
+            /*
+
+            */
 
 
-            var rigidbody = new ArcadeRigidbody()
-                .setMass(mass)
-                .setFriction(friction)
-                .setElasticity(elasticity)
-                .setVelocity(velocity);
-
-
-            rigidbody.shouldUseGravity = false;
-
-
+            /*
             var entityTwo = myScene.createEntity("some-dude");
 
             entityTwo.transform.position = new Vector2(50, 50);
@@ -84,6 +90,7 @@ namespace Cute_RTS
             entityTwo.addComponent(rigidbody);
             entityTwo.addCollider(new CircleCollider());
             sprite.play(Animation.WalkUp);
+            */
 
 
 

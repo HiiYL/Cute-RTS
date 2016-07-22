@@ -29,11 +29,15 @@ namespace Cute_RTS
         TiledMap _tilemap;
         Point _start, _end;
 
+        bool isDone = false;
+
+        int current_node = 0;
+        private Mover _mover;
 
         public Pathfinder(TiledMap tilemap)
         {
             _tilemap = tilemap;
-            var layer = tilemap.getLayer<TiledTileLayer>("main");
+            var layer = tilemap.getLayer<TiledTileLayer>("Stuff");
 
             _start = new Point(1, 1);
             _end = new Point(10, 10);
@@ -47,8 +51,14 @@ namespace Cute_RTS
             Debug.drawTextFromBottom = true;
         }
 
+        public override void onAddedToEntity()
+        {
+            _mover = new Mover();
+            entity.addComponent(_mover);
+        }
 
-        void IUpdatable.update()
+
+            void IUpdatable.update()
         {
             // on left click set our path end time
                 // on right click set our path start time
@@ -58,24 +68,36 @@ namespace Cute_RTS
 
                 _end = _tilemap.worldToTilePosition(Input.mousePosition);
 
+                if (_astarSearchPath != null)
+                {
+                    current_node = 0;
+                }
                 _astarSearchPath = _astarGraph.search(_start, _end);
 
-
-                Core.startCoroutine(moveTowardsNextNode(_astarSearchPath));
-                
+                isDone = false;
             }
-        }
-        
-        IEnumerator moveTowardsNextNode(List<Point> _astarSearchPath)
-        {
-            foreach (var node in _astarSearchPath)
+            if (_astarSearchPath != null && !isDone)
             {
+                var node = _astarSearchPath[current_node];
                 var x = node.X * _tilemap.tileWidth + _tilemap.tileWidth * 0.5f;
                 var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
                 Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
-                entity.move(moveDir);
-                yield return Coroutine.waitForSeconds(0.5f);
 
+                CollisionResult res;
+                _mover.move(moveDir * 20 * Time.deltaTime, out res);
+
+                if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
+                {
+                    if (current_node < _astarSearchPath.Count - 1)
+                    {
+                        current_node++;
+                    }else
+                    {
+                        isDone = true;
+                        current_node = 0;
+                    }
+                }
+                //Core.startCoroutine(moveTowardsNextNode(_astarSearchPath));
             }
         }
         
