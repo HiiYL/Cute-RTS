@@ -43,13 +43,20 @@ namespace Cute_RTS
             var moon = myScene.content.Load<Texture2D>("moon");
 
             //myScene.addEntityProcessor(new SelectionProcessingSystem());
-            FatMan fatman = new FatMan(moon);
-            fatman.move(new Vector2(300, 300));
+
+            TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
+
+            FatMan fatman = new FatMan(baldyTexture);
+            fatman.move(new Vector2(300, 500));
             myScene.addEntity(fatman);
 
-            FatMan fatman2 = new FatMan(moon);
-            fatman2.move(new Vector2(800, 300));
+            FatMan fatman2 = new FatMan(baldyTexture);
+            fatman2.move(new Vector2(400, 600));
             myScene.addEntity(fatman2);
+
+            FatMan fatman3 = new FatMan(baldyTexture);
+            fatman3.move(new Vector2(200, 550));
+            myScene.addEntity(fatman3);
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
