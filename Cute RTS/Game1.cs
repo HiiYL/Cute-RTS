@@ -42,14 +42,23 @@ namespace Cute_RTS
             var myScene = new BaseScene(true);
             var moon = myScene.content.Load<Texture2D>("moon");
 
-            myScene.addEntityProcessor(new SelectionProcessingSystem());
+            //myScene.addEntityProcessor(new SelectionProcessingSystem());
+            FatMan fatman = new FatMan(moon);
+            fatman.move(new Vector2(300, 300));
+            myScene.addEntity(fatman);
 
+            FatMan fatman2 = new FatMan(moon);
+            fatman2.move(new Vector2(800, 300));
+            myScene.addEntity(fatman2);
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
             var tiledMapComponent = tiledEntity.addComponent(new TiledMapComponent(tiledmap,"Stuff"));
-
+ 
             tiledMapComponent.renderLayer = 10;
+
+            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
+            selectionComponent.renderLayer = -5;
 
             //tiledMapDetailsComp.material = Material.stencilWrite();
             //tiledMapDetailsComp.material.effect = content.loadNezEffect<SpriteAlphaTestEffect>();
