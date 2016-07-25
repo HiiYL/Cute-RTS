@@ -44,25 +44,25 @@ namespace Cute_RTS
 
             //myScene.addEntityProcessor(new SelectionProcessingSystem());
 
-            TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
-
-            FatMan fatman = new FatMan(baldyTexture);
-            fatman.move(new Vector2(300, 500));
-            myScene.addEntity(fatman);
-
-            FatMan fatman2 = new FatMan(baldyTexture);
-            fatman2.move(new Vector2(400, 600));
-            myScene.addEntity(fatman2);
-
-            FatMan fatman3 = new FatMan(baldyTexture);
-            fatman3.move(new Vector2(200, 550));
-            myScene.addEntity(fatman3);
-
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
             var tiledMapComponent = tiledEntity.addComponent(new TiledMapComponent(tiledmap,"Stuff"));
- 
             tiledMapComponent.renderLayer = 10;
+
+            TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
+
+
+            FatMan fatman = new FatMan(baldyTexture, tiledmap, "Stuff");
+            fatman.move(new Vector2(300, 500));
+            myScene.addEntity(fatman);
+
+            FatMan fatman2 = new FatMan(baldyTexture, tiledmap, "Stuff");
+            fatman2.move(new Vector2(400, 600));
+            myScene.addEntity(fatman2);
+
+            FatMan fatman3 = new FatMan(baldyTexture, tiledmap, "Stuff");
+            fatman3.move(new Vector2(200, 550));
+            myScene.addEntity(fatman3);
 
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
