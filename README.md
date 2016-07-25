@@ -11,3 +11,6 @@ Setup
 - now you can open Cute RTS.sln
 
 
+**For Mac**
+- You have to install the Monogame addon from: http://addins.monodevelop.com/Project/Index/47 as of version 6.0.1
+
