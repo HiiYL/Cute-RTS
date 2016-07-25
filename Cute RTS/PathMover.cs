@@ -37,8 +37,12 @@ namespace Cute_RTS
         private Point target, source;
         private Vector2 pastMoveDir;
         private Selectable selectable;
-
-
+        private bool doneReroute = true;
+        private int numberOfTilesWide,numberOfTilesHigh;
+        private float colliderPosX;
+        private float colliderPosY;
+        private Point initialPositionInTileMap;
+        private int pathingReroutePadding = 2;
 
         public PathMover(TiledMap tilemap, string collisionlayer, Selectable selectable)
         {
@@ -104,29 +108,37 @@ namespace Cute_RTS
 
         public void rerouteEntity(CollisionResult colliderRes)
         {
-            List<Point> temp_points = new List<Point>();
-            int i = 0;
-            do
+            if (doneReroute)
             {
-                int j = 0;
-                do
+
+                numberOfTilesWide = (int)Math.Ceiling(colliderRes.collider.bounds.width / _tilemap.tileWidth);
+                numberOfTilesHigh = (int)Math.Ceiling(colliderRes.collider.bounds.height / _tilemap.tileHeight);
+                Console.WriteLine(numberOfTilesWide);
+                Console.WriteLine(numberOfTilesHigh);
+
+                colliderPosX = colliderRes.collider.bounds.x;
+                colliderPosY = colliderRes.collider.bounds.y;
+
+                Vector2 initialPosition = new Vector2(
+                    colliderPosX,
+                    colliderPosY
+                );
+                initialPositionInTileMap = _tilemap.worldToTilePosition(initialPosition);
+
+
+                for (int i = -pathingReroutePadding; i < numberOfTilesWide + pathingReroutePadding; i ++)
                 {
-                    Vector2 position = new Vector2(colliderRes.collider.bounds.x + _tilemap.tileWidth * i, colliderRes.collider.bounds.y + _tilemap.tileHeight * j);
-                    _astarGraph.weightedNodes.Add(_tilemap.worldToTilePosition(position));
-                    temp_points.Add(_tilemap.worldToTilePosition(position));
-                    Console.WriteLine(_tilemap.worldToTilePosition(position));
-                    j = j + 1;
+                    for(int j = -pathingReroutePadding; j < numberOfTilesHigh + pathingReroutePadding; j++)
+                    {
+                        _astarGraph.weightedNodes.Add(
+                            new Point(
+                                initialPositionInTileMap.X + i,
+                                initialPositionInTileMap.Y + j)
+                                );
+                    }
                 }
-                //One tile of margin
-                while (colliderRes.collider.bounds.height >  _tilemap.tileWidth * (j - 1)) ;
-                i = i + 1;
-            }
-            //One tile of margin
-            while (colliderRes.collider.bounds.width > _tilemap.tileWidth * ( i - 1 ));
-            retryRoute();
-            foreach (Point point in temp_points)
-            {
-                _astarGraph.weightedNodes.Remove(point);
+                doneReroute = false;
+                retryRoute();
             }
         }
 
@@ -160,6 +172,7 @@ namespace Cute_RTS
                 this.source = source;
                 isDone = false;
                 current_node = 0;
+                doneReroute = true;
                 return true;
             }
             else
@@ -190,6 +203,21 @@ namespace Cute_RTS
                     graphics.batcher.drawPixel(x - 1, y - 1, Color.Blue, 4);
                 }
             }
+            for (int i = -pathingReroutePadding; i < numberOfTilesWide + pathingReroutePadding; i++)
+            {
+                for (int j = -pathingReroutePadding; j < numberOfTilesHigh + pathingReroutePadding; j++)
+                {
+                    graphics.batcher.drawRect(
+                        new Rectangle(
+                            _tilemap.tileToWorldPositionX(initialPositionInTileMap.X + i),
+                            _tilemap.tileToWorldPositionX(initialPositionInTileMap.Y + j),
+                _tilemap.tileWidth,
+                _tilemap.tileHeight),
+                        Color.Blue);
+
+                }
+            }
+            graphics.batcher.drawRect(new Rectangle(25,25,150,150), Color.Red);
         }
     }
 }
