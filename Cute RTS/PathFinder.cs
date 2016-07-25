@@ -38,12 +38,8 @@ namespace Cute_RTS
         {
             _tilemap = tilemap;
             var layer = tilemap.getLayer<TiledTileLayer>("Stuff");
-
             _start = new Point(1, 1);
             _end = new Point(10, 10);
-
-            _gridGraph = new UnweightedGridGraph(layer);
-            _breadthSearchPath = _gridGraph.search(_start, _end);
 
             _astarGraph = new WeightedGridGraph(layer);
             _astarSearchPath = _astarGraph.search(_start, _end);

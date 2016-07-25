@@ -38,6 +38,8 @@ namespace Cute_RTS
         private Vector2 pastMoveDir;
         private Selectable selectable;
 
+
+
         public PathMover(TiledMap tilemap, string collisionlayer, Selectable selectable)
         {
             _tilemap = tilemap;
@@ -80,7 +82,8 @@ namespace Cute_RTS
             CollisionResult res;
             _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
             if (res.collider != null)
-            { 
+            {
+                rerouteEntity(res);
                 OnCollision?.Invoke(ref res);
             }
 
@@ -99,6 +102,34 @@ namespace Cute_RTS
             }
         }
 
+        public void rerouteEntity(CollisionResult colliderRes)
+        {
+            List<Point> temp_points = new List<Point>();
+            int i = 0;
+            do
+            {
+                int j = 0;
+                do
+                {
+                    Vector2 position = new Vector2(colliderRes.collider.bounds.x + _tilemap.tileWidth * i, colliderRes.collider.bounds.y + _tilemap.tileHeight * j);
+                    _astarGraph.weightedNodes.Add(_tilemap.worldToTilePosition(position));
+                    temp_points.Add(_tilemap.worldToTilePosition(position));
+                    Console.WriteLine(_tilemap.worldToTilePosition(position));
+                    j = j + 1;
+                }
+                //One tile of margin
+                while (colliderRes.collider.bounds.height >  _tilemap.tileWidth * (j - 1)) ;
+                i = i + 1;
+            }
+            //One tile of margin
+            while (colliderRes.collider.bounds.width > _tilemap.tileWidth * ( i - 1 ));
+            retryRoute();
+            foreach (Point point in temp_points)
+            {
+                _astarGraph.weightedNodes.Remove(point);
+            }
+        }
+
         public bool gotoLocation(Point target)
         {
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
@@ -114,6 +145,24 @@ namespace Cute_RTS
 
                 return true;
             } else
+            {
+                return false;
+            }
+
+        }
+
+        public bool retryRoute()
+        {
+            Point source = _tilemap.worldToTilePosition(entity.transform.position);
+            _astarSearchPath = _astarGraph.search(source, this.target);
+            if (_astarSearchPath != null)
+            {
+                this.source = source;
+                isDone = false;
+                current_node = 0;
+                return true;
+            }
+            else
             {
                 return false;
             }

@@ -17,7 +17,7 @@ namespace Cute_RTS.Units
         public FatMan(TextureAtlas texture, TiledMap tmc, string collisionlayer) : 
             base(texture, tmc, collisionlayer)
         {
-            transform.setScale(new Vector2(0.2f, 0.2f));
+            transform.setScale(new Vector2(0.189f, 0.189f));
         }
     }
 }
