@@ -68,40 +68,42 @@ namespace Cute_RTS
             }
 
             if (isDone) return;
-
-            var node = _astarSearchPath[current_node];
-            var x = node.X * _tilemap.tileWidth + _tilemap.tileWidth * 0.5f;
-            var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
-            Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
-
-
-            if (((int) moveDir.X ^ (int) pastMoveDir.X) < 0 
-                || ((int)moveDir.Y ^ (int)pastMoveDir.Y) < 0)
+            if (_astarSearchPath != null)
             {
-                pastMoveDir = moveDir;
-                OnDirectionChange?.Invoke(moveDir);
-            }
+                var node = _astarSearchPath[current_node];
+                var x = node.X * _tilemap.tileWidth + _tilemap.tileWidth * 0.5f;
+                var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
+                Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
 
 
-            CollisionResult res;
-            _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
-            if (res.collider != null)
-            {
-                rerouteEntity(res);
-                OnCollision?.Invoke(ref res);
-            }
-
-            if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
-            {
-                if (current_node < _astarSearchPath.Count - 1)
+                if (((int)moveDir.X ^ (int)pastMoveDir.X) < 0
+                    || ((int)moveDir.Y ^ (int)pastMoveDir.Y) < 0)
                 {
-                    current_node++;
+                    pastMoveDir = moveDir;
+                    OnDirectionChange?.Invoke(moveDir);
                 }
-                else
+
+
+                CollisionResult res;
+                _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
+                if (res.collider != null)
                 {
-                    isDone = true;
-                    current_node = 0;
-                    OnArrival?.Invoke();
+                    rerouteEntity(res);
+                    OnCollision?.Invoke(ref res);
+                }
+
+                if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
+                {
+                    if (current_node < _astarSearchPath.Count - 1)
+                    {
+                        current_node++;
+                    }
+                    else
+                    {
+                        isDone = true;
+                        current_node = 0;
+                        OnArrival?.Invoke();
+                    }
                 }
             }
         }
