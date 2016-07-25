@@ -12,13 +12,12 @@ namespace Cute_RTS.Units
 {
     class FatMan : BaseUnit
     {
+        public override int MoveSpeed { get; set; } = 7;
+
         public FatMan(TextureAtlas texture, TiledMap tmc, string collisionlayer) : 
             base(texture, tmc, collisionlayer)
         {
-            Health = 50;
-            Damage = 20;
-            Vision = 10;
-            transform.setScale(new Vector2(0.4f, 0.4f));
+            transform.setScale(new Vector2(0.2f, 0.2f));
         }
     }
 }

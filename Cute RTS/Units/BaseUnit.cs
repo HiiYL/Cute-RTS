@@ -15,11 +15,11 @@ namespace Cute_RTS.Units
     abstract class BaseUnit : Entity
     {
         // Unit Properties:
-        public int Health { get; set; } = 10;
-        public int Damage { get; set; } = 10;
-        public int Range { get; set; } = 1; // default is melee
-        public int Vision { get; set; } = 8;
-        public int MoveSpeed { get; set; } = 15;
+        public virtual int Health { get; set; } = 10;
+        public virtual int Damage { get; set; } = 10;
+        public virtual int Range { get; set; } = 1; // default is melee
+        public virtual int Vision { get; set; } = 8;
+        public virtual int MoveSpeed { get; set; } = 15;
 
         public enum Animation
         {
@@ -43,18 +43,29 @@ namespace Cute_RTS.Units
             pathmover = new PathMover(tmc, collisionlayer, selectable);
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
+            pathmover.OnCollision += Pathmover_OnCollision;
+            pathmover.MoveSpeed = MoveSpeed;
+
+            // Have path render below the unit
+            pathmover.renderLayer = 1;
 
             setupAnimation(atlas);
-
             addComponent(selectable);
             addComponent(sprite);
             addComponent(pathmover);
             colliders.add(new CircleCollider());
         }
 
+        private void Pathmover_OnCollision(ref CollisionResult res)
+        {
+            // When unit collides with anything, it simply gives up.
+            //pathmover.stopMoving();
+            //sprite.play(Animation.Idle);
+        }
+
         private void Pathmover_OnArrival()
         {
-            //sprite.play(Animation.Idle);
+            sprite.play(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -63,18 +74,24 @@ namespace Cute_RTS.Units
             if (Math.Abs(moveDir.X) > 5)
             {
                 if (moveDir.X < 0)
-                    newAnim = Animation.WalkLeft;
-                else
                 {
+                    sprite.spriteEffects = SpriteEffects.None;
+                    newAnim = Animation.WalkLeft;
+                } else
+                {
+                    sprite.spriteEffects = SpriteEffects.FlipHorizontally;
                     newAnim = Animation.WalkRight;
                 }
 
             } else if (Math.Abs(moveDir.Y) > 5)
             {
                 if (moveDir.Y < 0)
+                {
                     newAnim = Animation.WalkUp;
-                else if (moveDir.Y > 0)
+                } else if (moveDir.Y > 0)
+                {
                     newAnim = Animation.WalkDown;
+                }   
             } else if (moveDir == Vector2.Zero)
             {
                 newAnim = Animation.Idle;
@@ -95,11 +112,6 @@ namespace Cute_RTS.Units
         public bool gotoLocation(Vector2 target)
         {
             return false;
-        }
-
-        private void onCollision(ref CollisionResult res)
-        {
-
         }
 
         public override void onAddedToScene()

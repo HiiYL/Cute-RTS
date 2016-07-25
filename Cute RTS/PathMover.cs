@@ -79,6 +79,10 @@ namespace Cute_RTS
 
             CollisionResult res;
             _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
+            if (res.collider != null)
+            { 
+                OnCollision?.Invoke(ref res);
+            }
 
             if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
             {
@@ -114,6 +118,12 @@ namespace Cute_RTS
                 return false;
             }
 
+        }
+
+        public void stopMoving()
+        {
+            isDone = true;
+            target = entity.transform.position.ToPoint();
         }
 
 
