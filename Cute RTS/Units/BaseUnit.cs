@@ -23,6 +23,7 @@ namespace Cute_RTS.Units
 
         public enum Animation
         {
+            None,
             Idle,
             WalkUp,
             WalkDown,
@@ -70,34 +71,26 @@ namespace Cute_RTS.Units
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
         {
-            Animation newAnim = Animation.Idle;
-            if (Math.Abs(moveDir.X) > 5)
-            {
-                if (moveDir.X < 0)
-                {
-                    sprite.spriteEffects = SpriteEffects.None;
-                    newAnim = Animation.WalkLeft;
-                } else
-                {
-                    sprite.spriteEffects = SpriteEffects.FlipHorizontally;
-                    newAnim = Animation.WalkRight;
-                }
+            Animation newAnim = Animation.None;
 
-            } else if (Math.Abs(moveDir.Y) > 5)
+            if (moveDir.X == -1)
             {
-                if (moveDir.Y < 0)
-                {
-                    newAnim = Animation.WalkUp;
-                } else if (moveDir.Y > 0)
-                {
-                    newAnim = Animation.WalkDown;
-                }   
-            } else if (moveDir == Vector2.Zero)
+                sprite.spriteEffects = SpriteEffects.None;
+                newAnim = Animation.WalkLeft;
+            } else if (moveDir.X == 1)
             {
-                newAnim = Animation.Idle;
-            }
+                sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+                newAnim = Animation.WalkRight;
+            } else if (moveDir.Y == -1)
+            {
+                newAnim = Animation.WalkUp;
+            } else if (moveDir.Y == 1)
+            {
+                newAnim = Animation.WalkDown;
+            }   
 
-            if (animation != newAnim)
+
+            if (newAnim != Animation.None)
             {
                 animation = newAnim;
                 sprite.play(animation);

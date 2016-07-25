@@ -35,7 +35,8 @@ namespace Cute_RTS
         int current_node = 0;
         private Mover _mover;
         private Point target, source;
-        private Vector2 pastMoveDir;
+        private Vector2 pastLoc;
+        private Vector2 pastDir;
         private Selectable selectable;
         private bool doneReroute = true;
         private int numberOfTilesWide,numberOfTilesHigh;
@@ -75,14 +76,19 @@ namespace Cute_RTS
                 var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
                 Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
 
-
-                if (((int)moveDir.X ^ (int)pastMoveDir.X) < 0
-                    || ((int)moveDir.Y ^ (int)pastMoveDir.Y) < 0)
+                if (pastLoc != entity.transform.position)
                 {
-                    pastMoveDir = moveDir;
-                    OnDirectionChange?.Invoke(moveDir);
-                }
+                    Vector2 dir = entity.transform.position - pastLoc;
+                    dir.Normalize();
 
+                    if (dir != pastDir)
+                    {
+                        pastDir = dir;
+                        OnDirectionChange?.Invoke(dir);
+                    }
+                    
+                    pastLoc = entity.transform.position;
+                }
 
                 CollisionResult res;
                 _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
