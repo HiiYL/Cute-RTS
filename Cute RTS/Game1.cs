@@ -10,6 +10,13 @@ using Nez.Tiled;
 
 namespace Cute_RTS
 {
+    public enum RTSCollisionLayer
+    {
+        None,
+        Units,
+        Map
+    }
+
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -46,7 +53,10 @@ namespace Cute_RTS
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
-            var tiledMapComponent = tiledEntity.addComponent(new TiledMapComponent(tiledmap,"Stuff"));
+            var tmc = new TiledMapComponent(tiledmap, "Stuff");
+
+            var tiledMapComponent = tiledEntity.addComponent(tmc);
+            Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int) RTSCollisionLayer.Map);
             tiledMapComponent.renderLayer = 10;
 
             TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");

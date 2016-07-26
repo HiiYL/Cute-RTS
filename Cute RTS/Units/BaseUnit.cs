@@ -23,6 +23,7 @@ namespace Cute_RTS.Units
 
         public enum Animation
         {
+            None,
             Idle,
             WalkUp,
             WalkDown,
@@ -32,28 +33,32 @@ namespace Cute_RTS.Units
         }
 
         private Selectable selectable;
-        private Sprite<Animation> _animation;
+        private Sprite<Animation> sprite;
         private Animation animation = Animation.Idle;
         private PathMover pathmover;
+        private CircleCollider collider;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
             selectable = new Selectable();
-            _animation = new Sprite<Animation>();
+            sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
+            collider = new CircleCollider();
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
             pathmover.OnCollision += Pathmover_OnCollision;
             pathmover.MoveSpeed = MoveSpeed;
+
+            Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
 
             // Have path render below the unit
             pathmover.renderLayer = 1;
 
             setupAnimation(atlas);
             addComponent(selectable);
-            addComponent(_animation);
+            addComponent(sprite);
             addComponent(pathmover);
-            colliders.add(new CircleCollider());
+            colliders.add(collider);
         }
 
         private void Pathmover_OnCollision(ref CollisionResult res)
@@ -65,54 +70,50 @@ namespace Cute_RTS.Units
 
         private void Pathmover_OnArrival()
         {
-            _animation.play(Animation.Idle);
+            sprite.play(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
         {
+            Animation newAnim = Animation.None;
+
+            if (moveDir.X == -1)
+            {
+                sprite.spriteEffects = SpriteEffects.None;
+                newAnim = Animation.WalkLeft;
+            } else if (moveDir.X == 1)
+            {
+                sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+                newAnim = Animation.WalkRight;
+            } else if (moveDir.Y == -1)
+            {
+                newAnim = Animation.WalkUp;
+            } else if (moveDir.Y == 1)
+            {
+                newAnim = Animation.WalkDown;
+            }   
+
+
+            if (newAnim != Animation.None)
+            {
+                animation = newAnim;
+                sprite.play(animation);
+            }
             
-            if (Math.Abs(moveDir.X) > 5)
-            {
-                if (moveDir.X < 0)
-                {
-                    _animation.spriteEffects = SpriteEffects.None;
-                    animation = Animation.WalkLeft;
-                } else
-                {
-                    _animation.spriteEffects = SpriteEffects.FlipHorizontally;
-                    animation = Animation.WalkRight;
-                }
-
-            } else if (Math.Abs(moveDir.Y) > 5)
-            {
-                if (moveDir.Y < 0)
-                {
-                    animation = Animation.WalkUp;
-                } else if (moveDir.Y > 0)
-                {
-                    animation = Animation.WalkDown;
-                }   
-            }
-            if (!_animation.isAnimationPlaying(animation))
-            {
-                Console.Write("Animation Changed, current : " + animation + "\n");
-                _animation.play(animation);
-            }
-
         }
 
         /// <summary>
         /// Unit will move to target location according to its move speed.
         /// </summary>
         /// <returns>false if path does not exist, true otherwise.</returns>
-        public bool gotoLocation(Vector2 target)
+        private bool gotoLocation(Point target)
         {
-            return false;
+            return pathmover.gotoLocation(target);
         }
 
         public override void onAddedToScene()
         {
-            _animation.play(animation);
+            sprite.play(animation);
 
             Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
             base.onAddedToScene();
@@ -128,24 +129,24 @@ namespace Cute_RTS.Units
         {
             if (selectable.IsSelected)
             {
-                _animation.color = Color.Green;
+                sprite.color = Color.Green;
             } else
             {
-                _animation.color = Color.White;
+                sprite.color = Color.White;
             }
         }
 
         private void setupAnimation(TextureAtlas atlas)
         {
-            _animation.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-down"));
-            _animation.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
-            _animation.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
-            _animation.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
+            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-down"));
+            sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
+            sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
+            sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
             //TODO: Figure out how to flip X of animation
-            _animation.spriteEffects = SpriteEffects.FlipHorizontally;
-
-            _animation.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
-            _animation.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-left"));
+            sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+          
+            sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
+            sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-left"));
         }
     }
 }
