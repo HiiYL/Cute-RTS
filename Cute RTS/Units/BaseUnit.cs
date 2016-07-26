@@ -36,16 +36,20 @@ namespace Cute_RTS.Units
         private Sprite<Animation> sprite;
         private Animation animation = Animation.Idle;
         private PathMover pathmover;
+        private CircleCollider collider;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
             selectable = new Selectable();
             sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
+            collider = new CircleCollider();
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
             pathmover.OnCollision += Pathmover_OnCollision;
             pathmover.MoveSpeed = MoveSpeed;
+
+            Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
 
             // Have path render below the unit
             pathmover.renderLayer = 1;
@@ -54,7 +58,7 @@ namespace Cute_RTS.Units
             addComponent(selectable);
             addComponent(sprite);
             addComponent(pathmover);
-            colliders.add(new CircleCollider());
+            colliders.add(collider);
         }
 
         private void Pathmover_OnCollision(ref CollisionResult res)
@@ -102,9 +106,9 @@ namespace Cute_RTS.Units
         /// Unit will move to target location according to its move speed.
         /// </summary>
         /// <returns>false if path does not exist, true otherwise.</returns>
-        public bool gotoLocation(Vector2 target)
+        private bool gotoLocation(Point target)
         {
-            return false;
+            return pathmover.gotoLocation(target);
         }
 
         public override void onAddedToScene()

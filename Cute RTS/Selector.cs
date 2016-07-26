@@ -103,7 +103,8 @@ namespace Cute_RTS
                 isSelectionBox = false;
                 if (initialPos == Input.mousePosition)
                 {
-                    Collider v = Physics.overlapCircle(Input.mousePosition, 5f);
+                    // layer mask makes sure the map colliders are not selected:
+                    Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
                     if (v != null)
                     {
                         var s = v.entity.getComponent<Selectable>();
@@ -120,7 +121,8 @@ namespace Cute_RTS
                         selectionBoundary.Y,
                         selectionBoundary.Width,
                         selectionBoundary.Height);
-                    var colliders = new HashSet<Collider>(Physics.boxcastBroadphase(selectionBoundaryF));
+                    // layer mask makes sure the map colliders are not selected:
+                    var colliders = new HashSet<Collider>(Physics.boxcastBroadphase(selectionBoundaryF, layerMask:(int) RTSCollisionLayer.Map));
                     if (colliders != null)
                     {
                         foreach (var v in colliders)
