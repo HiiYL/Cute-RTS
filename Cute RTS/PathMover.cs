@@ -74,13 +74,7 @@ namespace Cute_RTS
             var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
             Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
 
-
-            if (((int) moveDir.X ^ (int) pastMoveDir.X) < 0 
-                || ((int)moveDir.Y ^ (int)pastMoveDir.Y) < 0)
-            {
-                pastMoveDir = moveDir;
-                OnDirectionChange?.Invoke(moveDir);
-            }
+            OnDirectionChange?.Invoke(moveDir);
 
 
             CollisionResult res;
@@ -126,10 +120,13 @@ namespace Cute_RTS
                 initialPositionInTileMap = _tilemap.worldToTilePosition(initialPosition);
 
 
+
+
                 for (int i = -pathingReroutePadding; i < numberOfTilesWide + pathingReroutePadding; i ++)
                 {
                     for(int j = -pathingReroutePadding; j < numberOfTilesHigh + pathingReroutePadding; j++)
                     {
+
                         _astarGraph.weightedNodes.Add(
                             new Point(
                                 initialPositionInTileMap.X + i,

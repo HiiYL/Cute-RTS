@@ -32,14 +32,14 @@ namespace Cute_RTS.Units
         }
 
         private Selectable selectable;
-        private Sprite<Animation> sprite;
+        private Sprite<Animation> _animation;
         private Animation animation = Animation.Idle;
         private PathMover pathmover;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
             selectable = new Selectable();
-            sprite = new Sprite<Animation>();
+            _animation = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
@@ -51,7 +51,7 @@ namespace Cute_RTS.Units
 
             setupAnimation(atlas);
             addComponent(selectable);
-            addComponent(sprite);
+            addComponent(_animation);
             addComponent(pathmover);
             colliders.add(new CircleCollider());
         }
@@ -65,44 +65,40 @@ namespace Cute_RTS.Units
 
         private void Pathmover_OnArrival()
         {
-            sprite.play(Animation.Idle);
+            _animation.play(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
         {
-            Animation newAnim = Animation.Idle;
+            
             if (Math.Abs(moveDir.X) > 5)
             {
                 if (moveDir.X < 0)
                 {
-                    sprite.spriteEffects = SpriteEffects.None;
-                    newAnim = Animation.WalkLeft;
+                    _animation.spriteEffects = SpriteEffects.None;
+                    animation = Animation.WalkLeft;
                 } else
                 {
-                    sprite.spriteEffects = SpriteEffects.FlipHorizontally;
-                    newAnim = Animation.WalkRight;
+                    _animation.spriteEffects = SpriteEffects.FlipHorizontally;
+                    animation = Animation.WalkRight;
                 }
 
             } else if (Math.Abs(moveDir.Y) > 5)
             {
                 if (moveDir.Y < 0)
                 {
-                    newAnim = Animation.WalkUp;
+                    animation = Animation.WalkUp;
                 } else if (moveDir.Y > 0)
                 {
-                    newAnim = Animation.WalkDown;
+                    animation = Animation.WalkDown;
                 }   
-            } else if (moveDir == Vector2.Zero)
+            }
+            if (!_animation.isAnimationPlaying(animation))
             {
-                newAnim = Animation.Idle;
+                Console.Write("Animation Changed, current : " + animation + "\n");
+                _animation.play(animation);
             }
 
-            if (animation != newAnim)
-            {
-                animation = newAnim;
-                sprite.play(animation);
-            }
-            
         }
 
         /// <summary>
@@ -116,7 +112,7 @@ namespace Cute_RTS.Units
 
         public override void onAddedToScene()
         {
-            sprite.play(animation);
+            _animation.play(animation);
 
             Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
             base.onAddedToScene();
@@ -132,24 +128,24 @@ namespace Cute_RTS.Units
         {
             if (selectable.IsSelected)
             {
-                sprite.color = Color.Green;
+                _animation.color = Color.Green;
             } else
             {
-                sprite.color = Color.White;
+                _animation.color = Color.White;
             }
         }
 
         private void setupAnimation(TextureAtlas atlas)
         {
-            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-down"));
-            sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
-            sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
-            sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
+            _animation.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-down"));
+            _animation.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
+            _animation.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
+            _animation.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
             //TODO: Figure out how to flip X of animation
-            sprite.spriteEffects = SpriteEffects.FlipHorizontally;
-          
-            sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-left"));
+            _animation.spriteEffects = SpriteEffects.FlipHorizontally;
+
+            _animation.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
+            _animation.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-left"));
         }
     }
 }
