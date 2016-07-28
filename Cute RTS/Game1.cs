@@ -63,16 +63,20 @@ namespace Cute_RTS
 
 
             FatMan fatman = new FatMan(baldyTexture, tiledmap, "Stuff");
-            fatman.move(new Vector2(300, 500));
             myScene.addEntity(fatman);
+            fatman.transform.position = new Vector2(0, 500);
+            fatman.goToPosition(new Point(300, 500));
 
             FatMan fatman2 = new FatMan(baldyTexture, tiledmap, "Stuff");
-            fatman2.move(new Vector2(400, 600));
             myScene.addEntity(fatman2);
+            fatman2.transform.position = new Vector2(0, 100);
+            fatman2.goToPosition(new Point(300, 100));
+
 
             FatMan fatman3 = new FatMan(baldyTexture, tiledmap, "Stuff");
-            fatman3.move(new Vector2(200, 550));
             myScene.addEntity(fatman3);
+            fatman3.transform.position = new Vector2(0, 400);
+            fatman3.goToPosition(new Point(300, 400));
 
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
@@ -91,22 +95,6 @@ namespace Cute_RTS
 
             /*
 
-            */
-
-
-            /*
-            var entityTwo = myScene.createEntity("some-dude");
-
-            entityTwo.transform.position = new Vector2(50, 50);
-
-            var sprite = new Sprite<Animation>(Animation.WalkUp, anim);
-
-            entityTwo.addComponent(sprite);
-            entityTwo.addComponent(new SimpleMover());
-            entityTwo.addComponent(new Pathfinder(tiledmap));
-            entityTwo.addComponent(rigidbody);
-            entityTwo.addCollider(new CircleCollider());
-            sprite.play(Animation.WalkUp);
             */
 
 

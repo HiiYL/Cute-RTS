@@ -36,14 +36,14 @@ namespace Cute_RTS.Units
         private Sprite<Animation> sprite;
         private Animation animation = Animation.Idle;
         private PathMover pathmover;
-        private CircleCollider collider;
+        private BoxCollider collider;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
             selectable = new Selectable();
             sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
-            collider = new CircleCollider();
+            collider = new BoxCollider();
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
             pathmover.OnCollision += Pathmover_OnCollision;
@@ -123,6 +123,11 @@ namespace Cute_RTS.Units
         {
             Selector.getSelector().OnSelectionChanged -= onChangeSelect;
             base.onRemovedFromScene();
+        }
+
+        public void goToPosition(Point point )
+        {
+            pathmover.gotoLocation(point);
         }
 
         private void onChangeSelect(IReadOnlyList<Selectable> sel)
