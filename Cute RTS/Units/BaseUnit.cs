@@ -130,6 +130,11 @@ namespace Cute_RTS.Units
             pathmover.gotoLocation(point);
         }
 
+        public void setPosition(Vector2 point)
+        {
+            transform.position = point;
+        }
+
         private void onChangeSelect(IReadOnlyList<Selectable> sel)
         {
             if (selectable.IsSelected)

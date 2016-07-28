@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Units;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.Pathfinding;
 using Nez.Tiled;
@@ -103,6 +104,8 @@ namespace Cute_RTS
 
                 if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
                 {
+                    BaseUnit temp = entity as BaseUnit;
+                    temp.setPosition(new Vector2(x,y));
                     if (current_node < _astarSearchPath.Count - 1)
                     {
                         current_node++;
@@ -169,7 +172,9 @@ namespace Cute_RTS
         public bool gotoLocation(Point target)
         {
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
+
             target = _tilemap.worldToTilePosition(target.ToVector2());
+            Console.WriteLine(target);
             _astarSearchPath = _astarGraph.search(source, target);
 
             if (_astarSearchPath != null)
@@ -196,7 +201,7 @@ namespace Cute_RTS
                 this.source = source;
                 isDone = false;
                 current_node = 0;
-                //doneReroute = true;
+                doneReroute = true;
                 return true;
             }
             else
