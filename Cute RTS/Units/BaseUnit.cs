@@ -40,7 +40,6 @@ namespace Cute_RTS.Units
         private BoxCollider collider;
         private Selectable selectable;
         private Sprite<Animation> sprite;
-        private UnitBehaviorTree behaviortree;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
