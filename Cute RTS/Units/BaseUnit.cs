@@ -32,18 +32,22 @@ namespace Cute_RTS.Units
             AttackLeft
         }
 
-        private Selectable selectable;
-        private Sprite<Animation> sprite;
+        public Point TargetLocation { get; set; }
         private Animation animation = Animation.Idle;
+
+        // components
         private PathMover pathmover;
         private BoxCollider collider;
+        private Selectable selectable;
+        private Sprite<Animation> sprite;
+        private UnitBehaviorTree behaviortree;
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
             selectable = new Selectable();
             sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
-            collider = new BoxCollider();
+            collider = new BoxCollider(-8, -8, 16, 16);
             pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             pathmover.OnArrival += Pathmover_OnArrival;
             pathmover.OnCollision += Pathmover_OnCollision;
@@ -106,7 +110,7 @@ namespace Cute_RTS.Units
         /// Unit will move to target location according to its move speed.
         /// </summary>
         /// <returns>false if path does not exist, true otherwise.</returns>
-        private bool gotoLocation(Point target)
+        public bool gotoLocation(Point target)
         {
             return pathmover.gotoLocation(target);
         }
@@ -148,15 +152,12 @@ namespace Cute_RTS.Units
 
         private void setupAnimation(TextureAtlas atlas)
         {
-            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-down"));
+            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
             sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
             sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
             sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
-            //TODO: Figure out how to flip X of animation
-            sprite.spriteEffects = SpriteEffects.FlipHorizontally;
-          
             sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-left"));
+            sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-front-left"));
         }
     }
 }

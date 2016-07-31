@@ -86,6 +86,17 @@ namespace Cute_RTS
 
         void IUpdatable.update()
         {
+            if (Input.rightMouseButtonPressed && _selectables.Count > 0)
+            {
+                foreach (var s in _selectables)
+                {
+                    var b = s.entity as BaseUnit;
+                    b.gotoLocation(Input.mousePosition.ToPoint());
+
+                }
+                return;
+            }
+
             if (Input.leftMouseButtonPressed)
             {
                 initialPos = Input.mousePosition;

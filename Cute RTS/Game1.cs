@@ -59,7 +59,8 @@ namespace Cute_RTS
             Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int) RTSCollisionLayer.Map);
             tiledMapComponent.renderLayer = 10;
 
-            TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
+            //TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
+            TextureAtlas baldyTexture = content.Load<TextureAtlas>("CatAtlas");
 
 
             FatMan fatman = new FatMan(baldyTexture, tiledmap, "Stuff");
