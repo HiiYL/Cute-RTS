@@ -80,19 +80,16 @@ namespace Cute_RTS
                 var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
                 Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
 
-                if (pastLoc != entity.transform.position)
-                {
-                    Vector2 dir = entity.transform.position - pastLoc;
-                    dir.Normalize();
+                Vector2 dir = entity.transform.position - pastLoc;
+                dir.Normalize();
 
-                    if (dir != pastDir)
-                    {
-                        pastDir = dir;
-                        OnDirectionChange?.Invoke(dir);
-                    }
-                    
-                    pastLoc = entity.transform.position;
+                if (dir != pastDir)
+                {
+                    pastDir = dir;
+                    OnDirectionChange?.Invoke(dir);
                 }
+                    
+                pastLoc = entity.transform.position;
 
                 CollisionResult res;
                 _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
