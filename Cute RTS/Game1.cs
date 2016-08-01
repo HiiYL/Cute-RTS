@@ -47,9 +47,6 @@ namespace Cute_RTS
 
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
             var myScene = new BaseScene(true);
-            var moon = myScene.content.Load<Texture2D>("moon");
-
-            //myScene.addEntityProcessor(new SelectionProcessingSystem());
 
             var tiledEntity = myScene.createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
@@ -82,26 +79,6 @@ namespace Cute_RTS
 
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
-
-            //tiledMapDetailsComp.material = Material.stencilWrite();
-            //tiledMapDetailsComp.material.effect = content.loadNezEffect<SpriteAlphaTestEffect>();
-
-            var atlas = myScene.content.Load<TextureAtlas>("FirstAtlas");
-            var anim = atlas.getSpriteAnimation("run");
-
-            var friction = 0.3f;
-            var elasticity = 0.4f;
-            var mass = 1f;
-
-            Vector2 velocity = new Vector2(0, 0);
-
-            /*
-
-            */
-
-
-
-
 
             // set the scene so Nez can take over
             Core.scene = myScene;
