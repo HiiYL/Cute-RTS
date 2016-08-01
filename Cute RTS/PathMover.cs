@@ -121,7 +121,7 @@ namespace Cute_RTS
             if (res.collider != null)
             {
                 collisionPos = entity.transform.position;
-                Core.schedule(1.5f, timer =>
+                Core.schedule(0.2f, timer =>
                 { if (collisionPos == entity.transform.position)
                 {
                     target = target + new Point(Nez.Random.range(-2, 3), Nez.Random.range(-2, 3));
