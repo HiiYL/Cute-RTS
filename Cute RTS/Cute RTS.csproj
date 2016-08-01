@@ -68,7 +68,7 @@
     <Compile Include="SelectionProcessingSystem.cs" />
     <Compile Include="Selector.cs" />
     <Compile Include="SimpleMover.cs" />
-    <Compile Include="Units\FatMan.cs" />
+    <Compile Include="Units\Cat.cs" />
     <Compile Include="Units\HumanFootman.cs" />
     <Compile Include="Units\UnitBehaviorTree.cs" />
   </ItemGroup>

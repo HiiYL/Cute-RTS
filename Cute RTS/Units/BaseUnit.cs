@@ -51,10 +51,13 @@ namespace Cute_RTS.Units
         private BoxCollider collider;
         private Selectable selectable;
         private Sprite<Animation> sprite;
+        private Sprite _selectTex;
 
-        public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
+        public BaseUnit(TextureAtlas atlas, Texture2D selectTex, TiledMap tmc, string collisionlayer)
         {
             _tilemap = tmc;
+            _selectTex = new Sprite(selectTex);
+            _selectTex.enabled = false;
             selectable = new Selectable();
             sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
@@ -71,6 +74,7 @@ namespace Cute_RTS.Units
 
             setupAnimation(atlas);
             addComponent(selectable);
+            addComponent(_selectTex);
             addComponent(sprite);
             addComponent(pathmover);
             addComponent(new UnitBehaviorTree(this, pathmover));
@@ -173,10 +177,10 @@ namespace Cute_RTS.Units
         {
             if (selectable.IsSelected)
             {
-                sprite.color = Color.Green;
+                _selectTex.enabled = true;
             } else
             {
-                sprite.color = Color.White;
+                _selectTex.enabled = false;
             }
         }
 

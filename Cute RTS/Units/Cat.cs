@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace Cute_RTS.Units
 {
-    class FatMan : BaseUnit
+    class Cat : BaseUnit
     {
         public override int MoveSpeed { get; set; } = 7;
 
-        public FatMan(TextureAtlas texture, TiledMap tmc, string collisionlayer) : 
-            base(texture, tmc, collisionlayer)
+        public Cat(TextureAtlas texture, Texture2D selectTex, TiledMap tmc, string collisionlayer) : 
+            base(texture, selectTex, tmc, collisionlayer)
         {
             transform.setScale(new Vector2(0.5f, 0.5f));
         }

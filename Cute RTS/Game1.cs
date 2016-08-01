@@ -61,20 +61,21 @@ namespace Cute_RTS
 
             //TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
             TextureAtlas baldyTexture = content.Load<TextureAtlas>("CatAtlas");
+            Texture2D catSelection = content.Load<Texture2D>("Units/Cat/cat-selection");
 
 
-            FatMan fatman = new FatMan(baldyTexture, tiledmap, "Stuff");
+            Cat fatman = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
             myScene.addEntity(fatman);
             fatman.transform.position = new Vector2(0, 500);
             fatman.gotoLocation(new Point(300, 500));
 
-            FatMan fatman2 = new FatMan(baldyTexture, tiledmap, "Stuff");
+            Cat fatman2 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
             myScene.addEntity(fatman2);
             fatman2.transform.position = new Vector2(0, 100);
             fatman2.gotoLocation(new Point(300, 100));
 
 
-            FatMan fatman3 = new FatMan(baldyTexture, tiledmap, "Stuff");
+            Cat fatman3 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
             myScene.addEntity(fatman3);
             fatman3.transform.position = new Vector2(0, 400);
             fatman3.gotoLocation(new Point(300, 400));
