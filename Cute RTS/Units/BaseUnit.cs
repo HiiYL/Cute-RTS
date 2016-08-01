@@ -33,7 +33,7 @@ namespace Cute_RTS.Units
         }
 
         public Point TargetLocation { get; set; }
-        private Animation animation = Animation.Idle;
+        private Animation animation;
 
         // components
         private PathMover pathmover;
@@ -73,7 +73,7 @@ namespace Cute_RTS.Units
 
         private void Pathmover_OnArrival()
         {
-            sprite.play(Animation.Idle);
+            playAnimation(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -96,13 +96,16 @@ namespace Cute_RTS.Units
                 newAnim = Animation.WalkDown;
             }   
 
+            playAnimation(newAnim);
+        }
 
-            if (newAnim != Animation.None)
+        public void playAnimation(Animation anim)
+        {
+            if (anim != Animation.None && animation != anim)
             {
-                animation = newAnim;
+                animation = anim;
                 sprite.play(animation);
             }
-            
         }
 
         /// <summary>
@@ -116,7 +119,7 @@ namespace Cute_RTS.Units
 
         public override void onAddedToScene()
         {
-            sprite.play(animation);
+            playAnimation(Animation.Idle);
 
             Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
             base.onAddedToScene();
