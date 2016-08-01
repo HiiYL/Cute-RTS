@@ -1,5 +1,6 @@
 ﻿using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Nez;
 using System;
 using System.Collections.Generic;
@@ -91,7 +92,25 @@ namespace Cute_RTS
                 foreach (var s in _selectables)
                 {
                     var b = s.entity as BaseUnit;
-                    b.gotoLocation(Input.mousePosition.ToPoint());
+                    Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
+                    if (v != null)
+                    {
+                        var g = v.entity as BaseUnit;
+                        b.followUnit(g);
+                    } else
+                    {
+                        b.gotoLocation(Input.mousePosition.ToPoint());
+                    }
+                }
+                return;
+            }
+
+            if (Input.isKeyReleased(Keys.S))
+            {
+                foreach (var s in _selectables)
+                {
+                    var b = s.entity as BaseUnit;
+                    b.stopMoving();
 
                 }
                 return;

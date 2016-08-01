@@ -18,6 +18,8 @@ namespace Cute_RTS
         public override float height { get { return 1000; } }
         public bool IsRenderPath { get; set; } = true;
         public int MoveSpeed { get; set; } = 15;
+        public bool HasArrived { get { return isDone; } }
+        public Point TargetLocation { get { return target; } }
 
         // Events:
         public delegate void OnCollisionHandler(ref CollisionResult res);
@@ -143,7 +145,6 @@ namespace Cute_RTS
                 {
                     isDone = true;
                     current_node = 0;
-                    OnArrival?.Invoke();
                 }
             }
         }
@@ -193,7 +194,7 @@ namespace Cute_RTS
             }
         }
 
-        public bool gotoLocation(Point target)
+        public bool setTargetLocation(Point target)
         {
             clearObstacleNodes();
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
@@ -210,12 +211,13 @@ namespace Cute_RTS
                 current_node = 0;
 
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }
-
         }
+
 
         public bool retryRoute()
         {

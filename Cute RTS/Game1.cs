@@ -66,18 +66,18 @@ namespace Cute_RTS
             FatMan fatman = new FatMan(baldyTexture, tiledmap, "Stuff");
             myScene.addEntity(fatman);
             fatman.transform.position = new Vector2(0, 500);
-            fatman.goToPosition(new Point(300, 500));
+            fatman.gotoLocation(new Point(300, 500));
 
             FatMan fatman2 = new FatMan(baldyTexture, tiledmap, "Stuff");
             myScene.addEntity(fatman2);
             fatman2.transform.position = new Vector2(0, 100);
-            fatman2.goToPosition(new Point(300, 100));
+            fatman2.gotoLocation(new Point(300, 100));
 
 
             FatMan fatman3 = new FatMan(baldyTexture, tiledmap, "Stuff");
             myScene.addEntity(fatman3);
             fatman3.transform.position = new Vector2(0, 400);
-            fatman3.goToPosition(new Point(300, 400));
+            fatman3.gotoLocation(new Point(300, 400));
 
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;

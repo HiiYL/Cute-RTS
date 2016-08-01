@@ -32,8 +32,19 @@ namespace Cute_RTS.Units
             AttackLeft
         }
 
+        public enum UnitCommand
+        {
+            None,
+            Idle,
+            GoTo,
+            Follow
+        }
+
         public Point TargetLocation { get; set; }
+        public BaseUnit TargetUnit { get; set; }
+        public UnitCommand ActiveCommand { get; set; }
         private Animation animation;
+        private TiledMap _tilemap;
 
         // components
         private PathMover pathmover;
@@ -43,6 +54,7 @@ namespace Cute_RTS.Units
 
         public BaseUnit(TextureAtlas atlas, TiledMap tmc, string collisionlayer)
         {
+            _tilemap = tmc;
             selectable = new Selectable();
             sprite = new Sprite<Animation>();
             pathmover = new PathMover(tmc, collisionlayer, selectable);
@@ -61,7 +73,13 @@ namespace Cute_RTS.Units
             addComponent(selectable);
             addComponent(sprite);
             addComponent(pathmover);
+            addComponent(new UnitBehaviorTree(this, pathmover));
             colliders.add(collider);
+        }
+
+        public Point getTilePosition()
+        {
+            return _tilemap.worldToTilePosition(transform.position);
         }
 
         private void Pathmover_OnCollision(ref CollisionResult res)
@@ -73,7 +91,7 @@ namespace Cute_RTS.Units
 
         private void Pathmover_OnArrival()
         {
-            playAnimation(Animation.Idle);
+            //playAnimation(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -114,7 +132,22 @@ namespace Cute_RTS.Units
         /// <returns>false if path does not exist, true otherwise.</returns>
         public bool gotoLocation(Point target)
         {
-            return pathmover.gotoLocation(target);
+            bool canGoTo = pathmover.setTargetLocation(target);
+
+            if (canGoTo) ActiveCommand = UnitCommand.GoTo;
+
+            return canGoTo;
+        }
+
+        public void stopMoving()
+        {
+            ActiveCommand = UnitCommand.Idle;
+        }
+
+        public void followUnit(BaseUnit bu)
+        {
+            TargetUnit = bu;
+            ActiveCommand = UnitCommand.Follow;
         }
 
         public override void onAddedToScene()
@@ -129,11 +162,6 @@ namespace Cute_RTS.Units
         {
             Selector.getSelector().OnSelectionChanged -= onChangeSelect;
             base.onRemovedFromScene();
-        }
-
-        public void goToPosition(Point point )
-        {
-            pathmover.gotoLocation(point);
         }
 
         public void setPosition(Vector2 point)
