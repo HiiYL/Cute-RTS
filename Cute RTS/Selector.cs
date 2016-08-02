@@ -96,6 +96,7 @@ namespace Cute_RTS
                     if (v != null)
                     {
                         var g = v.entity as BaseUnit;
+                        g.playClickSelectAnimation();
                         b.followUnit(g);
                     } else
                     {

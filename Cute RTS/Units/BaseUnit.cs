@@ -184,6 +184,17 @@ namespace Cute_RTS.Units
             }
         }
 
+        public void playClickSelectAnimation(int counter = 4)
+        {
+            if (counter == 0) return;
+
+            _selectTex.enabled = !_selectTex.enabled;
+            Core.schedule(0.15f, tmr =>
+            {
+                playClickSelectAnimation(counter - 1);
+            });
+        }
+
         private void setupAnimation(TextureAtlas atlas)
         {
             sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
