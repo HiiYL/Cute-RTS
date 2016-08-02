@@ -7,6 +7,8 @@ using Nez;
 using Nez.Sprites;
 using Nez.TextureAtlases;
 using Nez.Tiled;
+using System.Collections.Generic;
+using System;
 
 namespace Cute_RTS
 {
@@ -22,6 +24,9 @@ namespace Cute_RTS
     /// </summary>
     public class Game1 : Core
     {
+
+
+
         Scene.SceneResolutionPolicy policy;
 
         public Game1() : base(isFullScreen: false, enableEntitySystems: true)
@@ -46,42 +51,13 @@ namespace Cute_RTS
             Window.AllowUserResizing = true;
 
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
-            var myScene = new BaseScene(true);
+            var myScene = new Scene1(true);
 
-            var tiledEntity = myScene.createEntity("tiled-map-entity");
-            var tiledmap = content.Load<TiledMap>("cute-map");
-            var tmc = new TiledMapComponent(tiledmap, "Stuff");
-
-            var tiledMapComponent = tiledEntity.addComponent(tmc);
-            Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int) RTSCollisionLayer.Map);
-            tiledMapComponent.renderLayer = 10;
-
-            //TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
-            TextureAtlas baldyTexture = content.Load<TextureAtlas>("CatAtlas");
-            Texture2D catSelection = content.Load<Texture2D>("Units/Cat/cat-selection");
-
-
-            Cat fatman = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            myScene.addEntity(fatman);
-            fatman.transform.position = new Vector2(0, 500);
-            fatman.gotoLocation(new Point(300, 500));
-
-            Cat fatman2 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            myScene.addEntity(fatman2);
-            fatman2.transform.position = new Vector2(0, 100);
-            fatman2.gotoLocation(new Point(300, 100));
-
-
-            Cat fatman3 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            myScene.addEntity(fatman3);
-            fatman3.transform.position = new Vector2(0, 400);
-            fatman3.gotoLocation(new Point(300, 400));
-
-            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
-            selectionComponent.renderLayer = -5;
 
             // set the scene so Nez can take over
             Core.scene = myScene;
         }
+
+
     }
 }

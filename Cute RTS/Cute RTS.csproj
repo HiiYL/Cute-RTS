@@ -56,7 +56,11 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\Agent.cs" />
+    <Compile Include="AI\HeadingSmoother.cs" />
+    <Compile Include="AI\SteeringBehaviours.cs" />
     <Compile Include="PathMover.cs" />
+    <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Selectable.cs" />
