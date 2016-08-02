@@ -13,33 +13,13 @@ using System.Threading.Tasks;
 
 namespace Cute_RTS.Scenes
 {
-    class Scene1 : BaseScene, IUpdatable
+    class Scene1 : BaseScene
     {
         private const int PopulationSize = 175;
         private const int SensorDistance = 50;
         private const float MaxSpeed = 2f;
 
         private readonly List<Agent> agents = new List<Agent>();
-
-        public Scene1(bool addExcludeRenderer = true, bool needsFullRenderSizeForUI = false) : base(addExcludeRenderer, needsFullRenderSizeForUI)
-        {
-        }
-
-        public bool enabled
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public int updateOrder
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
 
         public override void initialize()
         {
@@ -100,11 +80,6 @@ namespace Cute_RTS.Scenes
             Agent agent4 = new Agent(fatman4, SensorDistance, MaxSpeed);
             agent4.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
             agents.Add(agent4);
-        }
-
-        public void update()
-        {
-            Console.Write("HELLO");
         }
     }
 }
