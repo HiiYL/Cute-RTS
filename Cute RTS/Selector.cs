@@ -15,6 +15,7 @@ namespace Cute_RTS
         // make sure we arent culled
         public override float width { get { return 1000; } }
         public override float height { get { return 1000; } }
+        public Player ActivePlayer { get; set; }
         
         public delegate void SelectionHandler(IReadOnlyList<Selectable> sels);
         public event SelectionHandler OnSelectionChanged;
@@ -96,8 +97,15 @@ namespace Cute_RTS
                     if (v != null)
                     {
                         var g = v.entity as BaseUnit;
+                        if (b.UnitPlayer.isMyUnit(g))
+                        {
+                            b.followUnit(g);
+                        } else
+                        {
+                            Debug.log("ATTACK ENEMY! ONE HIT KO!!");
+                            g.Health = 0;
+                        }
                         g.playClickSelectAnimation();
-                        b.followUnit(g);
                     } else
                     {
                         b.gotoLocation(Input.mousePosition.ToPoint());

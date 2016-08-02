@@ -12,14 +12,42 @@ using System.Threading.Tasks;
 
 namespace Cute_RTS.Units
 {
-    abstract class BaseUnit : Entity
+    class BaseUnit : Entity
     {
         // Unit Properties:
-        public virtual int Health { get; set; } = 10;
+        public virtual int Health
+        {
+            get { return _health; }
+            set
+            {
+                if (value == 0)
+                {
+                    OnUnitDied?.Invoke(this);
+                    die();
+                }
+                else
+                {
+                    _health = value;
+                }
+            }
+        }
+
         public virtual int Damage { get; set; } = 10;
         public virtual int Range { get; set; } = 1; // default is melee
         public virtual int Vision { get; set; } = 8;
-        public virtual int MoveSpeed { get; set; } = 15;
+        public virtual int MoveSpeed { get; set; } = 10;
+        public Point TargetLocation { get; set; }
+        public BaseUnit TargetUnit { get; set; }
+        public UnitCommand ActiveCommand { get; set; }
+        public Player UnitPlayer { get { return _player; } }
+        public delegate void OnUnitDiedHandler(BaseUnit idied);
+        public event OnUnitDiedHandler OnUnitDied;
+
+        private int _health;
+        private Player _player;
+        private Animation animation;
+        private TiledMap _tilemap;
+
 
         public enum Animation
         {
@@ -29,7 +57,8 @@ namespace Cute_RTS.Units
             WalkDown,
             WalkRight,
             WalkLeft,
-            AttackLeft
+            AttackLeft,
+            Die
         }
 
         public enum UnitCommand
@@ -40,12 +69,6 @@ namespace Cute_RTS.Units
             Follow
         }
 
-        public Point TargetLocation { get; set; }
-        public BaseUnit TargetUnit { get; set; }
-        public UnitCommand ActiveCommand { get; set; }
-        private Animation animation;
-        private TiledMap _tilemap;
-
         // components
         private PathMover pathmover;
         private BoxCollider collider;
@@ -53,7 +76,7 @@ namespace Cute_RTS.Units
         private Sprite<Animation> sprite;
         private Sprite _selectTex;
 
-        public BaseUnit(TextureAtlas atlas, Texture2D selectTex, TiledMap tmc, string collisionlayer)
+        public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
         {
             _tilemap = tmc;
             _selectTex = new Sprite(selectTex);
@@ -66,11 +89,16 @@ namespace Cute_RTS.Units
             pathmover.OnArrival += Pathmover_OnArrival;
             pathmover.OnCollision += Pathmover_OnCollision;
             pathmover.MoveSpeed = MoveSpeed;
+            _player = player;
+            _player.addUnit(this);
+            sprite.color = _player.PlayerColor;
 
             Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
+            transform.setScale(new Vector2(0.5f, 0.5f));
 
             // Have path render below the unit
             pathmover.renderLayer = 1;
+            _selectTex.renderLayer = 1;
 
             setupAnimation(atlas);
             addComponent(selectable);
@@ -197,12 +225,32 @@ namespace Cute_RTS.Units
 
         private void setupAnimation(TextureAtlas atlas)
         {
+            var deathAnim = atlas.getSpriteAnimation("death-left");
+            deathAnim.loop = false;
+
             sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
             sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
             sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
             sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
             sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
             sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-front-left"));
+            sprite.addAnimation(Animation.Die, deathAnim);
+        }
+
+        private void die()
+        {
+            ActiveCommand = UnitCommand.None;
+            sprite.play(Animation.Die);
+            Core.schedule(1.5f, timer =>
+            {
+                UnitPlayer.removeUnit(this);
+                destroy();
+            });
+        }
+
+        public void setSelectionColor(Color color)
+        {
+            _selectTex.color = color;
         }
     }
 }
