@@ -21,6 +21,10 @@ namespace Cute_RTS.Scenes
 
         private readonly List<Agent> agents = new List<Agent>();
 
+        public Scene1(bool addExcludeRenderer = true, bool needsFullRenderSizeForUI = false) : base(addExcludeRenderer, needsFullRenderSizeForUI)
+        {
+        }
+
         public override void initialize()
         {
 
