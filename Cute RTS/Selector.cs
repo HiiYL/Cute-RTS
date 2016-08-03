@@ -94,7 +94,7 @@ namespace Cute_RTS
         {
             if (Input.rightMouseButtonPressed && _selectables.Count > 0)
             {
-                /*
+                
                 foreach (var s in _selectables)
                 {
                     var b = s.entity as BaseUnit;
@@ -113,13 +113,9 @@ namespace Cute_RTS
                         g.playClickSelectAnimation();
                     } else
                     {
-                        b.gotoLocation(Input.mousePosition.ToPoint());
+                        b.getComponent<FlockingComponent>().moveTowards(Input.mousePosition);
+                        //b.gotoLocation(Input.mousePosition.ToPoint());
                     }
-                }
-                */
-                foreach(var s in _flockMembers)
-                {
-                    s.moveTowards(Input.mousePosition);
                 }
                 return;
             }
@@ -177,13 +173,6 @@ namespace Cute_RTS
                         _flockMembers.Clear();
                         foreach (var v in colliders)
                         {
-                            FlockingComponent flockingComponent = new FlockingComponent(FlockingSystem.SensorDistance, FlockingSystem.MaxSpeed);
-                            if (v.entity.getComponent<FlockingComponent>() == null)
-                            {
-                                Console.Write("FLOCKING ADDED!");
-                                v.entity.addComponent<FlockingComponent>(flockingComponent);
-                                _flockMembers.Add(flockingComponent);
-                            }
                             var selectable = v.entity.getComponent<Selectable>();
                             if (selectable != null)
                             {

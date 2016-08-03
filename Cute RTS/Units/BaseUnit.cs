@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Components;
+using Cute_RTS.Systems;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
@@ -96,6 +98,8 @@ namespace Cute_RTS.Units
             Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
             transform.setScale(new Vector2(0.5f, 0.5f));
 
+            FlockingComponent flockingComponent = new FlockingComponent(FlockingSystem.SensorDistance, FlockingSystem.MaxSpeed);
+
             // Have path render below the unit
             pathmover.renderLayer = 1;
             _selectTex.renderLayer = 1;
@@ -105,6 +109,7 @@ namespace Cute_RTS.Units
             addComponent(_selectTex);
             addComponent(sprite);
             addComponent(pathmover);
+            addComponent(flockingComponent);
             addComponent(new UnitBehaviorTree(this, pathmover));
             colliders.add(collider);
         }

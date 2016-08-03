@@ -1,4 +1,6 @@
 ﻿using Cute_RTS.AI;
+using Cute_RTS.Components;
+using Cute_RTS.Systems;
 using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,8 +20,6 @@ namespace Cute_RTS.Scenes
         private const int PopulationSize = 175;
         private const int SensorDistance = 50;
         private const float MaxSpeed = 2f;
-
-        private readonly List<Agent> agents = new List<Agent>();
 
         public override void initialize()
         {
@@ -60,41 +60,30 @@ namespace Cute_RTS.Scenes
             kitty.transform.position = new Vector2(0, 500);
             kitty.gotoLocation(new Point(300, 500));
 
-            Agent agent = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent);
 
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 100);
             kitty.gotoLocation(new Point(300, 100));
 
-            Agent agent2 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent2.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent2);
 
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 400);
             kitty.gotoLocation(new Point(300, 400));
-
-            Agent agent3 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent3.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent3);
 
             Selector.getSelector().ActivePlayer = myself;
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
 
             kitty = giveMeCat();
-            kitty.transform.position = new Vector2(0, 400);
-            kitty.gotoLocation(new Point(300, 400));
+            kitty.transform.position = new Vector2(0, 350);
+            kitty.gotoLocation(new Point(300, 350));
 
-            Agent agent4 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent4.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent4);
 
             var enemyCat = giveEnemyCat();
             enemyCat.transform.position = new Vector2(500, 500);
             enemyCat.gotoLocation(new Point(400, 450));
+
+            addEntityProcessor(new FlockingSystem(new Matcher().all(typeof(FlockingComponent))));
         }
     }
 }
