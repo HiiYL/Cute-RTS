@@ -30,6 +30,13 @@ namespace Cute_RTS
                 }
             }
         }
-        
+
+        public override void onRemovedFromEntity()
+        {
+            base.onRemovedFromEntity();
+            // Remove from Selector
+            IsSelected = false;
+        }
+
     }
 }
