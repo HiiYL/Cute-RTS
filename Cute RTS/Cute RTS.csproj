@@ -59,9 +59,11 @@
     <Compile Include="AI\Agent.cs" />
     <Compile Include="AI\HeadingSmoother.cs" />
     <Compile Include="AI\SteeringBehaviours.cs" />
+    <Compile Include="Components\FlockingComponent.cs" />
     <Compile Include="PathMover.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Scenes\Scene1.cs" />
+    <Compile Include="Systems\FlockingSystem.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Selectable.cs" />

@@ -1,4 +1,6 @@
-﻿using Cute_RTS.Units;
+﻿using Cute_RTS.Components;
+using Cute_RTS.Systems;
+using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nez;
@@ -26,6 +28,7 @@ namespace Cute_RTS
         private Color selectionColor;
         private static Selector selector;
         private List<Selectable> _selectables;
+        public List<FlockingComponent> _flockMembers;
 
         public IReadOnlyList<Selectable> Selectables {
             get { return _selectables.AsReadOnly(); }
@@ -34,6 +37,7 @@ namespace Cute_RTS
         private Selector()
         {
             _selectables = new List<Selectable>();
+            _flockMembers = new List<FlockingComponent>();
             selectionColor = Color.DarkBlue;
             selectionColor.A = (byte)0.1;
         }
@@ -90,6 +94,7 @@ namespace Cute_RTS
         {
             if (Input.rightMouseButtonPressed && _selectables.Count > 0)
             {
+                /*
                 foreach (var s in _selectables)
                 {
                     var b = s.entity as BaseUnit;
@@ -110,6 +115,11 @@ namespace Cute_RTS
                     {
                         b.gotoLocation(Input.mousePosition.ToPoint());
                     }
+                }
+                */
+                foreach(var s in _flockMembers)
+                {
+                    s.moveTowards(Input.mousePosition);
                 }
                 return;
             }
@@ -164,8 +174,16 @@ namespace Cute_RTS
                     var colliders = new HashSet<Collider>(Physics.boxcastBroadphase(selectionBoundaryF, layerMask:(int) RTSCollisionLayer.Map));
                     if (colliders != null)
                     {
+                        _flockMembers.Clear();
                         foreach (var v in colliders)
                         {
+                            FlockingComponent flockingComponent = new FlockingComponent(FlockingSystem.SensorDistance, FlockingSystem.MaxSpeed);
+                            if (v.entity.getComponent<FlockingComponent>() == null)
+                            {
+                                Console.Write("FLOCKING ADDED!");
+                                v.entity.addComponent<FlockingComponent>(flockingComponent);
+                                _flockMembers.Add(flockingComponent);
+                            }
                             var selectable = v.entity.getComponent<Selectable>();
                             if (selectable != null)
                             {
