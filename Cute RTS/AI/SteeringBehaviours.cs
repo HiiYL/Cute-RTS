@@ -1,25 +1,26 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Cute_RTS.Components;
 
 namespace Cute_RTS.AI
 {
-    public class SteeringBehaviours
+    class SteeringBehaviours
     {
         // Weights for the various steering forces.  Change these to modifiy behaviour
         private const int SeparationWeight = 35;
         private const int CohesionWeight = 1;
         private const int AlignmentWeight = 6;
 
-        private readonly Agent agentContext;
+        private readonly FlockingComponent flockingComponentContext;
         private readonly float maximumSpeed;
         
-        public SteeringBehaviours(Agent agent, float maxSpeed)
+        public SteeringBehaviours(float maxSpeed, FlockingComponent flockingComponent)
         {
-            agentContext = agent;
+            flockingComponentContext = flockingComponent;
             maximumSpeed = maxSpeed;
         }
 
-        public Vector2 CalculateFlocking(List<Agent> agents)
+        public Vector2 CalculateFlocking(List<FlockingComponent> flockingComponents)
         {
             Vector2 separationForce = Vector2.Zero;  // Force pushing agents apart
             Vector2 centerOfMass = Vector2.Zero;
@@ -29,20 +30,20 @@ namespace Cute_RTS.AI
             float neighbourCount = 0;
 
             // Loop all agents
-            foreach (Agent agent in agents)
+            foreach (FlockingComponent flockingComponent in flockingComponents)
             {
                 // Don't check an agent against itself
-                if (agent != agentContext)
+                if (flockingComponent != flockingComponentContext)
                 {
                     // Calculate distance between agents
-                    Vector2 separation = agentContext.Entity.transform.position - agent.Entity.transform.position;
+                    Vector2 separation = flockingComponentContext.entity.transform.position - flockingComponent.entity.transform.position;
                     float distance = separation.Length();
 
                     // If agent is within specified sensor distance...
-                    if (distance < agentContext.SensorDistance)
+                    if (distance < flockingComponentContext.SensorDistance)
                     {
-                        alignmentForce += agent.Velocity;
-                        centerOfMass += agent.Entity.transform.position;
+                        alignmentForce += flockingComponent.Velocity;
+                        centerOfMass += flockingComponent.entity.transform.position;
                         separationForce += Vector2.Normalize(separation) / distance;
 
                         neighbourCount++;
@@ -65,8 +66,8 @@ namespace Cute_RTS.AI
         // Steering behaviour to move agents towards a target
         public Vector2 Seek(Vector2 target)
         {
-            Vector2 desiredVelocity = Vector2.Normalize(target - agentContext.Entity.transform.position) * maximumSpeed;
-            return (desiredVelocity - agentContext.Velocity);
+            Vector2 desiredVelocity = Vector2.Normalize(target - flockingComponentContext.entity.transform.position) * maximumSpeed;
+            return (desiredVelocity - flockingComponentContext.Velocity);
         }
 
         public Vector2 ClampVelocity(Vector2 velocity)
