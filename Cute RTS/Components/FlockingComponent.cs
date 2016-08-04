@@ -37,7 +37,7 @@ namespace Cute_RTS.Components
 
                 Velocity = steering.ClampVelocity(Velocity);
                 //Console.WriteLine(Velocity);
-                entity.transform.position += Velocity;
+                entity.move(Velocity);
                 CalculateHeading();
             }
             //entity.transform.position += new Vector2(1);
@@ -46,7 +46,7 @@ namespace Cute_RTS.Components
 
         public void moveTowards(Vector2 position)
         {
-            forward = position - entity.transform.position;
+            steering.target = position - entity.transform.position;
         }
 
         private void CalculateHeading()

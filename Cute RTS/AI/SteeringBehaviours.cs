@@ -14,6 +14,8 @@ namespace Cute_RTS.AI
 
         private readonly FlockingComponent flockingComponentContext;
         private readonly float maximumSpeed;
+
+        public Vector2 target = Vector2.Zero;
         
         public SteeringBehaviours(float maxSpeed, FlockingComponent flockingComponent)
         {
@@ -66,7 +68,7 @@ namespace Cute_RTS.AI
             //Console.WriteLine(separationForce);
             //+(cohesionForce * CohesionWeight) + (alignmentForce * AlignmentWeight)
 
-            return (separationForce * SeparationWeight) + (cohesionForce * CohesionWeight) + (alignmentForce * AlignmentWeight);
+            return (separationForce * SeparationWeight) + (cohesionForce * CohesionWeight) + (alignmentForce * AlignmentWeight) + target;
         }
 
         // Steering behaviour to move agents towards a target
