@@ -133,6 +133,12 @@ namespace Cute_RTS
                 OnCollision?.Invoke(ref res);
             }
 
+            if (_astarSearchPath == null)
+            {
+                Console.WriteLine("How very strange. In rare cases the search path becomes null midway through...");
+                return;
+            }
+
             if (Math.Abs(moveDir.X) <= 5 && Math.Abs(moveDir.Y) <= 5)
             {
                 BaseUnit temp = entity as BaseUnit;
@@ -168,10 +174,7 @@ namespace Cute_RTS
                     colliderPosY
                 );
                 initialPositionInTileMap = _tilemap.worldToTilePosition(initialPosition);
-
-                Console.WriteLine(initialPositionInTileMap);
-
-
+                
                 for (int i = -pathingReroutePadding; i < numberOfTilesWide + pathingReroutePadding; i ++)
                 {
                     for(int j = -pathingReroutePadding; j < numberOfTilesHigh + pathingReroutePadding; j++)
@@ -181,7 +184,6 @@ namespace Cute_RTS
                                 initialPositionInTileMap.Y + j);
                         if (_astarGraph.weightedNodes.Contains(pointToAdd)) continue;
                         pathingCollisionPoints.Add(pointToAdd);
-                        Console.WriteLine("Added Point : " + pointToAdd);
                     }
                 }
 
@@ -200,7 +202,6 @@ namespace Cute_RTS
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
 
             target = _tilemap.worldToTilePosition(target.ToVector2());
-            Console.WriteLine(target);
             _astarSearchPath = _astarGraph.search(source, target);
 
             if (_astarSearchPath != null)

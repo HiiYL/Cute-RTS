@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Timers;
 
 namespace Cute_RTS.Units
 {
@@ -15,9 +16,12 @@ namespace Cute_RTS.Units
         private BaseUnit _baseunit;
         private PathMover _pathmover;
         private bool _isAttacking = false;
+        private Timer _attackTimer;
 
         public UnitBehaviorTree(BaseUnit bu, PathMover pm)
         {
+            _attackTimer = new Timer(1000);
+            _attackTimer.Elapsed += _attackTimer_Elapsed;
             _baseunit = bu;
             _pathmover = pm;
         }
@@ -66,12 +70,9 @@ namespace Cute_RTS.Units
             if (_isAttacking) { return TaskStatus.Failure; }
             else
             {
+                if (!_isAttacking) _baseunit.executeAttack();
                 _isAttacking = true;
-                Core.schedule(1, timer =>
-                {
-                    _baseunit.executeAttack();
-                    _isAttacking = false;
-                });
+                _attackTimer.Start();
             }
 
             return TaskStatus.Failure;
@@ -162,6 +163,12 @@ namespace Cute_RTS.Units
             _tree.tick();
 
             Core.schedule(UpdateInterval, timer => RunTick());
+        }
+
+        private void _attackTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            _isAttacking = false;
+            _attackTimer.Stop();
         }
     }
 }

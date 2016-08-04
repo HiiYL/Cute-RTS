@@ -257,6 +257,7 @@ namespace Cute_RTS.Units
             if (_deathTimer == true) return;
 
             _deathTimer = true;
+            pathmover.stopMoving();
             ActiveCommand = UnitCommand.None;
             sprite.play(Animation.Die);
             Core.schedule(1.5f, timer =>
@@ -270,7 +271,8 @@ namespace Cute_RTS.Units
         public void executeAttack()
         {
             if (TargetUnit == null) return;
-            Debug.log("ATTACK ENEMY! Health remained on target: " + TargetUnit.Health.ToString());
+
+            Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.Health.ToString());
             
             Vector2 diff = transform.position - TargetUnit.transform.position;
 
