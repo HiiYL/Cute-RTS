@@ -51,7 +51,7 @@ namespace Cute_RTS
             Window.AllowUserResizing = true;
 
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
-            var myScene = new Scene1(true);
+            var myScene = new Scene1();
 
 
             // set the scene so Nez can take over
