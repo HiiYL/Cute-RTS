@@ -1,5 +1,6 @@
 ﻿using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Cute_RTS
 {
@@ -15,6 +17,7 @@ namespace Cute_RTS
         // make sure we arent culled
         public override float width { get { return 1000; } }
         public override float height { get { return 1000; } }
+        public Texture2D TargetTex { get; set; }
         public Player ActivePlayer { get; set; }
         
         public delegate void SelectionHandler(IReadOnlyList<Selectable> sels);
@@ -26,6 +29,9 @@ namespace Cute_RTS
         private Color selectionColor;
         private static Selector selector;
         private List<Selectable> _selectables;
+        private bool _displayTarget = false;
+        private Vector2 _displayTargetPoint;
+        private Timer _targetTexTimer;
 
         public IReadOnlyList<Selectable> Selectables {
             get { return _selectables.AsReadOnly(); }
@@ -33,6 +39,8 @@ namespace Cute_RTS
 
         private Selector()
         {
+            _targetTexTimer = new Timer(1000);
+            _targetTexTimer.Elapsed += _targetTexTimer_Elapsed;
             _selectables = new List<Selectable>();
             selectionColor = Color.DarkBlue;
             selectionColor.A = (byte)0.1;
@@ -83,6 +91,11 @@ namespace Cute_RTS
             {
                 graphics.batcher.drawRect(selectionBoundary, selectionColor);
             }
+
+            if (_displayTarget)
+            {
+                graphics.batcher.draw(TargetTex, _displayTargetPoint);
+            }
         }
 
 
@@ -115,6 +128,16 @@ namespace Cute_RTS
                     {
                         var b = s.entity as BaseUnit;
                         b.gotoLocation(Input.mousePosition.ToPoint());
+                        if (TargetTex != null)
+                        {
+                            _displayTarget = true;
+                            _displayTargetPoint = Input.mousePosition - new Vector2(TargetTex.Width / 2, TargetTex.Height / 2);
+
+                            // restart timer
+                            _targetTexTimer.Stop();
+                            _targetTexTimer.Start();
+                            
+                        }
                     }
                 }
                 return;
@@ -188,6 +211,10 @@ namespace Cute_RTS
             
         }
 
-
+        private void _targetTexTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_displayTarget) _displayTarget = false;
+            _targetTexTimer.Stop();
+        }
     }
 }

@@ -23,7 +23,8 @@ namespace Cute_RTS.Scenes
 
         public override void initialize()
         {
-
+            var targettex = content.Load<Texture2D>("target");
+            Selector.getSelector().TargetTex = targettex;
             var tiledEntity = createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("cute-map");
             var tmc = new TiledMapComponent(tiledmap, "Stuff");

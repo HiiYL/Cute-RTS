@@ -258,7 +258,7 @@ namespace Cute_RTS
                     var x = node.X * _tilemap.tileWidth + _tilemap.tileWidth * 0.5f;
                     var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
 
-                    graphics.batcher.drawPixel(x - 1, y - 1, Color.Blue, 4);
+                    graphics.batcher.drawPixel(x - 1, y - 1, Color.LimeGreen, 3);
                 }
             }
 
