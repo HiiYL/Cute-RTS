@@ -20,7 +20,7 @@ namespace Cute_RTS.Units
 
         public UnitBehaviorTree(BaseUnit bu, PathMover pm)
         {
-            _attackTimer = new Timer(1000);
+            _attackTimer = new Timer(bu.AttackSpeed * 1000);
             _attackTimer.Elapsed += _attackTimer_Elapsed;
             _baseunit = bu;
             _pathmover = pm;
@@ -63,7 +63,6 @@ namespace Cute_RTS.Units
             // if killed target:
             if (_baseunit.TargetUnit == null)
             {
-                _baseunit.ActiveCommand = BaseUnit.UnitCommand.Idle;
                 return TaskStatus.Success;
             }
 

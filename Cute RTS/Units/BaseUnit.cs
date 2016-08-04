@@ -36,6 +36,7 @@ namespace Cute_RTS.Units
         public virtual float Range { get; set; } = 1.5f; // default is melee
         public virtual int Vision { get; set; } = 8;
         public virtual int MoveSpeed { get; set; } = 10;
+        public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
         public BaseUnit TargetUnit { get; set; }
         public UnitCommand ActiveCommand { get; set; }
@@ -239,8 +240,8 @@ namespace Cute_RTS.Units
             var attackFront = atlas.getSpriteAnimation("attack-front-left");
             var attackBack = atlas.getSpriteAnimation("attack-back-left");
             deathAnim.loop = false;
-            attackFront.loop = false;
-            attackBack.loop = false;
+            //attackFront.loop = false;
+            //attackBack.loop = false;
 
             sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
             sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
@@ -297,6 +298,7 @@ namespace Cute_RTS.Units
             
             if (killedTarget)
             {
+                ActiveCommand = UnitCommand.Idle;
                 TargetUnit = null;
             }
         }
