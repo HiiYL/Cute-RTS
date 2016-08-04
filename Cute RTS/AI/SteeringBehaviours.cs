@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Cute_RTS.Components;
+using System;
 
 namespace Cute_RTS.AI
 {
@@ -37,7 +38,9 @@ namespace Cute_RTS.AI
                 {
                     // Calculate distance between agents
                     Vector2 separation = flockingComponentContext.entity.transform.position - flockingComponent.entity.transform.position;
+                    //Console.WriteLine(separation);
                     float distance = separation.Length();
+                    
 
                     // If agent is within specified sensor distance...
                     if (distance < flockingComponentContext.SensorDistance)
@@ -59,6 +62,9 @@ namespace Cute_RTS.AI
                 centerOfMass /= neighbourCount;
                 cohesionForce = Seek(centerOfMass);
             }
+            //Console.WriteLine("HELLO THERE!");
+            //Console.WriteLine(separationForce);
+            //+(cohesionForce * CohesionWeight) + (alignmentForce * AlignmentWeight)
 
             return (separationForce * SeparationWeight) + (cohesionForce * CohesionWeight) + (alignmentForce * AlignmentWeight);
         }
@@ -66,6 +72,7 @@ namespace Cute_RTS.AI
         // Steering behaviour to move agents towards a target
         public Vector2 Seek(Vector2 target)
         {
+            Console.WriteLine("SEEKING!");
             Vector2 desiredVelocity = Vector2.Normalize(target - flockingComponentContext.entity.transform.position) * maximumSpeed;
             return (desiredVelocity - flockingComponentContext.Velocity);
         }

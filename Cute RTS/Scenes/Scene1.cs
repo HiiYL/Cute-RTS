@@ -18,11 +18,8 @@ namespace Cute_RTS.Scenes
     class Scene1 : BaseScene
     {
         private const int PopulationSize = 175;
-
-
-        public Scene1(bool addExcludeRenderer = true, bool needsFullRenderSizeForUI = false) : base(addExcludeRenderer, needsFullRenderSizeForUI)
-        {
-        }
+        private const int SensorDistance = 50;
+        private const float MaxSpeed = 2f;
 
         public override void initialize()
         {
@@ -35,41 +32,58 @@ namespace Cute_RTS.Scenes
             Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int)RTSCollisionLayer.Map);
             tiledMapComponent.renderLayer = 10;
 
-            //TextureAtlas baldyTexture = content.Load<TextureAtlas>("BaldyAtlas");
-            TextureAtlas baldyTexture = content.Load<TextureAtlas>("CatAtlas");
+            TextureAtlas catTexture = content.Load<TextureAtlas>("CatAtlas");
             Texture2D catSelection = content.Load<Texture2D>("Units/Cat/cat-selection");
+
+            Vector2 velocity = new Vector2(1 * MaxSpeed, 0);
 
             float angle = MathHelper.ToRadians(270);
 
-            Cat fatman = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            addEntity(fatman);
-            fatman.transform.position = new Vector2(0, 500);
-            fatman.gotoLocation(new Point(300, 500));
+            Player myself = new Player(Color.Aqua, "Robert Baratheon");
+            Player enemy = new Player(Color.Orchid, "Enemy AI");
+            myself.Opponent = enemy;
+            enemy.Opponent = myself;
+
+            Func<BaseUnit> giveMeCat = delegate {
+                var mys = new BaseUnit(catTexture, catSelection, myself, tiledmap, "Stuff");
+                mys.setSelectionColor(Color.LawnGreen);
+                return addEntity(mys);
+            };
+
+            Func<BaseUnit> giveEnemyCat = delegate {
+                var enem = new BaseUnit(catTexture, catSelection, enemy, tiledmap, "Stuff");
+                enem.setSelectionColor(Color.Red);
+                return addEntity(enem);
+            };
+
+            BaseUnit kitty = giveMeCat();
+            kitty.transform.position = new Vector2(0, 500);
+            kitty.gotoLocation(new Point(300, 500));
 
 
-
-            Cat fatman2 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            addEntity(fatman2);
-            fatman2.transform.position = new Vector2(0, 100);
-            fatman2.gotoLocation(new Point(300, 500));
+            kitty = giveMeCat();
+            kitty.transform.position = new Vector2(0, 100);
+            kitty.gotoLocation(new Point(300, 100));
 
 
-            Cat fatman3 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            addEntity(fatman3);
-            fatman3.transform.position = new Vector2(0, 400);
-            fatman3.gotoLocation(new Point(300, 500));
+            kitty = giveMeCat();
+            kitty.transform.position = new Vector2(0, 400);
+            kitty.gotoLocation(new Point(300, 400));
 
+            Selector.getSelector().ActivePlayer = myself;
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
 
-            Cat fatman4 = new Cat(baldyTexture, catSelection, tiledmap, "Stuff");
-            addEntity(fatman4);
-            fatman4.transform.position = new Vector2(0, 400);
-            fatman4.gotoLocation(new Point(300, 500));
+            kitty = giveMeCat();
+            kitty.transform.position = new Vector2(0, 350);
+            kitty.gotoLocation(new Point(300, 350));
 
+
+            var enemyCat = giveEnemyCat();
+            enemyCat.transform.position = new Vector2(500, 500);
+            enemyCat.gotoLocation(new Point(400, 450));
 
             addEntityProcessor(new FlockingSystem(new Matcher().all(typeof(FlockingComponent))));
-
         }
     }
 }

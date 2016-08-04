@@ -61,6 +61,7 @@
     <Compile Include="AI\SteeringBehaviours.cs" />
     <Compile Include="Components\FlockingComponent.cs" />
     <Compile Include="PathMover.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Systems\FlockingSystem.cs" />
     <Compile Include="Units\BaseUnit.cs" />
@@ -71,7 +72,6 @@
     <Compile Include="Scenes\BaseScene.cs" />
     <Compile Include="Selector.cs" />
     <Compile Include="SimpleMover.cs" />
-    <Compile Include="Units\Cat.cs" />
     <Compile Include="Units\UnitBehaviorTree.cs" />
   </ItemGroup>
   <ItemGroup>

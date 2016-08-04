@@ -10,7 +10,7 @@ namespace Cute_RTS.Systems
 {
     class FlockingSystem : EntityProcessingSystem
     {
-        public static int SensorDistance = 50;
+        public static int SensorDistance = 500;
         public static float MaxSpeed = 1f;
         List<FlockingComponent> flockingComponents;
         public FlockingSystem(Matcher matcher) : base(matcher)
@@ -21,6 +21,7 @@ namespace Cute_RTS.Systems
 
         public override void process(Entity entity)
         {
+            //Console.WriteLine("Update Called");
             FlockingComponent flockingComponent = entity.getComponent<FlockingComponent>();
             flockingComponent.Update(flockingComponents);
         }
@@ -28,11 +29,18 @@ namespace Cute_RTS.Systems
         protected override void process(List<Entity> entities)
         {
             flockingComponents.Clear();
-            for (var i = 0; i < entities.Count; i++)
-                flockingComponents.Add(entities[i].getComponent<FlockingComponent>());
 
             for (var i = 0; i < entities.Count; i++)
-                process(entities[i]);
+            {
+                if (entities[i].getComponent<Selectable>().IsSelected)
+                {
+                    //Console.WriteLine("SELECTED!");
+                    flockingComponents.Add(entities[i].getComponent<FlockingComponent>());
+                }
+            }
+            //Console.WriteLine(flockingComponents.Count);
+            for (var i = 0; i < flockingComponents.Count; i++)
+                process(flockingComponents[i].entity);
         }
         
     }

@@ -31,11 +31,12 @@ namespace Cute_RTS.Components
         {
             if (flockingComponents.Count > 1)
             {
-                Console.Write(flockingComponents.Count);
+                //Console.WriteLine(flockingComponents.Count);
                 Velocity = steering.CalculateFlocking(flockingComponents);
                 smoother.InsertSample(Velocity);
 
                 Velocity = steering.ClampVelocity(Velocity);
+                //Console.WriteLine(Velocity);
                 entity.transform.position += Velocity;
                 CalculateHeading();
             }
@@ -45,14 +46,14 @@ namespace Cute_RTS.Components
 
         public void moveTowards(Vector2 position)
         {
-            Velocity = position - entity.transform.position;
+            forward = position - entity.transform.position;
         }
 
         private void CalculateHeading()
         {
             forward = smoother.CalculateSmoothedHeading();
             entity.transform.rotation = (float)Math.Atan2(forward.Y, forward.X);
-            Console.WriteLine(forward);
+            //Console.WriteLine(forward);
 
             side = Vector2.Transform(forward, Matrix.CreateRotationZ(MathHelper.PiOver2));
             side.Normalize();

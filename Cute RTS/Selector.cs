@@ -17,6 +17,7 @@ namespace Cute_RTS
         // make sure we arent culled
         public override float width { get { return 1000; } }
         public override float height { get { return 1000; } }
+        public Player ActivePlayer { get; set; }
         
         public delegate void SelectionHandler(IReadOnlyList<Selectable> sels);
         public event SelectionHandler OnSelectionChanged;
@@ -93,7 +94,7 @@ namespace Cute_RTS
         {
             if (Input.rightMouseButtonPressed && _selectables.Count > 0)
             {
-                /*
+                
                 foreach (var s in _selectables)
                 {
                     var b = s.entity as BaseUnit;
@@ -101,16 +102,20 @@ namespace Cute_RTS
                     if (v != null)
                     {
                         var g = v.entity as BaseUnit;
-                        b.followUnit(g);
+                        if (b.UnitPlayer.isMyUnit(g))
+                        {
+                            b.followUnit(g);
+                        } else
+                        {
+                            Debug.log("ATTACK ENEMY! ONE HIT KO!!");
+                            g.Health = 0;
+                        }
+                        g.playClickSelectAnimation();
                     } else
                     {
-                        b.gotoLocation(Input.mousePosition.ToPoint());
+                        b.getComponent<FlockingComponent>().moveTowards(Input.mousePosition);
+                        //b.gotoLocation(Input.mousePosition.ToPoint());
                     }
-                }
-                */
-                foreach(var s in _flockMembers)
-                {
-                    s.moveTowards(Input.mousePosition);
                 }
                 return;
             }
@@ -168,13 +173,6 @@ namespace Cute_RTS
                         _flockMembers.Clear();
                         foreach (var v in colliders)
                         {
-                            FlockingComponent flockingComponent = new FlockingComponent(FlockingSystem.SensorDistance, FlockingSystem.MaxSpeed);
-                            if (v.entity.getComponent<FlockingComponent>() == null)
-                            {
-                                Console.Write("FLOCKING ADDED!");
-                                v.entity.addComponent<FlockingComponent>(flockingComponent);
-                                _flockMembers.Add(flockingComponent);
-                            }
                             var selectable = v.entity.getComponent<Selectable>();
                             if (selectable != null)
                             {
