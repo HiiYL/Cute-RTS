@@ -59,6 +59,7 @@
     <Compile Include="AI\Agent.cs" />
     <Compile Include="AI\HeadingSmoother.cs" />
     <Compile Include="AI\SteeringBehaviours.cs" />
+    <Compile Include="UnitRadar.cs" />
     <Compile Include="PathMover.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Scenes\Scene1.cs" />

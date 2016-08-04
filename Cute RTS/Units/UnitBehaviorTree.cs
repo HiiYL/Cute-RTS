@@ -32,7 +32,10 @@ namespace Cute_RTS.Units
             builder.selector(AbortTypes.Self);
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Idle);
-            builder.action(b => becomeIdle());
+            builder.selector()
+                .action(b => radarCheck())
+                .action(b => becomeIdle())
+                .endComposite();
 
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.GoTo);
@@ -56,6 +59,18 @@ namespace Cute_RTS.Units
 
             builder.endComposite();
             _tree = builder.build();
+        }
+
+        private TaskStatus radarCheck()
+        {
+            BaseUnit enemy = _baseunit.Radar.detectEnemyInArea();
+            if (enemy != null)
+            {
+                _baseunit.attackUnit(enemy);
+                return TaskStatus.Success;
+            }
+
+            return TaskStatus.Failure;
         }
 
         private TaskStatus attackUnit()

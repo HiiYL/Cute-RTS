@@ -34,13 +34,14 @@ namespace Cute_RTS.Units
 
         public virtual int Damage { get; set; } = 10;
         public virtual float Range { get; set; } = 1.5f; // default is melee
-        public virtual int Vision { get; set; } = 8;
+        public virtual int Vision { get; set; } = 9;
         public virtual int MoveSpeed { get; set; } = 10;
         public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
         public BaseUnit TargetUnit { get; set; }
         public UnitCommand ActiveCommand { get; set; }
         public Player UnitPlayer { get { return _player; } }
+        public UnitRadar Radar { get { return _radar; } }
         public delegate void OnUnitDiedHandler(BaseUnit idied);
         public event OnUnitDiedHandler OnUnitDied;
 
@@ -49,7 +50,7 @@ namespace Cute_RTS.Units
         private Animation animation;
         private TiledMap _tilemap;
         private bool _deathTimer = false;
-
+        private UnitRadar _radar;
 
         public enum Animation
         {
@@ -97,6 +98,7 @@ namespace Cute_RTS.Units
             _player = player;
             _player.addUnit(this);
             sprite.color = _player.PlayerColor;
+            _radar = new UnitRadar(Vision * 10);
 
             Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
             transform.setScale(new Vector2(0.5f, 0.5f));
@@ -110,6 +112,7 @@ namespace Cute_RTS.Units
             addComponent(_selectTex);
             addComponent(sprite);
             addComponent(pathmover);
+            addComponent(_radar);
             addComponent(new UnitBehaviorTree(this, pathmover));
             colliders.add(collider);
         }
