@@ -90,29 +90,37 @@ namespace Cute_RTS
         {
             if (Input.rightMouseButtonPressed && _selectables.Count > 0)
             {
-                foreach (var s in _selectables)
+                Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
+                if (v != null)
                 {
-                    var b = s.entity as BaseUnit;
-                    Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
-                    if (v != null)
+                    var g = v.entity as BaseUnit;
+                    g.playClickSelectAnimation();
+                    foreach (var s in _selectables)
                     {
-                        var g = v.entity as BaseUnit;
+                        var b = s.entity as BaseUnit;
+                        
                         if (b.UnitPlayer.isMyUnit(g))
                         {
                             b.followUnit(g);
-                        } else
-                        {
-                            Debug.log("ATTACK ENEMY! ONE HIT KO!!");
-                            g.Health = 0;
                         }
-                        g.playClickSelectAnimation();
-                    } else
+                        else
+                        {
+                            b.attackUnit(g);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var s in _selectables)
                     {
+                        var b = s.entity as BaseUnit;
                         b.gotoLocation(Input.mousePosition.ToPoint());
                     }
                 }
                 return;
             }
+
+            
 
             if (Input.isKeyReleased(Keys.S))
             {

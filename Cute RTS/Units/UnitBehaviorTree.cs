@@ -14,6 +14,7 @@ namespace Cute_RTS.Units
         private BehaviorTree<UnitBehaviorTree> _tree;
         private BaseUnit _baseunit;
         private PathMover _pathmover;
+        private bool _isAttacking = false;
 
         public UnitBehaviorTree(BaseUnit bu, PathMover pm)
         {
@@ -37,7 +38,14 @@ namespace Cute_RTS.Units
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Follow);
             builder.sequence()
-                .action(b => followUnit())
+                .action(b => followUnit(3))
+                .action(b => becomeIdle())
+                .endComposite();
+
+            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Attack);
+            builder.sequence()
+                .action(b => followUnit(_baseunit.Range))
+                .action(b => attackUnit())
                 .action(b => becomeIdle())
                 .endComposite();
 
@@ -46,11 +54,40 @@ namespace Cute_RTS.Units
             _tree = builder.build();
         }
 
-        private TaskStatus followUnit()
+        private TaskStatus attackUnit()
         {
+            // if killed target:
+            if (_baseunit.TargetUnit == null)
+            {
+                _baseunit.ActiveCommand = BaseUnit.UnitCommand.Idle;
+                return TaskStatus.Success;
+            }
+
+            if (_isAttacking) { return TaskStatus.Failure; }
+            else
+            {
+                _isAttacking = true;
+                Core.schedule(1, timer =>
+                {
+                    _baseunit.executeAttack();
+                    _isAttacking = false;
+                });
+            }
+
+            return TaskStatus.Failure;
+        }
+
+        private TaskStatus followUnit(float followDistance)
+        {
+            if (_baseunit.TargetUnit == null)
+            {
+                _baseunit.ActiveCommand = BaseUnit.UnitCommand.Idle;
+                return TaskStatus.Success;
+            }
+
             Point diff = _baseunit.getTilePosition() - _baseunit.TargetUnit.getTilePosition();
-            int distance = (int) Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
-            if (distance <= 3)
+            float distance = (float) Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
+            if (distance <= followDistance)
             {
                 _pathmover.stopMoving();
                 return TaskStatus.Success;

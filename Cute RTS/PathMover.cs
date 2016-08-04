@@ -85,7 +85,7 @@ namespace Cute_RTS
 
         void IUpdatable.update()
         {
-            if (isDone) return;
+            if (isDone || entity == null) return;
             if (_astarSearchPath != null)
             {
                 makeMoveStep();
