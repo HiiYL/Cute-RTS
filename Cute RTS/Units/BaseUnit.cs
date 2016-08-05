@@ -263,7 +263,7 @@ namespace Cute_RTS.Units
             _deathTimer = true;
             pathmover.stopMoving();
             ActiveCommand = UnitCommand.None;
-            sprite.play(Animation.Die);
+            playAnimation(Animation.Die);
             Core.schedule(1.5f, timer =>
             {
                 UnitPlayer.removeUnit(this);
@@ -290,10 +290,10 @@ namespace Cute_RTS.Units
 
             if (diff.Y < 0)
             {
-                sprite.play(Animation.AttackFront);
+                playAnimation(Animation.AttackFront);
             } else
             {
-                sprite.play(Animation.AttackBack);
+                playAnimation(Animation.AttackBack);
             }
 
             bool killedTarget = Damage >= TargetUnit.Health;
