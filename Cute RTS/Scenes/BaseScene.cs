@@ -35,11 +35,16 @@ namespace Cute_RTS.Scenes
             if (addExcludeRenderer)
                 addRenderer(new RenderLayerExcludeRenderer(0, SCREEN_SPACE_RENDER_LAYER));
 
+        }
+        public override void initialize()
+        {
+            Console.WriteLine("Called!");
             // create our canvas and put it on the screen space render layer
             canvas = createEntity("ui").addComponent(new UICanvas());
             canvas.isFullScreen = true;
             canvas.renderLayer = SCREEN_SPACE_RENDER_LAYER;
             setupSceneSelector();
+
         }
         void setupSceneSelector()
         {

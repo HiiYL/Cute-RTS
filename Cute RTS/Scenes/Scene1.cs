@@ -1,10 +1,12 @@
 ﻿using Cute_RTS.AI;
+using Cute_RTS.Structures;
 using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.TextureAtlases;
 using Nez.Tiled;
+using Nez.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +23,16 @@ namespace Cute_RTS.Scenes
 
         private readonly List<Agent> agents = new List<Agent>();
 
+        public Scene1():base()
+        {
+            Console.WriteLine("Init after");
+        }
+
         public override void initialize()
         {
+            base.initialize();
+            
+            Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
             var tiledEntity = createEntity("tiled-map-entity");
@@ -45,57 +55,59 @@ namespace Cute_RTS.Scenes
             myself.Opponent = enemy;
             enemy.Opponent = myself;
 
-            Func<BaseUnit> giveMeCat = delegate {
+            Func<BaseUnit> giveMeCat = delegate
+            {
                 var mys = new BaseUnit(catTexture, catSelection, myself, tiledmap, "Stuff");
                 mys.setSelectionColor(Color.LawnGreen);
                 return addEntity(mys);
             };
 
-            Func<BaseUnit> giveEnemyCat = delegate {
+            Func<BaseUnit> giveEnemyCat = delegate
+            {
                 var enem = new BaseUnit(catTexture, catSelection, enemy, tiledmap, "Stuff");
                 enem.setSelectionColor(Color.Red);
                 return addEntity(enem);
             };
 
+            Func<BaseUnit> giveEnemyCatStructure = delegate
+            {
+                var enem = new BaseStructure(catTexture, catSelection, enemy, tiledmap, "Stuff");
+                enem.setSelectionColor(Color.Red);
+                return addEntity(enem);
+            };
+
+            //var bar = new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White));
+
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 500);
             kitty.gotoLocation(new Point(300, 500));
-
-            Agent agent = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent);
 
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 100);
             kitty.gotoLocation(new Point(300, 100));
 
-            Agent agent2 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent2.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent2);
-
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 400);
             kitty.gotoLocation(new Point(300, 400));
-
-            Agent agent3 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent3.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent3);
 
             Selector.getSelector().ActivePlayer = myself;
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
             selectionComponent.renderLayer = -5;
 
+
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(0, 400);
             kitty.gotoLocation(new Point(300, 400));
-
-            Agent agent4 = new Agent(kitty, SensorDistance, MaxSpeed);
-            agent4.Velocity = Vector2.Transform(velocity, Matrix.CreateRotationZ(angle));
-            agents.Add(agent4);
+            kitty.MoveSpeed = 0;
+            kitty.Range = 15f;
 
             var enemyCat = giveEnemyCat();
-            enemyCat.transform.position = new Vector2(500, 500);
+            enemyCat.transform.position = new Vector2(700, 500);
             enemyCat.gotoLocation(new Point(400, 450));
+
+            //var enemyCatStructure = giveEnemyCatStructure();
+            //enemyCatStructure.transform.position = new Vector2(700, 500);
+            //enemyCatStructure.MoveSpeed = 0;
         }
     }
 }

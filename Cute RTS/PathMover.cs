@@ -85,6 +85,10 @@ namespace Cute_RTS
 
         void IUpdatable.update()
         {
+            ((BaseUnit)entity).healthBar.setPosition(entity.transform.position.X - 32, entity.transform.position.Y - 32);
+            float currentHealthPercentage = ((BaseUnit)entity).GetHealthPercentage;
+            ((BaseUnit)entity).healthBar.setValue(currentHealthPercentage);
+
             if (isDone || entity == null) return;
             if (_astarSearchPath != null)
             {

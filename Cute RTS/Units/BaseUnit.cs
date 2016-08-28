@@ -1,9 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Scenes;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 using Nez.TextureAtlases;
 using Nez.Tiled;
+using Nez.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +33,14 @@ namespace Cute_RTS.Units
                 }
             }
         }
+        public virtual int FullHealth
+        {
+            get { return _fullhealth; }
+        }
+        public virtual float GetHealthPercentage
+        {
+            get { return _health / (float)_fullhealth; }
+        }
 
         public virtual int Damage { get; set; } = 10;
         public virtual float Range { get; set; } = 1.5f; // default is melee
@@ -46,6 +56,7 @@ namespace Cute_RTS.Units
         public event OnUnitDiedHandler OnUnitDied;
 
         private int _health;
+        private int _fullhealth;
         private Player _player;
         private Animation animation;
         private TiledMap _tilemap;
@@ -80,10 +91,12 @@ namespace Cute_RTS.Units
         private Selectable selectable;
         private Sprite<Animation> sprite;
         private Sprite _selectTex;
+        public ProgressBar healthBar;
 
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
         {
             _health = 40;
+            _fullhealth = _health;
             _tilemap = tmc;
             _selectTex = new Sprite(selectTex);
             _selectTex.enabled = false;
@@ -115,6 +128,7 @@ namespace Cute_RTS.Units
             addComponent(_radar);
             addComponent(new UnitBehaviorTree(this, pathmover));
             colliders.add(collider);
+
         }
 
         internal void attackUnit(BaseUnit g)
@@ -198,6 +212,10 @@ namespace Cute_RTS.Units
 
         public override void onAddedToScene()
         {
+            healthBar = ((BaseScene)scene).canvas.stage.addElement(new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White)));
+            healthBar.setWidth(64);
+
+
             playAnimation(Animation.Idle);
 
             Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
@@ -268,6 +286,8 @@ namespace Cute_RTS.Units
             {
                 UnitPlayer.removeUnit(this);
                 destroy();
+                healthBar.setIsVisible(false); //TODO: FIGURE OUT TO REMOVE IT COMPLETELY
+
             });
         }
 

@@ -66,6 +66,7 @@ namespace Cute_RTS.Units
             BaseUnit enemy = _baseunit.Radar.detectEnemyInArea();
             if (enemy != null)
             {
+                Console.WriteLine("Enemy Detected!");
                 _baseunit.attackUnit(enemy);
                 return TaskStatus.Success;
             }
@@ -102,6 +103,8 @@ namespace Cute_RTS.Units
 
             Point diff = _baseunit.getTilePosition() - _baseunit.TargetUnit.getTilePosition();
             float distance = (float) Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
+
+            Console.WriteLine("Follow distance - {0}    Distance - {1}", followDistance, distance);
             if (distance <= followDistance)
             {
                 _pathmover.stopMoving();
