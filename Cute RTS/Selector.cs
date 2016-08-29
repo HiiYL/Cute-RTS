@@ -127,6 +127,7 @@ namespace Cute_RTS
                     foreach (var s in _selectables)
                     {
                         var b = s.entity as BaseUnit;
+                        // b.attackLocation(Input.mousePosition.ToPoint()); // test attack location
                         b.gotoLocation(Input.mousePosition.ToPoint());
                         if (TargetTex != null)
                         {

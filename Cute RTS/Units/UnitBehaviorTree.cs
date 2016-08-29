@@ -17,9 +17,11 @@ namespace Cute_RTS.Units
         private PathMover _pathmover;
         private bool _isAttacking = false;
         private Timer _attackTimer;
+        private Stack<BaseUnit.UnitCommand> _commandStack;
 
         public UnitBehaviorTree(BaseUnit bu, PathMover pm)
         {
+            _commandStack = new Stack<BaseUnit.UnitCommand>();
             _attackTimer = new Timer(bu.AttackSpeed * 1000);
             _attackTimer.Elapsed += _attackTimer_Elapsed;
             _baseunit = bu;
@@ -32,15 +34,16 @@ namespace Cute_RTS.Units
             builder.selector(AbortTypes.Self);
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Idle);
-            builder.selector()
+            builder.sequence()
                 .action(b => radarCheck())
                 .action(b => becomeIdle())
                 .endComposite();
 
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.GoTo);
-            builder.selector()
+            builder.sequence()
                 .action(b => checkArrival())
+                .action(b => becomeIdle())
                 .endComposite();
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Follow);
@@ -49,10 +52,18 @@ namespace Cute_RTS.Units
                 .action(b => becomeIdle())
                 .endComposite();
 
-            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.Attack);
+            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.AttackUnit);
             builder.sequence()
                 .action(b => followUnit(_baseunit.Range))
                 .action(b => attackUnit())
+                .action(b => becomeIdle())
+                .endComposite();
+
+            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.AttackLocation);
+            builder.sequence()
+                .action(b => radarCheck(BaseUnit.UnitCommand.AttackLocation))
+                .action(b => _pathmover.setTargetLocation(_baseunit.AttackLocation))
+                .action(b => checkArrival())
                 .action(b => becomeIdle())
                 .endComposite();
 
@@ -61,17 +72,23 @@ namespace Cute_RTS.Units
             _tree = builder.build();
         }
 
-        private TaskStatus radarCheck()
+        private TaskStatus radarCheck(BaseUnit.UnitCommand returnCommand = BaseUnit.UnitCommand.None)
         {
             BaseUnit enemy = _baseunit.Radar.detectEnemyInArea();
             if (enemy != null)
             {
+                Player p = enemy.UnitPlayer;
                 Console.WriteLine("Enemy Detected!");
                 _baseunit.attackUnit(enemy);
-                return TaskStatus.Success;
+                if (returnCommand != BaseUnit.UnitCommand.None)
+                {
+                    _commandStack.Push(returnCommand);
+                }
+
+                return TaskStatus.Failure;
             }
 
-            return TaskStatus.Failure;
+            return TaskStatus.Success;
         }
 
         private TaskStatus attackUnit()
@@ -111,6 +128,7 @@ namespace Cute_RTS.Units
                 return TaskStatus.Success;
             } else if (!_pathmover.HasArrived)
             {
+                // AI will go to where it is suppose to go first before switching to follow the unit
                 return TaskStatus.Running;
             }
 
@@ -127,6 +145,15 @@ namespace Cute_RTS.Units
 
         private TaskStatus becomeIdle()
         {
+            if (_commandStack.Count > 0)
+            {
+                _baseunit.ActiveCommand = _commandStack.Pop();
+                return TaskStatus.Success;
+            } else
+            {
+                _baseunit.ActiveCommand = BaseUnit.UnitCommand.Idle;
+            }
+
             if (!_pathmover.HasArrived)
             {
                 _pathmover.stopMoving();
@@ -145,7 +172,6 @@ namespace Cute_RTS.Units
 
             if (_pathmover.HasArrived)
             {
-                _baseunit.ActiveCommand = BaseUnit.UnitCommand.Idle;
                 return TaskStatus.Success;
             }
 

@@ -70,6 +70,7 @@ namespace Cute_RTS.Units
         public UnitRadar Radar { get { return _radar; } }
         public delegate void OnUnitDiedHandler(BaseUnit idied);
         public event OnUnitDiedHandler OnUnitDied;
+        public Point AttackLocation { get; set; }
 
         private int _health;
         private int _fullhealth;
@@ -100,7 +101,8 @@ namespace Cute_RTS.Units
             Idle,
             GoTo,
             Follow,
-            Attack
+            AttackUnit,
+            AttackLocation
         }
 
         // components
@@ -149,9 +151,24 @@ namespace Cute_RTS.Units
 
         }
 
-        internal void attackUnit(BaseUnit g)
+        public bool attackLocation(Point target)
         {
-            ActiveCommand = UnitCommand.Attack;
+            bool canGoTo = pathmover.setTargetLocation(target);
+
+            if (canGoTo)
+            {
+                AttackLocation = target;
+                ActiveCommand = UnitCommand.AttackLocation;
+            }
+
+            return canGoTo;
+        }
+
+        public void attackUnit(BaseUnit g)
+        {
+            // stop going anywhere; time to kill this son of a bitch!
+            pathmover.stopMoving();
+            ActiveCommand = UnitCommand.AttackUnit;
             TargetUnit = g;
         }
 
