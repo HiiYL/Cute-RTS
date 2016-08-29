@@ -36,8 +36,8 @@ namespace Cute_RTS.Scenes
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
             var tiledEntity = createEntity("tiled-map-entity");
-            var tiledmap = content.Load<TiledMap>("cute-map");
-            var tmc = new TiledMapComponent(tiledmap, "Stuff");
+            var tiledmap = content.Load<TiledMap>("map");
+            var tmc = new TiledMapComponent(tiledmap, "collision");
 
             var tiledMapComponent = tiledEntity.addComponent(tmc);
             Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int)RTSCollisionLayer.Map);
@@ -55,23 +55,27 @@ namespace Cute_RTS.Scenes
             myself.Opponent = enemy;
             enemy.Opponent = myself;
 
+            Selector.getSelector().ActivePlayer = myself;
+            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
+            selectionComponent.renderLayer = -5;
+
             Func<BaseUnit> giveMeCat = delegate
             {
-                var mys = new BaseUnit(catTexture, catSelection, myself, tiledmap, "Stuff");
+                var mys = new BaseUnit(catTexture, catSelection, myself, tiledmap, "collision");
                 mys.setSelectionColor(Color.LawnGreen);
                 return addEntity(mys);
             };
 
             Func<BaseUnit> giveEnemyCat = delegate
             {
-                var enem = new BaseUnit(catTexture, catSelection, enemy, tiledmap, "Stuff");
+                var enem = new BaseUnit(catTexture, catSelection, enemy, tiledmap, "collision");
                 enem.setSelectionColor(Color.Red);
                 return addEntity(enem);
             };
 
             Func<BaseUnit> giveEnemyCatStructure = delegate
             {
-                var enem = new BaseStructure(catTexture, catSelection, enemy, tiledmap, "Stuff");
+                var enem = new BaseStructure(catTexture, catSelection, enemy, tiledmap, "collision");
                 enem.setSelectionColor(Color.Red);
                 return addEntity(enem);
             };
@@ -79,31 +83,18 @@ namespace Cute_RTS.Scenes
             //var bar = new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White));
 
             BaseUnit kitty = giveMeCat();
-            kitty.transform.position = new Vector2(0, 500);
-            kitty.gotoLocation(new Point(300, 500));
+            kitty.transform.position = new Vector2(100, 200);
 
-            kitty = giveMeCat();
-            kitty.transform.position = new Vector2(0, 100);
-            kitty.gotoLocation(new Point(300, 100));
-
-            kitty = giveMeCat();
-            kitty.transform.position = new Vector2(0, 400);
-            kitty.gotoLocation(new Point(300, 400));
-
-            Selector.getSelector().ActivePlayer = myself;
-            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
-            selectionComponent.renderLayer = -5;
-
-
-            kitty = giveMeCat();
-            kitty.transform.position = new Vector2(0, 400);
-            kitty.gotoLocation(new Point(300, 400));
+            //kitty = giveMeCat();
+            //kitty.transform.position = new Vector2(120, 180);
             kitty.MoveSpeed = 0;
             kitty.Range = 15f;
 
+            kitty = giveMeCat();
+            kitty.transform.position = new Vector2(150, 230);
+
             var enemyCat = giveEnemyCat();
-            enemyCat.transform.position = new Vector2(700, 500);
-            enemyCat.gotoLocation(new Point(400, 450));
+            enemyCat.transform.position = new Vector2(700, 100);
 
             //var enemyCatStructure = giveEnemyCatStructure();
             //enemyCatStructure.transform.position = new Vector2(700, 500);

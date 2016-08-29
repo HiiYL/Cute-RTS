@@ -44,8 +44,24 @@ namespace Cute_RTS.Units
 
         public virtual int Damage { get; set; } = 10;
         public virtual float Range { get; set; } = 1.5f; // default is melee
-        public virtual int Vision { get; set; } = 9;
-        public virtual int MoveSpeed { get; set; } = 10;
+        public virtual int Vision
+        {
+            get { return _vision; }
+            set
+            {
+                _vision = value;
+                _radar.Radius = _vision;
+            }
+        }
+        public virtual int MoveSpeed
+        {
+            get { return _moveSpeed; }
+            set
+            {
+                _moveSpeed = value;
+                pathmover.MoveSpeed = _moveSpeed;
+            }
+        }
         public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
         public BaseUnit TargetUnit { get; set; }
@@ -62,6 +78,8 @@ namespace Cute_RTS.Units
         private TiledMap _tilemap;
         private bool _deathTimer = false;
         private UnitRadar _radar;
+        private int _moveSpeed = 10;
+        private int _vision = 9;
 
         public enum Animation
         {
@@ -113,7 +131,7 @@ namespace Cute_RTS.Units
             sprite.color = _player.PlayerColor;
             _radar = new UnitRadar(Vision * 10);
 
-            Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
+            Flags.setFlagExclusive(ref collider.physicsLayer, (int)RTSCollisionLayer.Units);
             transform.setScale(new Vector2(0.5f, 0.5f));
 
             // Have path render below the unit
@@ -162,17 +180,20 @@ namespace Cute_RTS.Units
             {
                 sprite.spriteEffects = SpriteEffects.None;
                 newAnim = Animation.WalkLeft;
-            } else if (moveDir.X == 1)
+            }
+            else if (moveDir.X == 1)
             {
                 sprite.spriteEffects = SpriteEffects.FlipHorizontally;
                 newAnim = Animation.WalkRight;
-            } else if (moveDir.Y == -1)
+            }
+            else if (moveDir.Y == -1)
             {
                 newAnim = Animation.WalkUp;
-            } else if (moveDir.Y == 1)
+            }
+            else if (moveDir.Y == 1)
             {
                 newAnim = Animation.WalkDown;
-            }   
+            }
 
             playAnimation(newAnim);
         }
@@ -238,7 +259,8 @@ namespace Cute_RTS.Units
             if (selectable.IsSelected)
             {
                 _selectTex.enabled = true;
-            } else
+            }
+            else
             {
                 _selectTex.enabled = false;
             }
@@ -297,13 +319,14 @@ namespace Cute_RTS.Units
             if (TargetUnit == null) return;
 
             Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.Health.ToString());
-            
+
             Vector2 diff = transform.position - TargetUnit.transform.position;
 
             if (diff.X < 0)
             {
                 sprite.spriteEffects = SpriteEffects.FlipHorizontally;
-            } else
+            }
+            else
             {
                 sprite.spriteEffects = SpriteEffects.None;
             }
@@ -311,14 +334,15 @@ namespace Cute_RTS.Units
             if (diff.Y < 0)
             {
                 playAnimation(Animation.AttackFront);
-            } else
+            }
+            else
             {
                 playAnimation(Animation.AttackBack);
             }
 
             bool killedTarget = Damage >= TargetUnit.Health;
             TargetUnit.Health -= Damage;
-            
+
             if (killedTarget)
             {
                 ActiveCommand = UnitCommand.Idle;
