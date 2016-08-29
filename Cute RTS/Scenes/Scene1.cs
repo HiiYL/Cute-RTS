@@ -84,21 +84,15 @@ namespace Cute_RTS.Scenes
 
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(100, 200);
-
-            //kitty = giveMeCat();
-            //kitty.transform.position = new Vector2(120, 180);
-            kitty.MoveSpeed = 0;
-            kitty.Range = 15f;
-
             kitty = giveMeCat();
             kitty.transform.position = new Vector2(150, 230);
 
             var enemyCat = giveEnemyCat();
             enemyCat.transform.position = new Vector2(700, 100);
 
-            //var enemyCatStructure = giveEnemyCatStructure();
-            //enemyCatStructure.transform.position = new Vector2(700, 500);
-            //enemyCatStructure.MoveSpeed = 0;
+            var enemyCatStructure = giveEnemyCatStructure();
+            enemyCatStructure.transform.position = new Vector2(700, 150);
+            enemyCatStructure.MoveSpeed = 0;
         }
     }
 }

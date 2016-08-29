@@ -65,7 +65,7 @@ namespace Cute_RTS.Units
         public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
         public BaseUnit TargetUnit { get; set; }
-        public UnitCommand ActiveCommand { get; set; }
+        public UnitCommand ActiveCommand { get; set; } = UnitCommand.Idle;
         public Player UnitPlayer { get { return _player; } }
         public UnitRadar Radar { get { return _radar; } }
         public delegate void OnUnitDiedHandler(BaseUnit idied);
