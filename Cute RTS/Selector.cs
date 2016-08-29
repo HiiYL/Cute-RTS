@@ -23,10 +23,10 @@ namespace Cute_RTS
         public delegate void SelectionHandler(IReadOnlyList<Selectable> sels);
         public event SelectionHandler OnSelectionChanged;
 
-        private Rectangle selectionBoundary;
-        private bool isSelectionBox = false;
-        private Vector2 initialPos = Vector2.Zero;
-        private Color selectionColor;
+        private Rectangle _selectionBoundary;
+        private bool _isSelectionBox = false;
+        private Vector2 _initialPos = Vector2.Zero;
+        private Color _selectionColor;
         private static Selector selector;
         private List<Selectable> _selectables;
         private bool _displayTarget = false;
@@ -42,8 +42,8 @@ namespace Cute_RTS
             _targetTexTimer = new Timer(1000);
             _targetTexTimer.Elapsed += _targetTexTimer_Elapsed;
             _selectables = new List<Selectable>();
-            selectionColor = Color.DarkBlue;
-            selectionColor.A = (byte)0.1;
+            _selectionColor = Color.DarkBlue;
+            _selectionColor.A = (byte)0.1;
         }
 
         public void add(Selectable sel)
@@ -87,9 +87,9 @@ namespace Cute_RTS
 
         public override void render(Graphics graphics, Camera camera)
         {
-            if (isSelectionBox)
+            if (_isSelectionBox)
             {
-                graphics.batcher.drawRect(selectionBoundary, selectionColor);
+                graphics.batcher.drawRect(_selectionBoundary, _selectionColor);
             }
 
             if (_displayTarget)
@@ -159,20 +159,20 @@ namespace Cute_RTS
 
             if (Input.leftMouseButtonPressed)
             {
-                initialPos = Input.mousePosition;
+                _initialPos = Input.mousePosition;
             } else if (Input.leftMouseButtonDown)
             {
-                isSelectionBox = true;
-                selectionBoundary = new Rectangle(
-                    (int) Math.Min(initialPos.X, Input.mousePosition.X),
-                    (int) Math.Min(initialPos.Y, Input.mousePosition.Y),
-                    (int) Math.Abs(Input.mousePosition.X - initialPos.X),
-                    (int) Math.Abs(Input.mousePosition.Y - initialPos.Y));
+                _isSelectionBox = true;
+                _selectionBoundary = new Rectangle(
+                    (int) Math.Min(_initialPos.X, Input.mousePosition.X),
+                    (int) Math.Min(_initialPos.Y, Input.mousePosition.Y),
+                    (int) Math.Abs(Input.mousePosition.X - _initialPos.X),
+                    (int) Math.Abs(Input.mousePosition.Y - _initialPos.Y));
             } else if (Input.leftMouseButtonReleased)
             {
                 getSelector().deselectAll();
-                isSelectionBox = false;
-                if (initialPos == Input.mousePosition)
+                _isSelectionBox = false;
+                if (_initialPos == Input.mousePosition)
                 {
                     // layer mask makes sure the map colliders are not selected:
                     Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
@@ -188,10 +188,10 @@ namespace Cute_RTS
                 {
 
                     RectangleF selectionBoundaryF = new RectangleF(
-                        selectionBoundary.X,
-                        selectionBoundary.Y,
-                        selectionBoundary.Width,
-                        selectionBoundary.Height);
+                        _selectionBoundary.X,
+                        _selectionBoundary.Y,
+                        _selectionBoundary.Width,
+                        _selectionBoundary.Height);
                     // layer mask makes sure the map colliders are not selected:
                     var colliders = new HashSet<Collider>(Physics.boxcastBroadphase(selectionBoundaryF, layerMask:(int) RTSCollisionLayer.Map));
                     if (colliders != null)

@@ -18,8 +18,8 @@ namespace Cute_RTS
         public override float height { get { return 1000; } }
         public bool IsRenderPath { get; set; } = true;
         public int MoveSpeed { get; set; } = 15;
-        public bool HasArrived { get { return isDone; } }
-        public Point TargetLocation { get { return target; } }
+        public bool HasArrived { get { return _isDone; } }
+        public Point TargetLocation { get { return _target; } }
 
         // Events:
         public delegate void OnCollisionHandler(ref CollisionResult res);
@@ -34,30 +34,29 @@ namespace Cute_RTS
 
         TiledMap _tilemap;
 
-        bool isDone = true;
-        int current_node = 0;
+        private bool _isDone = true;
+        private int _current_node = 0;
         private Mover _mover;
-        private Point target, source;
-        private Vector2 pastLoc;
-        private Vector2 pastDir;
-        private Selectable selectable;
-        private bool doneReroute = true;
-        private int numberOfTilesWide,numberOfTilesHigh;
-        private float colliderPosX;
-        private float colliderPosY;
-        private Point initialPositionInTileMap;
-        private int pathingReroutePadding = 1;
-        private Vector2 collisionPos;
-
-        private List<Point> pathingCollisionPoints;
+        private Point _target, _source;
+        private Vector2 _pastLoc;
+        private Vector2 _pastDir;
+        private Selectable _selectable;
+        private bool _doneReroute = true;
+        private int _numberOfTilesWide,_numberOfTilesHigh;
+        private float _colliderPosX;
+        private float _colliderPosY;
+        private Point _initialPositionInTileMap;
+        private int _pathingReroutePadding = 1;
+        private Vector2 _collisionPos;
+        private List<Point> _pathingCollisionPoints;
 
         public PathMover(TiledMap tilemap, string collisionlayer, Selectable selectable)
         {
             _tilemap = tilemap;
-            this.selectable = selectable;
+            this._selectable = selectable;
             var layer = tilemap.getLayer<TiledTileLayer>(collisionlayer);
             _astarGraph = new WeightedGridGraph(layer);
-            pathingCollisionPoints = new List<Point>();
+            _pathingCollisionPoints = new List<Point>();
             OnArrival += PathMover_OnArrival;
         }
 
@@ -74,12 +73,12 @@ namespace Cute_RTS
 
         public void clearObstacleNodes()
         {
-            foreach (Point point in pathingCollisionPoints)
+            foreach (Point point in _pathingCollisionPoints)
             {
                 _astarGraph.weightedNodes.Remove(point);
             }
 
-            pathingCollisionPoints.Clear();
+            _pathingCollisionPoints.Clear();
         }
 
 
@@ -89,46 +88,46 @@ namespace Cute_RTS
             float currentHealthPercentage = ((BaseUnit)entity).GetHealthPercentage;
             ((BaseUnit)entity).healthBar.setValue(currentHealthPercentage);
 
-            if (isDone || entity == null) return;
+            if (_isDone || entity == null) return;
             if (_astarSearchPath != null)
             {
                 makeMoveStep();
             }
             else
             {
-                isDone = true;
-                current_node = 0;
+                _isDone = true;
+                _current_node = 0;
                 OnArrival?.Invoke();
             }
         }
 
         public void makeMoveStep()
         {
-            var node = _astarSearchPath[current_node];
+            var node = _astarSearchPath[_current_node];
             var x = node.X * _tilemap.tileWidth + _tilemap.tileWidth * 0.5f;
             var y = node.Y * _tilemap.tileHeight + _tilemap.tileHeight * 0.5f;
             Vector2 moveDir = new Vector2((x - this.entity.transform.position.X), (y - this.entity.transform.position.Y));
 
-            Vector2 dir = entity.transform.position - pastLoc;
+            Vector2 dir = entity.transform.position - _pastLoc;
             dir.Normalize();
 
-            if (dir != pastDir)
+            if (dir != _pastDir)
             {
-                pastDir = dir;
+                _pastDir = dir;
                 OnDirectionChange?.Invoke(dir);
             }
 
-            pastLoc = entity.transform.position;
+            _pastLoc = entity.transform.position;
 
             CollisionResult res;
             _mover.move(moveDir * MoveSpeed * Time.deltaTime, out res);
             if (res.collider != null)
             {
-                collisionPos = entity.transform.position;
+                _collisionPos = entity.transform.position;
                 Core.schedule(0.2f, timer =>
-                { if (collisionPos == entity.transform.position)
+                { if (_collisionPos == entity.transform.position)
                 {
-                    target = target + new Point(Nez.Random.range(-2, 3), Nez.Random.range(-2, 3));
+                    _target = _target + new Point(Nez.Random.range(-2, 3), Nez.Random.range(-2, 3));
                     Core.schedule(0.5f, t => stopMoving());
                 } });
                 
@@ -147,55 +146,55 @@ namespace Cute_RTS
             {
                 BaseUnit temp = entity as BaseUnit;
                 temp.setPosition(new Vector2(x, y));
-                if (current_node < _astarSearchPath.Count - 1)
+                if (_current_node < _astarSearchPath.Count - 1)
                 {
-                    current_node++;
+                    _current_node++;
                 }
                 else
                 {
-                    isDone = true;
-                    current_node = 0;
+                    _isDone = true;
+                    _current_node = 0;
                 }
             }
         }
 
         public void rerouteEntity(ref CollisionResult colliderRes)
         {
-            if (doneReroute)
+            if (_doneReroute)
             {
 
-                numberOfTilesWide = (int)Math.Ceiling(colliderRes.collider.bounds.width / _tilemap.tileWidth);
-                numberOfTilesHigh = (int)Math.Ceiling(colliderRes.collider.bounds.height / _tilemap.tileHeight);
+                _numberOfTilesWide = (int)Math.Ceiling(colliderRes.collider.bounds.width / _tilemap.tileWidth);
+                _numberOfTilesHigh = (int)Math.Ceiling(colliderRes.collider.bounds.height / _tilemap.tileHeight);
 
 
-                colliderPosX = colliderRes.collider.bounds.x;
-                colliderPosY = colliderRes.collider.bounds.y;
+                _colliderPosX = colliderRes.collider.bounds.x;
+                _colliderPosY = colliderRes.collider.bounds.y;
 
 
 
                 Vector2 initialPosition = new Vector2(
-                    colliderPosX,
-                    colliderPosY
+                    _colliderPosX,
+                    _colliderPosY
                 );
-                initialPositionInTileMap = _tilemap.worldToTilePosition(initialPosition);
+                _initialPositionInTileMap = _tilemap.worldToTilePosition(initialPosition);
                 
-                for (int i = -pathingReroutePadding; i < numberOfTilesWide + pathingReroutePadding; i ++)
+                for (int i = -_pathingReroutePadding; i < _numberOfTilesWide + _pathingReroutePadding; i ++)
                 {
-                    for(int j = -pathingReroutePadding; j < numberOfTilesHigh + pathingReroutePadding; j++)
+                    for(int j = -_pathingReroutePadding; j < _numberOfTilesHigh + _pathingReroutePadding; j++)
                     {
                         Point pointToAdd = new Point(
-                                initialPositionInTileMap.X + i,
-                                initialPositionInTileMap.Y + j);
+                                _initialPositionInTileMap.X + i,
+                                _initialPositionInTileMap.Y + j);
                         if (_astarGraph.weightedNodes.Contains(pointToAdd)) continue;
-                        pathingCollisionPoints.Add(pointToAdd);
+                        _pathingCollisionPoints.Add(pointToAdd);
                     }
                 }
 
-                foreach(Point point in pathingCollisionPoints)
+                foreach(Point point in _pathingCollisionPoints)
                 {
                     _astarGraph.weightedNodes.Add(point);
                 }
-                doneReroute = false;
+                _doneReroute = false;
                 retryRoute();
             }
         }
@@ -210,10 +209,10 @@ namespace Cute_RTS
 
             if (_astarSearchPath != null)
             {
-                this.target = target;
-                this.source = source;
-                isDone = false;
-                current_node = 0;
+                this._target = target;
+                this._source = source;
+                _isDone = false;
+                _current_node = 0;
 
                 return true;
             }
@@ -227,13 +226,13 @@ namespace Cute_RTS
         public bool retryRoute()
         {
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
-            _astarSearchPath = _astarGraph.search(source, this.target);
+            _astarSearchPath = _astarGraph.search(source, this._target);
             if (_astarSearchPath != null)
             {
-                this.source = source;
-                isDone = false;
-                current_node = 0;
-                doneReroute = true;
+                this._source = source;
+                _isDone = false;
+                _current_node = 0;
+                _doneReroute = true;
                 return true;
             }
             else
@@ -245,16 +244,16 @@ namespace Cute_RTS
 
         public void stopMoving()
         {
-            collisionPos = new Vector2(-1, -1);
-            isDone = true;
-            target = entity.transform.position.ToPoint();
+            _collisionPos = new Vector2(-1, -1);
+            _isDone = true;
+            _target = entity.transform.position.ToPoint();
             OnArrival?.Invoke();
         }
 
 
         public override void render(Graphics graphics, Camera camera)
         {
-            if (isDone) return;
+            if (_isDone) return;
 
             if (IsRenderPath && _astarSearchPath != null)
             {
@@ -267,7 +266,7 @@ namespace Cute_RTS
                 }
             }
 
-            foreach (Point point in pathingCollisionPoints)
+            foreach (Point point in _pathingCollisionPoints)
             {
                 graphics.batcher.drawHollowRect(
                     new Rectangle(

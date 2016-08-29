@@ -19,7 +19,7 @@ namespace Cute_RTS
 
         private Player _player;
         private const int MAX_UNIT_RETURN = 100;
-        Collider[] colliders = new Collider[MAX_UNIT_RETURN];
+        private Collider[] _colliders = new Collider[MAX_UNIT_RETURN];
 
         public UnitRadar (int radius)
         {
@@ -46,11 +46,11 @@ namespace Cute_RTS
         // finds the first enemy to step into your field of vision
         public BaseUnit detectEnemyInArea()
         {
-            int count = Physics.overlapCircleAll(entity.transform.position, Radius, colliders, layerMask: (int) RTSCollisionLayer.Map);
+            int count = Physics.overlapCircleAll(entity.transform.position, Radius, _colliders, layerMask: (int) RTSCollisionLayer.Map);
 
             for (int i = 0; i < count; i++)
             {
-                BaseUnit bu = colliders[i].entity as BaseUnit;
+                BaseUnit bu = _colliders[i].entity as BaseUnit;
                 if (bu == null || bu == entity || _player.isMyUnit(bu)) continue;
                 return bu;
             }

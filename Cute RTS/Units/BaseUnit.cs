@@ -59,7 +59,7 @@ namespace Cute_RTS.Units
             set
             {
                 _moveSpeed = value;
-                pathmover.MoveSpeed = _moveSpeed;
+                _pathmover.MoveSpeed = _moveSpeed;
             }
         }
         public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
@@ -75,7 +75,7 @@ namespace Cute_RTS.Units
         private int _health;
         private int _fullhealth;
         private Player _player;
-        private Animation animation;
+        private Animation _animation;
         private TiledMap _tilemap;
         private bool _deathTimer = false;
         private UnitRadar _radar;
@@ -106,10 +106,10 @@ namespace Cute_RTS.Units
         }
 
         // components
-        private PathMover pathmover;
-        private BoxCollider collider;
-        private Selectable selectable;
-        private Sprite<Animation> sprite;
+        private PathMover _pathmover;
+        private BoxCollider _collider;
+        private Selectable _selectable;
+        private Sprite<Animation> _sprite;
         private Sprite _selectTex;
         public ProgressBar healthBar;
 
@@ -120,40 +120,40 @@ namespace Cute_RTS.Units
             _tilemap = tmc;
             _selectTex = new Sprite(selectTex);
             _selectTex.enabled = false;
-            selectable = new Selectable();
-            sprite = new Sprite<Animation>();
-            pathmover = new PathMover(tmc, collisionlayer, selectable);
-            collider = new BoxCollider(-8, -8, 16, 16);
-            pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
-            pathmover.OnArrival += Pathmover_OnArrival;
-            pathmover.OnCollision += Pathmover_OnCollision;
-            pathmover.MoveSpeed = MoveSpeed;
+            _selectable = new Selectable();
+            _sprite = new Sprite<Animation>();
+            _pathmover = new PathMover(tmc, collisionlayer, _selectable);
+            _collider = new BoxCollider(-8, -8, 16, 16);
+            _pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
+            _pathmover.OnArrival += Pathmover_OnArrival;
+            _pathmover.OnCollision += Pathmover_OnCollision;
+            _pathmover.MoveSpeed = MoveSpeed;
             _player = player;
             _player.addUnit(this);
-            sprite.color = _player.PlayerColor;
+            _sprite.color = _player.PlayerColor;
             _radar = new UnitRadar(Vision * 10);
 
-            Flags.setFlagExclusive(ref collider.physicsLayer, (int)RTSCollisionLayer.Units);
+            Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
             transform.setScale(new Vector2(0.5f, 0.5f));
 
             // Have path render below the unit
-            pathmover.renderLayer = 1;
+            _pathmover.renderLayer = 1;
             _selectTex.renderLayer = 1;
 
             setupAnimation(atlas);
-            addComponent(selectable);
+            addComponent(_selectable);
             addComponent(_selectTex);
-            addComponent(sprite);
-            addComponent(pathmover);
+            addComponent(_sprite);
+            addComponent(_pathmover);
             addComponent(_radar);
-            addComponent(new UnitBehaviorTree(this, pathmover));
-            colliders.add(collider);
+            addComponent(new UnitBehaviorTree(this, _pathmover));
+            colliders.add(_collider);
 
         }
 
         public bool attackLocation(Point target)
         {
-            bool canGoTo = pathmover.setTargetLocation(target);
+            bool canGoTo = _pathmover.setTargetLocation(target);
 
             if (canGoTo)
             {
@@ -167,7 +167,7 @@ namespace Cute_RTS.Units
         public void attackUnit(BaseUnit g)
         {
             // stop going anywhere; time to kill this son of a bitch!
-            pathmover.stopMoving();
+            _pathmover.stopMoving();
             ActiveCommand = UnitCommand.AttackUnit;
             TargetUnit = g;
         }
@@ -195,12 +195,12 @@ namespace Cute_RTS.Units
 
             if (moveDir.X == -1)
             {
-                sprite.spriteEffects = SpriteEffects.None;
+                _sprite.spriteEffects = SpriteEffects.None;
                 newAnim = Animation.WalkLeft;
             }
             else if (moveDir.X == 1)
             {
-                sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+                _sprite.spriteEffects = SpriteEffects.FlipHorizontally;
                 newAnim = Animation.WalkRight;
             }
             else if (moveDir.Y == -1)
@@ -217,10 +217,10 @@ namespace Cute_RTS.Units
 
         public void playAnimation(Animation anim)
         {
-            if (anim != Animation.None && animation != anim)
+            if (anim != Animation.None && _animation != anim)
             {
-                animation = anim;
-                sprite.play(animation);
+                _animation = anim;
+                _sprite.play(_animation);
             }
         }
 
@@ -230,7 +230,7 @@ namespace Cute_RTS.Units
         /// <returns>false if path does not exist, true otherwise.</returns>
         public bool gotoLocation(Point target)
         {
-            bool canGoTo = pathmover.setTargetLocation(target);
+            bool canGoTo = _pathmover.setTargetLocation(target);
 
             if (canGoTo) ActiveCommand = UnitCommand.GoTo;
 
@@ -273,7 +273,7 @@ namespace Cute_RTS.Units
 
         private void onChangeSelect(IReadOnlyList<Selectable> sel)
         {
-            if (selectable.IsSelected)
+            if (_selectable.IsSelected)
             {
                 _selectTex.enabled = true;
             }
@@ -303,14 +303,14 @@ namespace Cute_RTS.Units
             //attackFront.loop = false;
             //attackBack.loop = false;
 
-            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
-            sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
-            sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
-            sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.AttackFront, attackFront);
-            sprite.addAnimation(Animation.AttackBack, attackBack);
-            sprite.addAnimation(Animation.Die, deathAnim);
+            _sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
+            _sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
+            _sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
+            _sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
+            _sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
+            _sprite.addAnimation(Animation.AttackFront, attackFront);
+            _sprite.addAnimation(Animation.AttackBack, attackBack);
+            _sprite.addAnimation(Animation.Die, deathAnim);
         }
 
         private void die()
@@ -318,7 +318,7 @@ namespace Cute_RTS.Units
             if (_deathTimer == true) return;
 
             _deathTimer = true;
-            pathmover.stopMoving();
+            _pathmover.stopMoving();
             ActiveCommand = UnitCommand.None;
             playAnimation(Animation.Die);
             Core.schedule(1.5f, timer =>
@@ -341,11 +341,11 @@ namespace Cute_RTS.Units
 
             if (diff.X < 0)
             {
-                sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+                _sprite.spriteEffects = SpriteEffects.FlipHorizontally;
             }
             else
             {
-                sprite.spriteEffects = SpriteEffects.None;
+                _sprite.spriteEffects = SpriteEffects.None;
             }
 
             if (diff.Y < 0)

@@ -14,7 +14,7 @@ namespace Cute_RTS
         public string Name { get; set; }
         public Player Opponent { get; set; }
 
-        List<BaseUnit> _units;
+        private List<BaseUnit> _units;
 
         public Player(Color color, string name)
         {
