@@ -81,6 +81,16 @@ namespace Cute_RTS.Scenes
             };
 
             //var bar = new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White));
+            
+            List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
+            var flagTexture = content.Load<Texture2D>("flag");
+            CaptureFlag captureflag;
+            foreach (TiledObject f in flags)
+            {
+                captureflag = new CaptureFlag(flagTexture);
+                captureflag.transform.position = new Vector2(f.x, f.y);
+                addEntity(captureflag);
+            }
 
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(100, 200);

@@ -60,6 +60,7 @@
     <Compile Include="AI\HeadingSmoother.cs" />
     <Compile Include="AI\SteeringBehaviours.cs" />
     <Compile Include="Structures\BaseStructure.cs" />
+    <Compile Include="Structures\CaptureFlag.cs" />
     <Compile Include="UnitRadar.cs" />
     <Compile Include="PathMover.cs" />
     <Compile Include="Player.cs" />

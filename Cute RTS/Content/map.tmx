@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" nextobjectid="12">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="16" tileheight="16" nextobjectid="15">
  <tileset firstgid="1" name="terrain" tilewidth="16" tileheight="16" tilecount="4096" columns="64">
   <image source="map-terrain.png" width="1024" height="1024"/>
  </tileset>
@@ -106,24 +106,28 @@
 </data>
  </layer>
  <objectgroup name="objects">
-  <object id="1" name="Start Location 1" type="StartLocation" x="53" y="376" width="71" height="61"/>
-  <object id="3" name="Start Location 2" type="StartLocation" x="636" y="31" width="70" height="57"/>
   <object id="6" name="Flag" type="Flag" x="32" y="143" width="32" height="32">
    <ellipse/>
   </object>
   <object id="7" name="Flag" type="Flag" x="500" y="440" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="8" name="Flag" type="Flag" x="221" y="14" width="32" height="32">
+  <object id="8" name="Flag" type="Flag" x="213" y="46" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="9" name="Flag" type="Flag" x="753" y="301" width="32" height="32">
+  <object id="9" name="Flag" type="Flag" x="714.333" y="345" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="10" name="Flag" type="Flag" x="750" y="104" width="32" height="32">
+  <object id="10" name="Flag" type="Flag" x="730" y="121.333" width="32" height="32">
    <ellipse/>
   </object>
   <object id="11" name="Flag" type="Flag" x="167" y="423" width="32" height="32">
+   <ellipse/>
+  </object>
+  <object id="12" name="StartLocation" x="36" y="366.667" width="84" height="82.6667">
+   <ellipse/>
+  </object>
+  <object id="14" name="StartLocation" x="636.667" y="41.3333" width="84" height="82.6667">
    <ellipse/>
   </object>
  </objectgroup>
