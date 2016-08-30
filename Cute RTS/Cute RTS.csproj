@@ -61,18 +61,17 @@
     <Compile Include="AI\SteeringBehaviours.cs" />
     <Compile Include="Structures\BaseStructure.cs" />
     <Compile Include="Structures\CaptureFlag.cs" />
-    <Compile Include="UnitRadar.cs" />
-    <Compile Include="PathMover.cs" />
+    <Compile Include="Components\UnitRadar.cs" />
+    <Compile Include="Components\PathMover.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Scenes\Scene1.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Selectable.cs" />
+    <Compile Include="Components\Selectable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\BaseScene.cs" />
-    <Compile Include="Selector.cs" />
-    <Compile Include="SimpleMover.cs" />
+    <Compile Include="Components\Selector.cs" />
     <Compile Include="Units\UnitBehaviorTree.cs" />
   </ItemGroup>
   <ItemGroup>
