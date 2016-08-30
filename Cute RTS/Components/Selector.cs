@@ -107,11 +107,14 @@ namespace Cute_RTS
                 if (v != null)
                 {
                     var g = v.entity as BaseUnit;
+                    if (g == null) return;
+
                     g.playClickSelectAnimation();
                     foreach (var s in _selectables)
                     {
                         var b = s.entity as BaseUnit;
-                        
+                        if (b == null) continue;
+
                         if (b.UnitPlayer.isMyUnit(g))
                         {
                             b.followUnit(g);
@@ -127,6 +130,8 @@ namespace Cute_RTS
                     foreach (var s in _selectables)
                     {
                         var b = s.entity as BaseUnit;
+                        if (b == null) continue;
+
                         // b.attackLocation(Input.mousePosition.ToPoint()); // test attack location
                         b.gotoLocation(Input.mousePosition.ToPoint());
                         if (TargetTex != null)
@@ -137,7 +142,7 @@ namespace Cute_RTS
                             // restart timer
                             _targetTexTimer.Stop();
                             _targetTexTimer.Start();
-                            
+
                         }
                     }
                 }

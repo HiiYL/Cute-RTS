@@ -84,10 +84,11 @@ namespace Cute_RTS.Scenes
             
             List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
             var flagTexture = content.Load<Texture2D>("flag");
+            var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
             CaptureFlag captureflag;
             foreach (TiledObject f in flags)
             {
-                captureflag = new CaptureFlag(flagTexture);
+                captureflag = new CaptureFlag(flagTexture, flagSelectionTexture);
                 captureflag.transform.position = new Vector2(f.x, f.y);
                 addEntity(captureflag);
             }
