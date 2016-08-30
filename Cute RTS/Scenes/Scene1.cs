@@ -62,21 +62,21 @@ namespace Cute_RTS.Scenes
             Func<BaseUnit> giveMeCat = delegate
             {
                 var mys = new BaseUnit(catTexture, catSelection, myself, tiledmap, "collision");
-                mys.setSelectionColor(Color.LawnGreen);
+                mys.Select.setSelectionColor(Color.LawnGreen);
                 return addEntity(mys);
             };
 
             Func<BaseUnit> giveEnemyCat = delegate
             {
                 var enem = new BaseUnit(catTexture, catSelection, enemy, tiledmap, "collision");
-                enem.setSelectionColor(Color.Red);
+                enem.Select.setSelectionColor(Color.Red);
                 return addEntity(enem);
             };
 
             Func<BaseUnit> giveEnemyCatStructure = delegate
             {
                 var enem = new BaseStructure(catTexture, catSelection, enemy, tiledmap, "collision");
-                enem.setSelectionColor(Color.Red);
+                enem.Select.setSelectionColor(Color.Red);
                 return addEntity(enem);
             };
 

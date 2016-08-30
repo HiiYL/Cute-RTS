@@ -71,6 +71,7 @@ namespace Cute_RTS.Units
         public delegate void OnUnitDiedHandler(BaseUnit idied);
         public event OnUnitDiedHandler OnUnitDied;
         public Point AttackLocation { get; set; }
+        public Selectable Select { get { return _selectable; } }
 
         private int _health;
         private int _fullhealth;
@@ -110,7 +111,6 @@ namespace Cute_RTS.Units
         private BoxCollider _collider;
         private Selectable _selectable;
         private Sprite<Animation> _sprite;
-        private Sprite _selectTex;
         public ProgressBar healthBar;
 
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
@@ -118,15 +118,11 @@ namespace Cute_RTS.Units
             _health = 40;
             _fullhealth = _health;
             _tilemap = tmc;
-            _selectTex = new Sprite(selectTex);
-            _selectTex.enabled = false;
-            _selectable = new Selectable();
+            _selectable = new Selectable(new Sprite(selectTex));
             _sprite = new Sprite<Animation>();
             _pathmover = new PathMover(tmc, collisionlayer, _selectable);
             _collider = new BoxCollider(-8, -8, 16, 16);
             _pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
-            _pathmover.OnArrival += Pathmover_OnArrival;
-            _pathmover.OnCollision += Pathmover_OnCollision;
             _pathmover.MoveSpeed = MoveSpeed;
             _player = player;
             _player.addUnit(this);
@@ -138,11 +134,9 @@ namespace Cute_RTS.Units
 
             // Have path render below the unit
             _pathmover.renderLayer = 1;
-            _selectTex.renderLayer = 1;
 
             setupAnimation(atlas);
             addComponent(_selectable);
-            addComponent(_selectTex);
             addComponent(_sprite);
             addComponent(_pathmover);
             addComponent(_radar);
@@ -175,18 +169,6 @@ namespace Cute_RTS.Units
         public Point getTilePosition()
         {
             return _tilemap.worldToTilePosition(transform.position);
-        }
-
-        private void Pathmover_OnCollision(ref CollisionResult res)
-        {
-            // When unit collides with anything, it simply gives up.
-            //pathmover.stopMoving();
-            //sprite.play(Animation.Idle);
-        }
-
-        private void Pathmover_OnArrival()
-        {
-            //playAnimation(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -255,15 +237,7 @@ namespace Cute_RTS.Units
 
 
             playAnimation(Animation.Idle);
-
-            Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
             base.onAddedToScene();
-        }
-
-        public override void onRemovedFromScene()
-        {
-            Selector.getSelector().OnSelectionChanged -= onChangeSelect;
-            base.onRemovedFromScene();
         }
 
         public void setPosition(Vector2 point)
@@ -271,28 +245,6 @@ namespace Cute_RTS.Units
             transform.position = point;
         }
 
-        private void onChangeSelect(IReadOnlyList<Selectable> sel)
-        {
-            if (_selectable.IsSelected)
-            {
-                _selectTex.enabled = true;
-            }
-            else
-            {
-                _selectTex.enabled = false;
-            }
-        }
-
-        public void playClickSelectAnimation(int counter = 4)
-        {
-            if (counter == 0) return;
-
-            _selectTex.enabled = !_selectTex.enabled;
-            Core.schedule(0.15f, tmr =>
-            {
-                playClickSelectAnimation(counter - 1);
-            });
-        }
 
         private void setupAnimation(TextureAtlas atlas)
         {
@@ -367,9 +319,5 @@ namespace Cute_RTS.Units
             }
         }
 
-        public void setSelectionColor(Color color)
-        {
-            _selectTex.color = color;
-        }
     }
 }

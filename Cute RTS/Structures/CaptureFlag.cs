@@ -24,13 +24,10 @@ namespace Cute_RTS.Structures
             _sprite = new Sprite(tex);
             // offset to set pitch point of flag as origin
             _sprite.setLocalOffset(textureOffset);
-
-            _selectable = new Selectable();
-            _selectTex = new Sprite(selectTex);
-            _selectTex.enabled = false;
-            _selectTex.color = Color.Yellow;
-            _selectTex.renderLayer = 1;
-            _selectTex.setLocalOffset(textureOffset);
+            var s = new Sprite(selectTex);
+            s.setLocalOffset(textureOffset);
+            _selectable = new Selectable(s);
+            _selectable.setSelectionColor(Color.Yellow);
 
             _collider = new CircleCollider(10);
             _collider.setLocalOffset(new Vector2(15, 15));
@@ -39,30 +36,18 @@ namespace Cute_RTS.Structures
 
             addComponent(_sprite);
             addComponent(_selectable);
-            addComponent(_selectTex);
+            //addComponent(_selectTex);
         }
 
         public override void onAddedToScene()
         {
-            Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
             base.onAddedToScene();
         }
 
-        private void onChangeSelect(IReadOnlyList<Selectable> sel)
+        public override void onRemovedFromScene()
         {
-            if (_selectable.IsSelected)
-            {
-                _selectTex.enabled = true;
-            }
-            else
-            {
-                _selectTex.enabled = false;
-            }
+            base.onRemovedFromScene();
         }
 
-        public void setSelectionColor(Color color)
-        {
-            _selectTex.color = color;
-        }
     }
 }

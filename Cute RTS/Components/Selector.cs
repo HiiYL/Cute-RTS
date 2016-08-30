@@ -109,7 +109,7 @@ namespace Cute_RTS
                     var g = v.entity as BaseUnit;
                     if (g == null) return;
 
-                    g.playClickSelectAnimation();
+                    g.Select.playClickSelectAnimation();
                     foreach (var s in _selectables)
                     {
                         var b = s.entity as BaseUnit;
