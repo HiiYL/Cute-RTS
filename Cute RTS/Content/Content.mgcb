@@ -1496,6 +1496,9 @@
 
 #begin MainBaseAtlas.xml
 /importer:XmlImporter
-/processor:PassThroughProcessor
+/processor:TextureAtlasProcessor
+/processorParam:compressTexture=False
+/processorParam:animationFPS=10
+/processorParam:flattenPaths=True
 /build:MainBaseAtlas.xml
 
