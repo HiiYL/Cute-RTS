@@ -34,13 +34,10 @@ namespace Cute_RTS.Units
                 }
             }
         }
-        public virtual int FullHealth
-        {
-            get { return _fullhealth; }
-        }
+        public virtual int FullHealth { get; set; }
         public virtual float GetHealthPercentage
         {
-            get { return _health / (float)_fullhealth; }
+            get { return _health / (float)FullHealth; }
         }
 
         public virtual int Damage { get; set; } = 10;
@@ -76,7 +73,6 @@ namespace Cute_RTS.Units
         public CaptureFlag TargetFlag { get; set; } = null;
 
         private int _health;
-        private int _fullhealth;
         private Player _player;
         private Animation _animation;
         private TiledMap _tilemap;
@@ -119,7 +115,8 @@ namespace Cute_RTS.Units
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
         {
             _health = 40;
-            _fullhealth = _health;
+            FullHealth = _health;
+
             _tilemap = tmc;
             _selectable = new Selectable(new Sprite(selectTex));
             _sprite = new Sprite<Animation>();
