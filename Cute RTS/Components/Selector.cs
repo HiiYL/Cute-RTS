@@ -1,4 +1,5 @@
-﻿using Cute_RTS.Units;
+﻿using Cute_RTS.Structures;
+using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -106,24 +107,39 @@ namespace Cute_RTS
                 Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
                 if (v != null)
                 {
-                    var g = v.entity as BaseUnit;
-                    if (g == null) return;
-
-                    g.Select.playClickSelectAnimation();
-                    foreach (var s in _selectables)
+                    if (v.entity is BaseUnit)
                     {
-                        var b = s.entity as BaseUnit;
-                        if (b == null) continue;
+                        var g = v.entity as BaseUnit;
 
-                        if (b.UnitPlayer.isMyUnit(g))
+                        g.Select.playClickSelectAnimation();
+                        foreach (var s in _selectables)
                         {
-                            b.followUnit(g);
+                            var b = s.entity as BaseUnit;
+                            if (b == null) continue;
+
+                            if (b.UnitPlayer.isMyUnit(g))
+                            {
+                                b.followUnit(g);
+                            }
+                            else
+                            {
+                                b.attackUnit(g);
+                            }
                         }
-                        else
+                    } else if (v.entity is CaptureFlag)
+                    {
+                        var fl = v.entity as CaptureFlag;
+
+                        fl.Select.playClickSelectAnimation();
+                        foreach (var s in _selectables)
                         {
-                            b.attackUnit(g);
+                            var b = s.entity as BaseUnit;
+                            if (b == null) continue;
+
+                            b.captureFlag(fl);
                         }
                     }
+                    
                 }
                 else
                 {

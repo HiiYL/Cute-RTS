@@ -1,4 +1,5 @@
 ﻿using Cute_RTS.Scenes;
+using Cute_RTS.Structures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
@@ -72,6 +73,7 @@ namespace Cute_RTS.Units
         public event OnUnitDiedHandler OnUnitDied;
         public Point AttackLocation { get; set; }
         public Selectable Select { get { return _selectable; } }
+        public CaptureFlag TargetFlag { get; set; } = null;
 
         private int _health;
         private int _fullhealth;
@@ -103,7 +105,8 @@ namespace Cute_RTS.Units
             GoTo,
             Follow,
             AttackUnit,
-            AttackLocation
+            AttackLocation,
+            CaptureFlag
         }
 
         // components
@@ -221,6 +224,7 @@ namespace Cute_RTS.Units
 
         public void stopMoving()
         {
+            _pathmover.stopMoving();
             ActiveCommand = UnitCommand.Idle;
         }
 
@@ -228,6 +232,18 @@ namespace Cute_RTS.Units
         {
             TargetUnit = bu;
             ActiveCommand = UnitCommand.Follow;
+        }
+
+        public bool captureFlag(CaptureFlag flag)
+        {
+            Point p = flag.getPosition().ToPoint();
+            bool r = _pathmover.setTargetLocation(p);
+            if (r == false) return r;
+
+            TargetFlag = flag;
+            ActiveCommand = UnitCommand.CaptureFlag;
+
+            return true;
         }
 
         public override void onAddedToScene()

@@ -67,9 +67,39 @@ namespace Cute_RTS.Units
                 .action(b => becomeIdle())
                 .endComposite();
 
+            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.CaptureFlag);
+            builder.sequence()
+                .action(b => checkArriveOnRange(b._baseunit.TargetFlag.getPosition(), b._baseunit.TargetFlag.CaptureRange))
+                .action(b => captureFlag())
+                .action(b => becomeIdle())
+                .endComposite();
+
 
             builder.endComposite();
             _tree = builder.build();
+        }
+
+        private TaskStatus checkArriveOnRange(Vector2 target, float range)
+        {
+            float distance = Vector2.Distance(_baseunit.transform.position, target);
+            if (distance <= range)
+            {
+                return TaskStatus.Success;
+            }
+
+            return TaskStatus.Failure;
+        }
+
+        private TaskStatus captureFlag()
+        {
+            if (_baseunit.TargetFlag.Capturer == _baseunit.UnitPlayer)
+            {
+                return TaskStatus.Success;
+            } else
+            {
+                _baseunit.TargetFlag.CapturingBaseUnit = _baseunit;
+                return TaskStatus.Failure;
+            }
         }
 
         private TaskStatus radarCheck(BaseUnit.UnitCommand returnCommand = BaseUnit.UnitCommand.None)
@@ -165,11 +195,6 @@ namespace Cute_RTS.Units
 
         private TaskStatus checkArrival()
         {
-            // if arrived
-            //      send arrival event
-            //      return taskstatus.success
-            // if not arrived return taskstatus.fail
-
             if (_pathmover.HasArrived)
             {
                 return TaskStatus.Success;
