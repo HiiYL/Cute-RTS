@@ -1,9 +1,12 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Scenes;
+using Cute_RTS.Structures;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 using Nez.TextureAtlases;
 using Nez.Tiled;
+using Nez.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +23,7 @@ namespace Cute_RTS.Units
             get { return _health; }
             set
             {
-                if (value == 0)
+                if (value <= 0)
                 {
                     OnUnitDied?.Invoke(this);
                     die();
@@ -31,23 +34,56 @@ namespace Cute_RTS.Units
                 }
             }
         }
+        public virtual int FullHealth
+        {
+            get { return _fullhealth; }
+        }
+        public virtual float GetHealthPercentage
+        {
+            get { return _health / (float)_fullhealth; }
+        }
 
         public virtual int Damage { get; set; } = 10;
-        public virtual int Range { get; set; } = 1; // default is melee
-        public virtual int Vision { get; set; } = 8;
-        public virtual int MoveSpeed { get; set; } = 10;
+        public virtual float Range { get; set; } = 1.5f; // default is melee
+        public virtual int Vision
+        {
+            get { return _vision; }
+            set
+            {
+                _vision = value;
+                _radar.Radius = _vision;
+            }
+        }
+        public virtual int MoveSpeed
+        {
+            get { return _moveSpeed; }
+            set
+            {
+                _moveSpeed = value;
+                _pathmover.MoveSpeed = _moveSpeed;
+            }
+        }
+        public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
         public BaseUnit TargetUnit { get; set; }
-        public UnitCommand ActiveCommand { get; set; }
+        public UnitCommand ActiveCommand { get; set; } = UnitCommand.Idle;
         public Player UnitPlayer { get { return _player; } }
+        public UnitRadar Radar { get { return _radar; } }
         public delegate void OnUnitDiedHandler(BaseUnit idied);
         public event OnUnitDiedHandler OnUnitDied;
+        public Point AttackLocation { get; set; }
+        public Selectable Select { get { return _selectable; } }
+        public CaptureFlag TargetFlag { get; set; } = null;
 
         private int _health;
+        private int _fullhealth;
         private Player _player;
-        private Animation animation;
+        private Animation _animation;
         private TiledMap _tilemap;
-
+        private bool _deathTimer = false;
+        private UnitRadar _radar;
+        private int _moveSpeed = 10;
+        private int _vision = 9;
 
         public enum Animation
         {
@@ -57,8 +93,9 @@ namespace Cute_RTS.Units
             WalkDown,
             WalkRight,
             WalkLeft,
-            AttackLeft,
-            Die
+            AttackFront,
+            Die,
+            AttackBack
         }
 
         public enum UnitCommand
@@ -66,64 +103,75 @@ namespace Cute_RTS.Units
             None,
             Idle,
             GoTo,
-            Follow
+            Follow,
+            AttackUnit,
+            AttackLocation,
+            CaptureFlag
         }
 
         // components
-        private PathMover pathmover;
-        private BoxCollider collider;
-        private Selectable selectable;
-        private Sprite<Animation> sprite;
-        private Sprite _selectTex;
+        private PathMover _pathmover;
+        private BoxCollider _collider;
+        private Selectable _selectable;
+        private Sprite<Animation> _sprite;
+        public ProgressBar healthBar;
 
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
         {
+            _health = 40;
+            _fullhealth = _health;
             _tilemap = tmc;
-            _selectTex = new Sprite(selectTex);
-            _selectTex.enabled = false;
-            selectable = new Selectable();
-            sprite = new Sprite<Animation>();
-            pathmover = new PathMover(tmc, collisionlayer, selectable);
-            collider = new BoxCollider(-8, -8, 16, 16);
-            pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
-            pathmover.OnArrival += Pathmover_OnArrival;
-            pathmover.OnCollision += Pathmover_OnCollision;
-            pathmover.MoveSpeed = MoveSpeed;
+            _selectable = new Selectable(new Sprite(selectTex));
+            _sprite = new Sprite<Animation>();
+            _pathmover = new PathMover(tmc, collisionlayer, _selectable);
+            _collider = new BoxCollider(-8, -8, 16, 16);
+            _pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
+            _pathmover.MoveSpeed = MoveSpeed;
             _player = player;
             _player.addUnit(this);
-            sprite.color = _player.PlayerColor;
+            _sprite.color = _player.PlayerColor;
+            _radar = new UnitRadar(Vision * 10);
 
-            Flags.setFlagExclusive(ref collider.physicsLayer, (int) RTSCollisionLayer.Units);
+            Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
             transform.setScale(new Vector2(0.5f, 0.5f));
 
             // Have path render below the unit
-            pathmover.renderLayer = 1;
-            _selectTex.renderLayer = 1;
+            _pathmover.renderLayer = 1;
 
             setupAnimation(atlas);
-            addComponent(selectable);
-            addComponent(_selectTex);
-            addComponent(sprite);
-            addComponent(pathmover);
-            addComponent(new UnitBehaviorTree(this, pathmover));
-            colliders.add(collider);
+            addComponent(_selectable);
+            addComponent(_sprite);
+            addComponent(_pathmover);
+            addComponent(_radar);
+            addComponent(new UnitBehaviorTree(this, _pathmover));
+            colliders.add(_collider);
+
+        }
+
+        public bool attackLocation(Point target)
+        {
+            bool canGoTo = _pathmover.setTargetLocation(target);
+
+            if (canGoTo)
+            {
+                AttackLocation = target;
+                ActiveCommand = UnitCommand.AttackLocation;
+            }
+
+            return canGoTo;
+        }
+
+        public void attackUnit(BaseUnit g)
+        {
+            // stop going anywhere; time to kill this son of a bitch!
+            _pathmover.stopMoving();
+            ActiveCommand = UnitCommand.AttackUnit;
+            TargetUnit = g;
         }
 
         public Point getTilePosition()
         {
             return _tilemap.worldToTilePosition(transform.position);
-        }
-
-        private void Pathmover_OnCollision(ref CollisionResult res)
-        {
-            // When unit collides with anything, it simply gives up.
-            //pathmover.stopMoving();
-            //sprite.play(Animation.Idle);
-        }
-
-        private void Pathmover_OnArrival()
-        {
-            //playAnimation(Animation.Idle);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -132,29 +180,32 @@ namespace Cute_RTS.Units
 
             if (moveDir.X == -1)
             {
-                sprite.spriteEffects = SpriteEffects.None;
+                _sprite.spriteEffects = SpriteEffects.None;
                 newAnim = Animation.WalkLeft;
-            } else if (moveDir.X == 1)
+            }
+            else if (moveDir.X == 1)
             {
-                sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+                _sprite.spriteEffects = SpriteEffects.FlipHorizontally;
                 newAnim = Animation.WalkRight;
-            } else if (moveDir.Y == -1)
+            }
+            else if (moveDir.Y == -1)
             {
                 newAnim = Animation.WalkUp;
-            } else if (moveDir.Y == 1)
+            }
+            else if (moveDir.Y == 1)
             {
                 newAnim = Animation.WalkDown;
-            }   
+            }
 
             playAnimation(newAnim);
         }
 
         public void playAnimation(Animation anim)
         {
-            if (anim != Animation.None && animation != anim)
+            if (anim != Animation.None && _animation != anim)
             {
-                animation = anim;
-                sprite.play(animation);
+                _animation = anim;
+                _sprite.play(_animation);
             }
         }
 
@@ -164,7 +215,7 @@ namespace Cute_RTS.Units
         /// <returns>false if path does not exist, true otherwise.</returns>
         public bool gotoLocation(Point target)
         {
-            bool canGoTo = pathmover.setTargetLocation(target);
+            bool canGoTo = _pathmover.setTargetLocation(target);
 
             if (canGoTo) ActiveCommand = UnitCommand.GoTo;
 
@@ -173,6 +224,7 @@ namespace Cute_RTS.Units
 
         public void stopMoving()
         {
+            _pathmover.stopMoving();
             ActiveCommand = UnitCommand.Idle;
         }
 
@@ -182,18 +234,26 @@ namespace Cute_RTS.Units
             ActiveCommand = UnitCommand.Follow;
         }
 
-        public override void onAddedToScene()
+        public bool captureFlag(CaptureFlag flag)
         {
-            playAnimation(Animation.Idle);
+            Point p = flag.getPosition().ToPoint();
+            bool r = _pathmover.setTargetLocation(p);
+            if (r == false) return r;
 
-            Selector.getSelector().OnSelectionChanged += new Selector.SelectionHandler(onChangeSelect);
-            base.onAddedToScene();
+            TargetFlag = flag;
+            ActiveCommand = UnitCommand.CaptureFlag;
+
+            return true;
         }
 
-        public override void onRemovedFromScene()
+        public override void onAddedToScene()
         {
-            Selector.getSelector().OnSelectionChanged -= onChangeSelect;
-            base.onRemovedFromScene();
+            healthBar = ((BaseScene)scene).canvas.stage.addElement(new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White)));
+            healthBar.setWidth(64);
+
+
+            playAnimation(Animation.Idle);
+            base.onAddedToScene();
         }
 
         public void setPosition(Vector2 point)
@@ -201,56 +261,79 @@ namespace Cute_RTS.Units
             transform.position = point;
         }
 
-        private void onChangeSelect(IReadOnlyList<Selectable> sel)
-        {
-            if (selectable.IsSelected)
-            {
-                _selectTex.enabled = true;
-            } else
-            {
-                _selectTex.enabled = false;
-            }
-        }
-
-        public void playClickSelectAnimation(int counter = 4)
-        {
-            if (counter == 0) return;
-
-            _selectTex.enabled = !_selectTex.enabled;
-            Core.schedule(0.15f, tmr =>
-            {
-                playClickSelectAnimation(counter - 1);
-            });
-        }
 
         private void setupAnimation(TextureAtlas atlas)
         {
             var deathAnim = atlas.getSpriteAnimation("death-left");
+            var attackFront = atlas.getSpriteAnimation("attack-front-left");
+            var attackBack = atlas.getSpriteAnimation("attack-back-left");
             deathAnim.loop = false;
+            //attackFront.loop = false;
+            //attackBack.loop = false;
 
-            sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
-            sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
-            sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
-            sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
-            sprite.addAnimation(Animation.AttackLeft, atlas.getSpriteAnimation("attack-front-left"));
-            sprite.addAnimation(Animation.Die, deathAnim);
+            _sprite.addAnimation(Animation.Idle, atlas.getSpriteAnimation("idle-front-left"));
+            _sprite.addAnimation(Animation.WalkDown, atlas.getSpriteAnimation("move-down"));
+            _sprite.addAnimation(Animation.WalkUp, atlas.getSpriteAnimation("move-up"));
+            _sprite.addAnimation(Animation.WalkLeft, atlas.getSpriteAnimation("move-front-left"));
+            _sprite.addAnimation(Animation.WalkRight, atlas.getSpriteAnimation("move-front-left"));
+            _sprite.addAnimation(Animation.AttackFront, attackFront);
+            _sprite.addAnimation(Animation.AttackBack, attackBack);
+            _sprite.addAnimation(Animation.Die, deathAnim);
         }
 
         private void die()
         {
+            if (_deathTimer == true) return;
+
+            _deathTimer = true;
+            _pathmover.stopMoving();
             ActiveCommand = UnitCommand.None;
-            sprite.play(Animation.Die);
+            playAnimation(Animation.Die);
             Core.schedule(1.5f, timer =>
             {
                 UnitPlayer.removeUnit(this);
                 destroy();
+                healthBar.setIsVisible(false); //TODO: FIGURE OUT TO REMOVE IT COMPLETELY
+
             });
         }
 
-        public void setSelectionColor(Color color)
+        // execute attack, asumming target is already in range
+        public void executeAttack()
         {
-            _selectTex.color = color;
+            if (TargetUnit == null) return;
+
+            Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.Health.ToString());
+
+            Vector2 diff = transform.position - TargetUnit.transform.position;
+
+            if (diff.X < 0)
+            {
+                _sprite.spriteEffects = SpriteEffects.FlipHorizontally;
+            }
+            else
+            {
+                _sprite.spriteEffects = SpriteEffects.None;
+            }
+
+            if (diff.Y < 0)
+            {
+                playAnimation(Animation.AttackFront);
+            }
+            else
+            {
+                playAnimation(Animation.AttackBack);
+            }
+
+            bool killedTarget = Damage >= TargetUnit.Health;
+            TargetUnit.Health -= Damage;
+
+            if (killedTarget)
+            {
+                ActiveCommand = UnitCommand.Idle;
+                TargetUnit = null;
+            }
         }
+
     }
 }
