@@ -31,8 +31,8 @@ namespace Cute_RTS
 
         public Game1() : base(isFullScreen: false, enableEntitySystems: true)
         {
-            policy = Scene.SceneResolutionPolicy.ShowAllPixelPerfect;
-            Scene.setDefaultDesignResolution(1280, 720, policy);
+            policy = Scene.SceneResolutionPolicy.ExactFit;
+            Scene.setDefaultDesignResolution(800, 480, policy);
             Window.AllowUserResizing = true;
         }
 
