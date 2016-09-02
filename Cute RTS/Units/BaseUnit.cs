@@ -43,16 +43,13 @@ namespace Cute_RTS.Units
         public Point TargetLocation { get; set; }
         public Attackable TargetUnit { get; set; }
         public UnitCommand ActiveCommand { get; set; } = UnitCommand.Idle;
-        public Player UnitPlayer { get { return _player; } }
         public UnitRadar Radar { get { return _radar; } }
         
         public Point AttackLocation { get; set; }
         public Selectable Select { get { return _selectable; } }
         public CaptureFlag TargetFlag { get; set; } = null;
-
-        private Player _player;
-        private Animation _animation;
         
+        private Animation _animation;
         private bool _deathTimer = false;
         private UnitRadar _radar;
         private int _moveSpeed = 10;
@@ -91,6 +88,7 @@ namespace Cute_RTS.Units
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer) :
             base(tmc)
         {
+            UnitPlayer = player;
             FullHealth = 40;
 
             OnUnitDied += BaseUnit_OnUnitDied;
@@ -101,9 +99,8 @@ namespace Cute_RTS.Units
             _collider = new BoxCollider(-8, -8, 16, 16);
             _pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             _pathmover.MoveSpeed = MoveSpeed;
-            _player = player;
-            _player.addUnit(this);
-            _sprite.color = _player.PlayerColor;
+            UnitPlayer.addUnit(this);
+            _sprite.color = UnitPlayer.PlayerColor;
             _radar = new UnitRadar(Vision * 10);
 
             Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);

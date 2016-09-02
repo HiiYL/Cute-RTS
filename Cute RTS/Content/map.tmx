@@ -127,7 +127,7 @@
   <object id="12" name="StartLocation" x="36" y="366.667" width="84" height="82.6667">
    <ellipse/>
   </object>
-  <object id="14" name="StartLocation" x="636.667" y="41.3333" width="84" height="82.6667">
+  <object id="14" name="StartLocation" x="654.667" y="36.3333" width="84" height="82.6667">
    <ellipse/>
   </object>
  </objectgroup>

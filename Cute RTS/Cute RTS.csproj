@@ -67,6 +67,7 @@
     <Compile Include="Components\PathMover.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Scenes\GameScene.cs" />
+    <Compile Include="Structures\MainBase.cs" />
     <Compile Include="Units\BaseUnit.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Components\Selectable.cs" />
