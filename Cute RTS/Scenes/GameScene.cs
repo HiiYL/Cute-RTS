@@ -23,6 +23,8 @@ namespace Cute_RTS.Scenes
 
         private Table _resourceTable;
 
+        private Table _selectedUnitTable;
+
         private readonly List<Agent> agents = new List<Agent>();
 
         public GameScene():base()
@@ -37,14 +39,37 @@ namespace Cute_RTS.Scenes
 
             _resourceTable = canvas.stage.addElement(new Table());
             _resourceTable.setFillParent(true).top().left();
-            _resourceTable.setColor(Color.Black);
 
             var coinTex = content.Load<Texture2D>("coin");
 
             _resourceTable.add(new Image(coinTex));
-
-
             _resourceTable.add(new Label("Gold: 50"));
+
+
+            _resourceTable = canvas.stage.addElement(new Table());
+            _resourceTable.setFillParent(true).top().left();
+
+
+            _selectedUnitTable = canvas.stage.addElement(new Table());
+
+            _selectedUnitTable.setFillParent(true).bottom().left();
+
+            var attackTex = content.Load<Texture2D>("attack");
+            var button = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+                new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex)));
+            _selectedUnitTable.add(button).setMinWidth(100).setMinHeight(30);
+
+
+            var stopTex = content.Load<Texture2D>("stop");
+
+            var stopButton = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+    new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex)));
+            _selectedUnitTable.add(stopButton).setMinWidth(100).setMinHeight(30);
+
+
+
+
+
 
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");

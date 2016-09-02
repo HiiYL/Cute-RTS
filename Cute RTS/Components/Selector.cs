@@ -172,7 +172,8 @@ namespace Cute_RTS
                 foreach (var s in _selectables)
                 {
                     var b = s.entity as BaseUnit;
-                    b.stopMoving();
+                    if(b != null)
+                      b.stopMoving();
 
                 }
                 return;

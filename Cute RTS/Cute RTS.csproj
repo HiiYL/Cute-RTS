@@ -97,7 +97,9 @@
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <MonoGameContentReference Include="Content\Content.mgcb" />
+    <MonoGameContentReference Include="Content\Content.mgcb">
+      <SubType>Designer</SubType>
+    </MonoGameContentReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\nez\effects\Bevels.mgfxo">

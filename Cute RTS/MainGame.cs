@@ -26,10 +26,10 @@ namespace Cute_RTS
     {
 
         public const int SCREEN_DEFAULT_WIDTH = 800;
-        public const int SCREEN_DEFAULT_HEIGHT = 480;
+        public const int SCREEN_DEFAULT_HEIGHT = 580;
 
         public const int SCREEN_WIDTH = SCREEN_DEFAULT_WIDTH;
-        public const int SCREEN_HEIGHT = (SCREEN_DEFAULT_HEIGHT + 100);
+        public const int SCREEN_HEIGHT = (SCREEN_DEFAULT_HEIGHT);
         private Scene.SceneResolutionPolicy policy;
 
         public MainGame() : base(isFullScreen: false, enableEntitySystems: true)
