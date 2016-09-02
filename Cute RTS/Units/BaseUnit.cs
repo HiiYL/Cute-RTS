@@ -1,4 +1,5 @@
-﻿using Cute_RTS.Scenes;
+﻿using Cute_RTS.Components;
+using Cute_RTS.Scenes;
 using Cute_RTS.Structures;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,34 +16,9 @@ using System.Threading.Tasks;
 
 namespace Cute_RTS.Units
 {
-    class BaseUnit : Entity
+    class BaseUnit : Attackable
     {
         // Unit Properties:
-        public virtual int Health
-        {
-            get { return _health; }
-            set
-            {
-                if (value <= 0)
-                {
-                    OnUnitDied?.Invoke(this);
-                    die();
-                }
-                else
-                {
-                    _health = value;
-                }
-            }
-        }
-        public virtual int FullHealth
-        {
-            get { return _fullhealth; }
-        }
-        public virtual float GetHealthPercentage
-        {
-            get { return _health / (float)_fullhealth; }
-        }
-
         public virtual int Damage { get; set; } = 10;
         public virtual float Range { get; set; } = 1.5f; // default is melee
         public virtual int Vision
@@ -65,21 +41,18 @@ namespace Cute_RTS.Units
         }
         public virtual float AttackSpeed { get; set; } = 1.5f; // in seconds
         public Point TargetLocation { get; set; }
-        public BaseUnit TargetUnit { get; set; }
+        public Attackable TargetUnit { get; set; }
         public UnitCommand ActiveCommand { get; set; } = UnitCommand.Idle;
         public Player UnitPlayer { get { return _player; } }
         public UnitRadar Radar { get { return _radar; } }
-        public delegate void OnUnitDiedHandler(BaseUnit idied);
-        public event OnUnitDiedHandler OnUnitDied;
+        
         public Point AttackLocation { get; set; }
         public Selectable Select { get { return _selectable; } }
         public CaptureFlag TargetFlag { get; set; } = null;
 
-        private int _health;
-        private int _fullhealth;
         private Player _player;
         private Animation _animation;
-        private TiledMap _tilemap;
+        
         private bool _deathTimer = false;
         private UnitRadar _radar;
         private int _moveSpeed = 10;
@@ -114,13 +87,14 @@ namespace Cute_RTS.Units
         private BoxCollider _collider;
         private Selectable _selectable;
         private Sprite<Animation> _sprite;
-        public ProgressBar healthBar;
 
-        public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer)
+        public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer) :
+            base(tmc)
         {
-            _health = 40;
-            _fullhealth = _health;
-            _tilemap = tmc;
+            FullHealth = 40;
+
+            OnUnitDied += BaseUnit_OnUnitDied;
+            
             _selectable = new Selectable(new Sprite(selectTex));
             _sprite = new Sprite<Animation>();
             _pathmover = new PathMover(tmc, collisionlayer, _selectable);
@@ -139,6 +113,9 @@ namespace Cute_RTS.Units
             _pathmover.renderLayer = 1;
 
             setupAnimation(atlas);
+            var h = new HealthBar(this);
+            h.PositionOffset = new Vector2(32, 32);
+            addComponent(h);
             addComponent(_selectable);
             addComponent(_sprite);
             addComponent(_pathmover);
@@ -146,6 +123,21 @@ namespace Cute_RTS.Units
             addComponent(new UnitBehaviorTree(this, _pathmover));
             colliders.add(_collider);
 
+        }
+
+        private void BaseUnit_OnUnitDied(Attackable idied)
+        {
+            if (_deathTimer == true) return;
+
+            _deathTimer = true;
+            _pathmover.stopMoving();
+            ActiveCommand = UnitCommand.None;
+            playAnimation(Animation.Die);
+            Core.schedule(1.5f, timer =>
+            {
+                UnitPlayer.removeUnit(this);
+                destroy();
+            });
         }
 
         public bool attackLocation(Point target)
@@ -161,17 +153,12 @@ namespace Cute_RTS.Units
             return canGoTo;
         }
 
-        public void attackUnit(BaseUnit g)
+        public void attackUnit(Attackable g)
         {
             // stop going anywhere; time to kill this son of a bitch!
             _pathmover.stopMoving();
             ActiveCommand = UnitCommand.AttackUnit;
             TargetUnit = g;
-        }
-
-        public Point getTilePosition()
-        {
-            return _tilemap.worldToTilePosition(transform.position);
         }
 
         private void Pathmover_OnDirectionChange(Vector2 moveDir)
@@ -248,10 +235,6 @@ namespace Cute_RTS.Units
 
         public override void onAddedToScene()
         {
-            healthBar = ((BaseScene)scene).canvas.stage.addElement(new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White)));
-            healthBar.setWidth(64);
-
-
             playAnimation(Animation.Idle);
             base.onAddedToScene();
         }
@@ -281,29 +264,12 @@ namespace Cute_RTS.Units
             _sprite.addAnimation(Animation.Die, deathAnim);
         }
 
-        private void die()
-        {
-            if (_deathTimer == true) return;
-
-            _deathTimer = true;
-            _pathmover.stopMoving();
-            ActiveCommand = UnitCommand.None;
-            playAnimation(Animation.Die);
-            Core.schedule(1.5f, timer =>
-            {
-                UnitPlayer.removeUnit(this);
-                destroy();
-                healthBar.setIsVisible(false); //TODO: FIGURE OUT TO REMOVE IT COMPLETELY
-
-            });
-        }
-
         // execute attack, asumming target is already in range
         public void executeAttack()
         {
             if (TargetUnit == null) return;
 
-            Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.Health.ToString());
+            Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.CurrentHealth.ToString());
 
             Vector2 diff = transform.position - TargetUnit.transform.position;
 
@@ -325,8 +291,8 @@ namespace Cute_RTS.Units
                 playAnimation(Animation.AttackBack);
             }
 
-            bool killedTarget = Damage >= TargetUnit.Health;
-            TargetUnit.Health -= Damage;
+            bool killedTarget = Damage >= TargetUnit.CurrentHealth;
+            TargetUnit.CurrentHealth -= Damage;
 
             if (killedTarget)
             {
