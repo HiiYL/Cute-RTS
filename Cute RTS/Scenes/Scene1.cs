@@ -21,6 +21,8 @@ namespace Cute_RTS.Scenes
         private const int SensorDistance = 50;
         private const float MaxSpeed = 2f;
 
+        private Table _resourceTable;
+
         private readonly List<Agent> agents = new List<Agent>();
 
         public Scene1():base()
@@ -31,7 +33,19 @@ namespace Cute_RTS.Scenes
         public override void initialize()
         {
             base.initialize();
-            
+
+
+            _resourceTable = canvas.stage.addElement(new Table());
+            _resourceTable.setFillParent(true).top().left();
+            _resourceTable.setColor(Color.Black);
+
+            var coinTex = content.Load<Texture2D>("coin");
+
+            _resourceTable.add(new Image(coinTex));
+
+
+            _resourceTable.add(new Label("Gold: 50"));
+
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;

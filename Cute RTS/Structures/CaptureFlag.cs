@@ -40,7 +40,7 @@ namespace Cute_RTS.Structures
         public float CaptureRange { get; set; } = 70;
         public float CaptureDuration { get; set; } = 5000; // miliseconds
 
-        private CircleCollider _collider;
+        private BoxCollider _collider;
         private Selectable _selectable;
         private Sprite _flagTex;
         private Text _displayText;
@@ -65,8 +65,8 @@ namespace Cute_RTS.Structures
             _selectable = new Selectable(s);
             _selectable.setSelectionColor(Color.Yellow);
 
-            _collider = new CircleCollider(10);
-            _collider.setLocalOffset(new Vector2(15, 15));
+            _collider = new BoxCollider(32,32);
+            //_collider.setLocalOffset(new Vector2(15, 15));
             Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
             colliders.add(_collider);
 
