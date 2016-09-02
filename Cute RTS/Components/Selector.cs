@@ -1,9 +1,11 @@
-﻿using Cute_RTS.Structures;
+﻿using Cute_RTS.Scenes;
+using Cute_RTS.Structures;
 using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Nez;
+using Nez.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -99,9 +101,26 @@ namespace Cute_RTS
             }
         }
 
+        public void onStopMovingBtnPressed(Button button)
+        {
+            foreach (var s in _selectables)
+            {
+                var b = s.entity as BaseUnit;
+                if (b != null)
+                    b.stopMoving();
+            }
+        }
+
 
         void IUpdatable.update()
         {
+            if(_selectables.Count > 0)
+            {
+                ((GameScene)entity.scene)._selectedUnitTable.setVisible(true);
+            }else
+            {
+                ((GameScene)entity.scene)._selectedUnitTable.setVisible(false);
+            }
             if (Input.rightMouseButtonPressed && _selectables.Count > 0)
             {
                 Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);

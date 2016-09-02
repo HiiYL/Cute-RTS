@@ -23,9 +23,11 @@ namespace Cute_RTS.Scenes
 
         private Table _resourceTable;
 
-        private Table _selectedUnitTable;
+        public Table _selectedUnitTable { get; set; }
 
-        private readonly List<Agent> agents = new List<Agent>();
+    private readonly List<Agent> agents = new List<Agent>();
+        public ImageButton _attackBtn { get; set; }
+        public ImageButton _stopBtn { get; set; }
 
         public GameScene():base()
         {
@@ -55,16 +57,18 @@ namespace Cute_RTS.Scenes
             _selectedUnitTable.setFillParent(true).bottom().left();
 
             var attackTex = content.Load<Texture2D>("attack");
-            var button = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+            _attackBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
                 new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex)));
-            _selectedUnitTable.add(button).setMinWidth(100).setMinHeight(30);
+            _selectedUnitTable.add(_attackBtn).setMinWidth(100).setMinHeight(30);
 
 
             var stopTex = content.Load<Texture2D>("stop");
 
-            var stopButton = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+            _stopBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
     new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex)));
-            _selectedUnitTable.add(stopButton).setMinWidth(100).setMinHeight(30);
+            _selectedUnitTable.add(_stopBtn).setMinWidth(100).setMinHeight(30);
+
+            _selectedUnitTable.setVisible(false);
 
 
 
@@ -74,6 +78,7 @@ namespace Cute_RTS.Scenes
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
+            _stopBtn.onClicked += Selector.getSelector().onStopMovingBtnPressed;
             var tiledEntity = createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("map");
             var tmc = new TiledMapComponent(tiledmap, "collision");
