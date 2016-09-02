@@ -29,6 +29,8 @@ namespace Cute_RTS.Scenes
         public ImageButton _attackBtn { get; set; }
         public ImageButton _stopBtn { get; set; }
 
+        public bool isAttackBtnClicked = false;
+
         public GameScene():base()
         {
             Console.WriteLine("Init after");
@@ -78,7 +80,10 @@ namespace Cute_RTS.Scenes
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
+
             _stopBtn.onClicked += Selector.getSelector().onStopMovingBtnPressed;
+
+            _attackBtn.onClicked += Selector.getSelector().onAttackBtnPressed;
             var tiledEntity = createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("map");
             var tmc = new TiledMapComponent(tiledmap, "collision");

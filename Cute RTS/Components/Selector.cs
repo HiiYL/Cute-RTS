@@ -22,6 +22,8 @@ namespace Cute_RTS
         public override float height { get { return 1000; } }
         public Texture2D TargetTex { get; set; }
         public Player ActivePlayer { get; set; }
+
+        private bool isAttackBtnClicked = false;
         
         public delegate void SelectionHandler(IReadOnlyList<Selectable> sels);
         public event SelectionHandler OnSelectionChanged;
@@ -35,6 +37,7 @@ namespace Cute_RTS
         private bool _displayTarget = false;
         private Vector2 _displayTargetPoint;
         private Timer _targetTexTimer;
+
 
         public IReadOnlyList<Selectable> Selectables {
             get { return _selectables.AsReadOnly(); }
@@ -109,6 +112,12 @@ namespace Cute_RTS
                 if (b != null)
                     b.stopMoving();
             }
+        }
+
+        public void onAttackBtnPressed(Button button)
+        {
+            Console.WriteLine("Attack Btn Changed!");
+            isAttackBtnClicked = !isAttackBtnClicked;
         }
 
 
