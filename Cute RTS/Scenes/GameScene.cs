@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Cute_RTS.Scenes
 {
-    class Scene1 : BaseScene
+    class GameScene : BaseScene
     {
         private const int PopulationSize = 175;
         private const int SensorDistance = 50;
@@ -23,7 +23,7 @@ namespace Cute_RTS.Scenes
 
         private readonly List<Agent> agents = new List<Agent>();
 
-        public Scene1():base()
+        public GameScene():base()
         {
             Console.WriteLine("Init after");
         }

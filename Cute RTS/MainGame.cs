@@ -22,18 +22,19 @@ namespace Cute_RTS
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Core
+    public class MainGame : Core
     {
 
+        public const int SCREEN_WIDTH = 800;
+        public const int SCREEN_HEIGHT = 480;
+        private Scene.SceneResolutionPolicy policy;
 
-
-        Scene.SceneResolutionPolicy policy;
-
-        public Game1() : base(isFullScreen: false, enableEntitySystems: true)
+        public MainGame() : base(isFullScreen: false, enableEntitySystems: true)
         {
             policy = Scene.SceneResolutionPolicy.ExactFit;
-            Scene.setDefaultDesignResolution(800, 480, policy);
-            Window.AllowUserResizing = true;
+            Scene.setDefaultDesignResolution(SCREEN_WIDTH, SCREEN_HEIGHT, policy);
+            Screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+            // Window.AllowUserResizing = true;
         }
 
 
@@ -48,11 +49,9 @@ namespace Cute_RTS
         {
             // TODO: Add your initialization logic here
             base.Initialize();
-            Window.AllowUserResizing = true;
 
             // create our Scene with the DefaultRenderer and a clear color of CornflowerBlue
-            var myScene = new Scene1();
-
+            var myScene = new GameScene();
 
             // set the scene so Nez can take over
             Core.scene = myScene;

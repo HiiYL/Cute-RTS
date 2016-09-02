@@ -15,7 +15,6 @@ namespace Cute_RTS.Scenes
         public UICanvas canvas;
 
         public Table _table;
-        List<Button> _sceneButtons = new List<Button>();
         ScreenSpaceRenderer _screenSpaceRenderer;
 
         public BaseScene(bool addExcludeRenderer = true, bool needsFullRenderSizeForUI = false) : base()
@@ -55,7 +54,6 @@ namespace Cute_RTS.Scenes
             {
                 downFontColor = Color.Black
             };
-            _table.add(new TextButton("Toggle Scene List", topButtonStyle)).setFillX().setMinHeight(30).getElement<Button>().onClicked += onToggleSceneListClicked;
 
             _table.row().setPadTop(10);
             var checkbox = _table.add(new CheckBox("Debug Render", new CheckBoxStyle
@@ -78,13 +76,6 @@ namespace Cute_RTS.Scenes
             var instructionsEntity = createEntity("instructions");
             instructionsEntity.addComponent(new Text(Graphics.instance.bitmapFont, text, new Vector2(10, 10), Color.White))
                 .setRenderLayer(SCREEN_SPACE_RENDER_LAYER);
-        }
-
-
-        void onToggleSceneListClicked(Button butt)
-        {
-            foreach (var button in _sceneButtons)
-                button.setIsVisible(!button.isVisible());
         }
 
     }

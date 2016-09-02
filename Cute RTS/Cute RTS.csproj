@@ -66,9 +66,9 @@
     <Compile Include="Components\UnitRadar.cs" />
     <Compile Include="Components\PathMover.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Scenes\Scene1.cs" />
+    <Compile Include="Scenes\GameScene.cs" />
     <Compile Include="Units\BaseUnit.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="MainGame.cs" />
     <Compile Include="Components\Selectable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
