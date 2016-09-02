@@ -80,8 +80,6 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
-            //var bar = new ProgressBar(0, 1, 0.1f, false, ProgressBarStyle.create(Color.Black, Color.White));
-            
             List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
             var flagTexture = content.Load<Texture2D>("flag");
             var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
@@ -96,6 +94,7 @@ namespace Cute_RTS.Scenes
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(100, 200);
             kitty = giveMeCat();
+            kitty.FullHealth = 150;
             kitty.transform.position = new Vector2(150, 230);
 
             var enemyCat = giveEnemyCat();
