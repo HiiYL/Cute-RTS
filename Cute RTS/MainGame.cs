@@ -25,16 +25,19 @@ namespace Cute_RTS
     public class MainGame : Core
     {
 
-        public const int SCREEN_WIDTH = 800;
-        public const int SCREEN_HEIGHT = 480;
+        public const int SCREEN_DEFAULT_WIDTH = 800;
+        public const int SCREEN_DEFAULT_HEIGHT = 480;
+
+        public const int SCREEN_WIDTH = SCREEN_DEFAULT_WIDTH;
+        public const int SCREEN_HEIGHT = (SCREEN_DEFAULT_HEIGHT + 100);
         private Scene.SceneResolutionPolicy policy;
 
         public MainGame() : base(isFullScreen: false, enableEntitySystems: true)
         {
-            policy = Scene.SceneResolutionPolicy.ExactFit;
-            Scene.setDefaultDesignResolution(SCREEN_WIDTH, SCREEN_HEIGHT, policy);
+            policy = Scene.SceneResolutionPolicy.ShowAllPixelPerfect;
+            Scene.setDefaultDesignResolution(SCREEN_DEFAULT_WIDTH, SCREEN_DEFAULT_HEIGHT, policy);
             Screen.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-            // Window.AllowUserResizing = true;
+            Window.AllowUserResizing = true;
         }
 
 

@@ -50,6 +50,7 @@ namespace Cute_RTS
         public event OnUnitDiedHandler OnUnitDied;
         public delegate void OnHealthChangeHandler(float healthpercentage);
         public event OnHealthChangeHandler OnHealthChange;
+        public Player UnitPlayer { get; set; }
 
         private int _currenthealth;
         private int _fullhealth;
