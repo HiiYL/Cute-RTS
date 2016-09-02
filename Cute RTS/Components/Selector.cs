@@ -175,18 +175,24 @@ namespace Cute_RTS
                     {
                         var b = s.entity as BaseUnit;
                         if (b == null) continue;
-
-                        // b.attackLocation(Input.mousePosition.ToPoint()); // test attack location
-                        b.gotoLocation(Input.mousePosition.ToPoint());
-                        if (TargetTex != null)
+                        if (isAttackBtnClicked)
                         {
-                            _displayTarget = true;
-                            _displayTargetPoint = Input.mousePosition - new Vector2(TargetTex.Width / 2, TargetTex.Height / 2);
+                            b.attackLocation(Input.mousePosition.ToPoint()); // test attack location
+                            isAttackBtnClicked = false;
+                        }
+                        else
+                        {
+                            b.gotoLocation(Input.mousePosition.ToPoint());
+                            if (TargetTex != null)
+                            {
+                                _displayTarget = true;
+                                _displayTargetPoint = Input.mousePosition - new Vector2(TargetTex.Width / 2, TargetTex.Height / 2);
 
-                            // restart timer
-                            _targetTexTimer.Stop();
-                            _targetTexTimer.Start();
+                                // restart timer
+                                _targetTexTimer.Stop();
+                                _targetTexTimer.Start();
 
+                            }
                         }
                     }
                 }
@@ -218,7 +224,7 @@ namespace Cute_RTS
                     (int) Math.Min(_initialPos.Y, Input.mousePosition.Y),
                     (int) Math.Abs(Input.mousePosition.X - _initialPos.X),
                     (int) Math.Abs(Input.mousePosition.Y - _initialPos.Y));
-            } else if (Input.leftMouseButtonReleased)
+            } else if (Input.leftMouseButtonReleased && !isAttackBtnClicked)
             {
                 getSelector().deselectAll();
                 _isSelectionBox = false;
