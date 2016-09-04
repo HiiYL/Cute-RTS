@@ -56,11 +56,13 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AIPlayer.cs" />
     <Compile Include="AI\Agent.cs" />
     <Compile Include="AI\HeadingSmoother.cs" />
     <Compile Include="AI\SteeringBehaviours.cs" />
     <Compile Include="Attackable.cs" />
     <Compile Include="Components\HealthBar.cs" />
+    <Compile Include="PlayerBehaviourTree.cs" />
     <Compile Include="Structures\BaseStructure.cs" />
     <Compile Include="Structures\CaptureFlag.cs" />
     <Compile Include="Components\UnitRadar.cs" />

@@ -1,5 +1,6 @@
 ﻿using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
+using Nez;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace Cute_RTS
 {
-    class Player
+    class Player : Entity
     {
         public Color PlayerColor { get; set; }
         public List<BaseUnit> Units { get { return _units; } }

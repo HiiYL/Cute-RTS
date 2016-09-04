@@ -30,6 +30,8 @@ namespace Cute_RTS.Scenes
         public ImageButton _stopBtn { get; set; }
 
         public bool isAttackBtnClicked = false;
+        private Player myself;
+        private Player enemy;
 
         public GameScene():base()
         {
@@ -72,18 +74,14 @@ namespace Cute_RTS.Scenes
 
             _selectedUnitTable.setVisible(false);
 
-
-
-
-
-
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
 
             _stopBtn.onClicked += Selector.getSelector().onStopMovingBtnPressed;
-
             _attackBtn.onClicked += Selector.getSelector().onAttackBtnPressed;
+
+
             var tiledEntity = createEntity("tiled-map-entity");
             var tiledmap = content.Load<TiledMap>("map");
             var tmc = new TiledMapComponent(tiledmap, "collision");
@@ -99,10 +97,12 @@ namespace Cute_RTS.Scenes
 
             float angle = MathHelper.ToRadians(270);
 
-            Player myself = new Player(Color.Aqua, "Robert Baratheon");
-            Player enemy = new Player(Color.Orchid, "Enemy AI");
+            myself = new Player(Color.Aqua, "Robert Baratheon");
+            enemy = new AIPlayer(Color.Orchid, "Enemy AI", myself);
             myself.Opponent = enemy;
-            enemy.Opponent = myself;
+            //enemy.Opponent = myself;
+
+            addEntity(enemy);
 
             Selector.getSelector().ActivePlayer = myself;
             var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
@@ -164,12 +164,17 @@ namespace Cute_RTS.Scenes
 
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(100, 200);
+            /*
             kitty = giveMeCat();
             kitty.FullHealth = 150;
             kitty.transform.position = new Vector2(150, 230);
+            */
 
             var enemyCat = giveEnemyCat();
             enemyCat.transform.position = new Vector2(700, 200);
+
+            var enemyCat2 = giveEnemyCat();
+            enemyCat2.transform.position = new Vector2(750, 200);
 
             var enemyCatStructure = giveEnemyCatStructure();
             enemyCatStructure.transform.position = new Vector2(650, 300);
