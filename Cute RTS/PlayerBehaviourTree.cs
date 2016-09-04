@@ -1,4 +1,5 @@
-﻿using Cute_RTS.Units;
+﻿using Cute_RTS.Scenes;
+using Cute_RTS.Units;
 using Nez;
 using Nez.AI.BehaviorTrees;
 using System;
@@ -15,6 +16,7 @@ namespace Cute_RTS
         private Player _opponent;
 
         bool walkingToEnemy = false;
+        bool walkingToFlag = false;
 
         private Stack<AIPlayer.UnitCommand> _commandStack;
 
@@ -30,7 +32,13 @@ namespace Cute_RTS
             var builder = BehaviorTreeBuilder<PlayerBehaviourTree>.begin(this);
             builder.selector(AbortTypes.Self);
 
-            builder.conditionalDecorator(b => b._player.Units.Count > b._opponent.Units.Count);
+            builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
+            builder.sequence()
+                .logAction("Enemy is WEAKER! CHARRGGEEE")
+                .action(b => b.captureFlag())
+                .endComposite();
+
+            builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action( b => b.attackEnemy())
@@ -61,9 +69,37 @@ namespace Cute_RTS
                     }
                 }
                 return TaskStatus.Running;
-
             }
+        }
 
+        private TaskStatus captureFlag()
+        {
+            if(!walkingToFlag)
+            {
+                walkingToFlag = true;
+                var i = 0;
+                var captureFlags = ((GameScene)entity.scene).captureFlags;
+                foreach (BaseUnit unit in _player.Units)
+                {
+                    if (captureFlags[i] != null)
+                    {
+                        unit.captureFlag(captureFlags[i]);
+                        i++;
+                    }
+                }
+                return TaskStatus.Running;
+            }
+            else
+            {
+                foreach (BaseUnit unit in _player.Units)
+                {
+                    if (unit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                    {
+                        return TaskStatus.Success;
+                    }
+                }
+            }
+            return TaskStatus.Running;
         }
 
         public override void onAddedToEntity()

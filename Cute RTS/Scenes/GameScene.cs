@@ -29,6 +29,9 @@ namespace Cute_RTS.Scenes
         public ImageButton _attackBtn { get; set; }
         public ImageButton _stopBtn { get; set; }
 
+
+        public List<CaptureFlag> captureFlags;
+
         public bool isAttackBtnClicked = false;
         private Player myself;
         private Player enemy;
@@ -155,10 +158,12 @@ namespace Cute_RTS.Scenes
             var flagTexture = content.Load<Texture2D>("flag");
             var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
             CaptureFlag captureflag;
+            captureFlags = new List<CaptureFlag>();
             foreach (TiledObject f in flags)
             {
                 captureflag = new CaptureFlag(flagTexture, flagSelectionTexture);
                 captureflag.transform.position = new Vector2(f.x, f.y);
+                captureFlags.Add(captureflag);
                 addEntity(captureflag);
             }
 
