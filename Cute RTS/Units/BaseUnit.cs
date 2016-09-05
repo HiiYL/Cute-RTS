@@ -46,7 +46,6 @@ namespace Cute_RTS.Units
         public UnitRadar Radar { get { return _radar; } }
         
         public Point AttackLocation { get; set; }
-        public Selectable Select { get { return _selectable; } }
         public CaptureFlag TargetFlag { get; set; } = null;
         
         private Animation _animation;
@@ -82,24 +81,20 @@ namespace Cute_RTS.Units
         // components
         private PathMover _pathmover;
         private BoxCollider _collider;
-        private Selectable _selectable;
         private Sprite<Animation> _sprite;
 
         public BaseUnit(TextureAtlas atlas, Texture2D selectTex, Player player, TiledMap tmc, string collisionlayer) :
-            base(tmc)
+            base(tmc, new Sprite(selectTex), player)
         {
-            UnitPlayer = player;
             FullHealth = 40;
 
             OnUnitDied += BaseUnit_OnUnitDied;
             
-            _selectable = new Selectable(new Sprite(selectTex));
             _sprite = new Sprite<Animation>();
             _pathmover = new PathMover(tmc, collisionlayer, _selectable);
             _collider = new BoxCollider(-8, -8, 16, 16);
             _pathmover.OnDirectionChange += Pathmover_OnDirectionChange;
             _pathmover.MoveSpeed = MoveSpeed;
-            UnitPlayer.addUnit(this);
             _sprite.color = UnitPlayer.PlayerColor;
             _radar = new UnitRadar(Vision * 10);
 
@@ -113,13 +108,11 @@ namespace Cute_RTS.Units
             var h = new HealthBar(this);
             h.PositionOffset = new Vector2(32, 32);
             addComponent(h);
-            addComponent(_selectable);
             addComponent(_sprite);
             addComponent(_pathmover);
             addComponent(_radar);
             addComponent(new UnitBehaviorTree(this, _pathmover));
             colliders.add(_collider);
-
         }
 
         private void BaseUnit_OnUnitDied(Attackable idied)
@@ -212,7 +205,7 @@ namespace Cute_RTS.Units
             ActiveCommand = UnitCommand.Idle;
         }
 
-        public void followUnit(BaseUnit bu)
+        public void followUnit(Attackable bu)
         {
             TargetUnit = bu;
             ActiveCommand = UnitCommand.Follow;

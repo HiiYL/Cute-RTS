@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Nez;
+using Nez.Sprites;
 using Nez.Tiled;
 using System;
 using System.Collections.Generic;
@@ -50,17 +52,25 @@ namespace Cute_RTS
         public event OnUnitDiedHandler OnUnitDied;
         public delegate void OnHealthChangeHandler(float healthpercentage);
         public event OnHealthChangeHandler OnHealthChange;
-        public Player UnitPlayer { get; set; }
+        public Player UnitPlayer { get { return _player; } }
+        public Selectable Select { get { return _selectable; } }
 
+        private Player _player;
         private int _currenthealth;
         private int _fullhealth;
         private TiledMap _tilemap;
+        protected Selectable _selectable;
 
-        public Attackable(TiledMap tmc)
+        public Attackable(TiledMap tmc, Sprite selectTex, Player player)
         {
+            _player = player;
+            UnitPlayer.addUnit(this);
+
             // start with full health
             _currenthealth = _fullhealth = 10;
             _tilemap = tmc;
+            _selectable = new Selectable(selectTex);
+            addComponent(_selectable);
         }
 
         public virtual float HealthPercentage

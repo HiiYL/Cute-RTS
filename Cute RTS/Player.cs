@@ -11,30 +11,30 @@ namespace Cute_RTS
     class Player : Entity
     {
         public Color PlayerColor { get; set; }
-        public List<BaseUnit> Units { get { return _units; } }
+        public List<Attackable> Units { get { return _units; } }
         public string Name { get; set; }
         public Player Opponent { get; set; }
 
-        private List<BaseUnit> _units;
+        private List<Attackable> _units;
 
         public Player(Color color, string name)
         {
-            _units = new List<BaseUnit>();
+            _units = new List<Attackable>();
             PlayerColor = color;
             Name = name;
         }
 
-        public bool isMyUnit(BaseUnit bu)
+        public bool isMyUnit(Attackable bu)
         {
             return _units.Contains(bu);
         }
 
-        public void addUnit(BaseUnit bu)
+        public void addUnit(Attackable bu)
         {
             _units.Add(bu);
         }
 
-        public bool removeUnit(BaseUnit bu)
+        public bool removeUnit(Attackable bu)
         {
             return _units.Remove(bu);
         }

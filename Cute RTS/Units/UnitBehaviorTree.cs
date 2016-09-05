@@ -149,7 +149,10 @@ namespace Cute_RTS.Units
             }
 
             Point diff = _baseunit.getTilePosition() - _baseunit.TargetUnit.getTilePosition();
-            float distance = (float) Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y);
+            // need to account for the size of the collider, otherwise if collider is big unit never 
+            // thinks it reaches it.
+            float size = _baseunit.TargetUnit.colliders.getCollider<Collider>().bounds.width / 10;
+            float distance = (float)Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y) - size;
 
             Console.WriteLine("Follow distance - {0}    Distance - {1}", followDistance, distance);
             if (distance <= followDistance)

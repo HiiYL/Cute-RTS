@@ -135,10 +135,10 @@ namespace Cute_RTS
                 Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
                 if (v != null)
                 {
-                    if (v.entity is BaseUnit)
+                    if (v.entity is Attackable)
                     {
-                        var g = v.entity as BaseUnit;
-
+                        var g = v.entity as Attackable;
+                        
                         g.Select.playClickSelectAnimation();
                         foreach (var s in _selectables)
                         {

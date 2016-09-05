@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Cute_RTS.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
@@ -14,12 +15,10 @@ namespace Cute_RTS.Structures
 {
     class MainBase : Attackable
     {
-        private Selectable _selectable;
         private Sprite<Animation> _sprite;
         private BoxCollider _collider;
         private Animation _animation;
 
-        public Selectable Select { get { return _selectable; } }
         public enum Animation
         {
             None,
@@ -28,14 +27,15 @@ namespace Cute_RTS.Structures
         }
 
         public MainBase(TiledMap tmc, TextureAtlas atlas, Texture2D selectTex, Player player) :
-            base(tmc)
+            base(tmc, new Sprite(selectTex), player)
         {
-            UnitPlayer = player;
+            FullHealth = 100;
             transform.scale = new Vector2(0.7f, 0.7f);
 
-            _selectable = new Selectable(new Sprite(selectTex));
-            addComponent(_selectable);
-            
+            var h = new HealthBar(this);
+            h.PositionOffset = new Vector2(30, 55);
+            addComponent(h);
+
             _sprite = new Sprite<Animation>();
             _sprite.color = UnitPlayer.PlayerColor;
             setupAnimation(atlas);
@@ -71,7 +71,7 @@ namespace Cute_RTS.Structures
 
         private void MainBase_OnUnitDied(Attackable idied)
         {
-            throw new NotImplementedException();
+            destroy();
         }
     }
 }
