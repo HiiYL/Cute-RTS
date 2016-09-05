@@ -32,17 +32,17 @@ namespace Cute_RTS
             var builder = BehaviorTreeBuilder<PlayerBehaviourTree>.begin(this);
             builder.selector(AbortTypes.Self);
 
-            /*
+            
             builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action(b => b.captureFlag())
                 .endComposite(); 
-            */
+            
             builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
-                .action( b => b.captureFlag())
+                .action( b => b.attackEnemy())
                 .endComposite();
             
 

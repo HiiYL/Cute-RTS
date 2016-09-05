@@ -177,8 +177,8 @@ namespace Cute_RTS.Scenes
                 addEntity(captureflag);
             }
 
-            //BaseUnit kitty = giveMeCat();
-           // kitty.transform.position = new Vector2(100, 200);
+            BaseUnit kitty = giveMeCat();
+            kitty.transform.position = new Vector2(100, 200);
             /*
             kitty = giveMeCat();
             kitty.FullHealth = 150;
