@@ -159,10 +159,20 @@ namespace Cute_RTS.Scenes
             var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
             CaptureFlag captureflag;
             captureFlags = new List<CaptureFlag>();
+
+            int tileSize = 16;
+            //int nearestMultiple = (int)Math.Round((value / (double)tileSize),MidpointRounding.AwayFromZero) * tileSize;
+
             foreach (TiledObject f in flags)
             {
                 captureflag = new CaptureFlag(flagTexture, flagSelectionTexture);
-                captureflag.transform.position = new Vector2(f.x, f.y);
+
+                int xNearestTile = (int)Math.Round((f.x / (double)tileSize), MidpointRounding.AwayFromZero) * tileSize;
+                int yNearestTile = (int)Math.Round((f.y / (double)tileSize), MidpointRounding.AwayFromZero) * tileSize;
+                captureflag.transform.position = new Vector2(xNearestTile, yNearestTile);
+                Console.WriteLine(xNearestTile);
+                Console.WriteLine(yNearestTile);
+                Console.WriteLine("");
                 captureFlags.Add(captureflag);
                 addEntity(captureflag);
             }

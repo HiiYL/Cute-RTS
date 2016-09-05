@@ -12,7 +12,7 @@ namespace Cute_RTS
         public AIPlayer(Color color, string name, Player opponent) : base(color, name)
         {
             Opponent = opponent;
-            addComponent(new PlayerBehaviourTree(this, opponent));
+            //addComponent(new PlayerBehaviourTree(this, opponent));
         }
 
         public enum UnitCommand

@@ -46,7 +46,7 @@ namespace Cute_RTS
         private float _colliderPosX;
         private float _colliderPosY;
         private Point _initialPositionInTileMap;
-        private int _pathingReroutePadding = 1;
+        private int _pathingReroutePadding = 0;
         private Vector2 _collisionPos;
         private List<Point> _pathingCollisionPoints;
 
@@ -183,7 +183,8 @@ namespace Cute_RTS
                         Point pointToAdd = new Point(
                                 _initialPositionInTileMap.X + i,
                                 _initialPositionInTileMap.Y + j);
-                        if (_astarGraph.weightedNodes.Contains(pointToAdd)) continue;
+                        if (_astarGraph.weightedNodes.Contains(pointToAdd))
+                            continue;
                         _pathingCollisionPoints.Add(pointToAdd);
                     }
                 }
