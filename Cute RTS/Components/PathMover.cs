@@ -240,10 +240,13 @@ namespace Cute_RTS
 
         public void stopMoving()
         {
-            _collisionPos = new Vector2(-1, -1);
-            _isDone = true;
-            _target = entity.transform.position.ToPoint();
-            OnArrival?.Invoke();
+            if (entity != null)
+            {
+                _collisionPos = new Vector2(-1, -1);
+                _isDone = true;
+                _target = entity.transform.position.ToPoint();
+                OnArrival?.Invoke();
+            }
         }
 
 

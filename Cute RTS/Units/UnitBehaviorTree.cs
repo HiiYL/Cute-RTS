@@ -154,7 +154,6 @@ namespace Cute_RTS.Units
             float size = _baseunit.TargetUnit.colliders.getCollider<Collider>().bounds.width / 10;
             float distance = (float)Math.Sqrt(diff.X * diff.X + diff.Y * diff.Y) - size;
 
-            Console.WriteLine("Follow distance - {0}    Distance - {1}", followDistance, distance);
             if (distance <= followDistance)
             {
                 _pathmover.stopMoving();

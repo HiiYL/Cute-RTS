@@ -32,17 +32,19 @@ namespace Cute_RTS
             var builder = BehaviorTreeBuilder<PlayerBehaviourTree>.begin(this);
             builder.selector(AbortTypes.Self);
 
+            /*
             builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action(b => b.captureFlag())
-                .endComposite();
-
+                .endComposite(); 
+            */
             builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
-                .action( b => b.attackEnemy())
+                .action( b => b.captureFlag())
                 .endComposite();
+            
 
             builder.endComposite();
             _tree = builder.build();
@@ -84,8 +86,10 @@ namespace Cute_RTS
 
         private TaskStatus captureFlag()
         {
+
             if(!walkingToFlag)
             {
+                Console.WriteLine("Walking To Flag!");
                 walkingToFlag = true;
                 var i = 0;
                 var captureFlags = ((GameScene)entity.scene).captureFlags;
@@ -94,10 +98,12 @@ namespace Cute_RTS
                     if (unit is BaseUnit)
                     {
                         BaseUnit u = unit as BaseUnit;
-                        if (captureFlags[i] != null)
+                        foreach (var flag in captureFlags)
                         {
-                            u.captureFlag(captureFlags[i]);
-                            i++;
+                            if (flag != null && flag.Capturer != entity)
+                            {
+                                u.captureFlag(flag);
+                            }
                         }
                     }
                 }
@@ -112,12 +118,13 @@ namespace Cute_RTS
                         BaseUnit u = unit as BaseUnit;
                         if (u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
                         {
-                            return TaskStatus.Success;
+                            walkingToFlag = false;
+                            //return TaskStatus.Success;
                         }
                     }
                 }
             }
-            return TaskStatus.Running;
+             return TaskStatus.Running;
         }
 
         public override void onAddedToEntity()
