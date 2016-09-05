@@ -54,18 +54,28 @@ namespace Cute_RTS
             if (!walkingToEnemy)
             {
                 walkingToEnemy = true;
-                foreach (BaseUnit unit in _player.Units)
+
+                foreach (Attackable unit in _player.Units)
                 {
-                    unit.attackUnit(_opponent.Units[0]);
+                    if (unit is BaseUnit)
+                    {
+                        BaseUnit u = unit as BaseUnit;
+                        u.attackUnit(_opponent.Units[0]);
+                    }
+                    
                 }
                 return TaskStatus.Running;
             }else
             {
-                foreach (BaseUnit unit in _player.Units)
+                foreach (Attackable unit in _player.Units)
                 {
-                    if(unit.ActiveCommand != BaseUnit.UnitCommand.AttackUnit)
+                    if (unit is BaseUnit)
                     {
-                        return TaskStatus.Success;
+                        BaseUnit u = unit as BaseUnit;
+                        if (u.ActiveCommand != BaseUnit.UnitCommand.AttackUnit)
+                        {
+                            return TaskStatus.Success;
+                        }
                     }
                 }
                 return TaskStatus.Running;
@@ -79,23 +89,31 @@ namespace Cute_RTS
                 walkingToFlag = true;
                 var i = 0;
                 var captureFlags = ((GameScene)entity.scene).captureFlags;
-                foreach (BaseUnit unit in _player.Units)
+                foreach (Attackable unit in _player.Units)
                 {
-                    if (captureFlags[i] != null)
+                    if (unit is BaseUnit)
                     {
-                        unit.captureFlag(captureFlags[i]);
-                        i++;
+                        BaseUnit u = unit as BaseUnit;
+                        if (captureFlags[i] != null)
+                        {
+                            u.captureFlag(captureFlags[i]);
+                            i++;
+                        }
                     }
                 }
                 return TaskStatus.Running;
             }
             else
             {
-                foreach (BaseUnit unit in _player.Units)
+                foreach (Attackable unit in _player.Units)
                 {
-                    if (unit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                    if (unit is BaseUnit)
                     {
-                        return TaskStatus.Success;
+                        BaseUnit u = unit as BaseUnit;
+                        if (u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                        {
+                            return TaskStatus.Success;
+                        }
                     }
                 }
             }
