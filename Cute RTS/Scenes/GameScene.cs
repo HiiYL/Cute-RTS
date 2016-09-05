@@ -184,9 +184,12 @@ namespace Cute_RTS.Scenes
             var enemyCat2 = giveEnemyCat();
             enemyCat2.transform.position = new Vector2(750, 200);
 
+
+            /*
             var enemyCatStructure = giveEnemyCatStructure();
             enemyCatStructure.transform.position = new Vector2(650, 300);
             enemyCatStructure.MoveSpeed = 0;
+            */
         }
     }
 }

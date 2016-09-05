@@ -121,11 +121,13 @@ namespace Cute_RTS
             {
                 _collisionPos = entity.transform.position;
                 Core.schedule(0.2f, timer =>
-                { if (_collisionPos == entity.transform.position)
                 {
-                    _target = _target + new Point(Nez.Random.range(-2, 3), Nez.Random.range(-2, 3));
-                    Core.schedule(0.5f, t => stopMoving());
-                } });
+                    if (_collisionPos == entity.transform.position)
+                    {
+                        _target = _target + new Point(Nez.Random.range(-2, 3), Nez.Random.range(-2, 3));
+                        Core.schedule(0.5f, t => stopMoving());
+                    }
+                });
                 
                 
                 rerouteEntity(ref res);

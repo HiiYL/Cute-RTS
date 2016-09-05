@@ -65,10 +65,10 @@ namespace Cute_RTS.Structures
             _selectable = new Selectable(s);
             _selectable.setSelectionColor(Color.Yellow);
 
-            _collider = new BoxCollider(32,32);
+            //_collider = new BoxCollider(32,32);
             //_collider.setLocalOffset(new Vector2(15, 15));
-            Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
-            colliders.add(_collider);
+            //Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
+            //colliders.add(_collider);
 
             _displayText = new Text(Graphics.instance.bitmapFont, "", new Vector2(5, -40), Color.LightGoldenrodYellow);
             //_displayText.setText("DIE DIE DIE!");
@@ -114,7 +114,7 @@ namespace Cute_RTS.Structures
 
         public Vector2 getPosition()
         {
-            return _collider.absolutePosition;
+            return transform.position;
         }
 
     }
