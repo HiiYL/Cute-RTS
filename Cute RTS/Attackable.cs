@@ -30,8 +30,9 @@ namespace Cute_RTS
                 {
                     _currenthealth = newHealth;
                     OnHealthChange?.Invoke(HealthPercentage);
-                    if (!isAlive)
+                    if (isAlive && _currenthealth <= 0) // you only die once
                     {
+                        isAlive = false; 
                         OnUnitDied?.Invoke(this);
                     }
                 }
@@ -47,7 +48,7 @@ namespace Cute_RTS
                 _currenthealth = (int)(_fullhealth * percen);
             }
         }
-        public bool isAlive { get { return _currenthealth > 0; } }
+        public bool isAlive { get; set; } = true;
         public delegate void OnUnitDiedHandler(Attackable idied);
         public event OnUnitDiedHandler OnUnitDied;
         public delegate void OnHealthChangeHandler(float healthpercentage);
@@ -64,7 +65,6 @@ namespace Cute_RTS
         public Attackable(TiledMap tmc, Sprite selectTex, Player player)
         {
             _player = player;
-            UnitPlayer.addUnit(this);
 
             // start with full health
             _currenthealth = _fullhealth = 10;
@@ -81,6 +81,18 @@ namespace Cute_RTS
         public Point getTilePosition()
         {
             return _tilemap.worldToTilePosition(transform.position);
+        }
+
+        public override void onAddedToScene()
+        {
+            base.onAddedToScene();
+            UnitPlayer.addUnit(this);
+        }
+
+        public override void onRemovedFromScene()
+        {
+            base.onRemovedFromScene();
+            UnitPlayer.removeUnit(this);
         }
     }
 }

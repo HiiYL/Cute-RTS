@@ -125,7 +125,6 @@ namespace Cute_RTS.Units
             playAnimation(Animation.Die);
             Core.schedule(1.5f, timer =>
             {
-                UnitPlayer.removeUnit(this);
                 destroy();
             });
         }

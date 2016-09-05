@@ -23,7 +23,8 @@ namespace Cute_RTS.Structures
         {
             None,
             Default,
-            BuildingUnit
+            BuildingUnit,
+            Explode
         }
 
         public MainBase(TiledMap tmc, TextureAtlas atlas, Texture2D selectTex, Player player) :
@@ -67,11 +68,21 @@ namespace Cute_RTS.Structures
         {
             _sprite.addAnimation(Animation.Default, atlas.getSpriteAnimation("idle"));
             _sprite.addAnimation(Animation.BuildingUnit, atlas.getSpriteAnimation("training"));
+            var explo = atlas.getSpriteAnimation("explosion");
+            explo.loop = false;
+            _sprite.addAnimation(Animation.Explode, explo);
         }
 
         private void MainBase_OnUnitDied(Attackable idied)
         {
-            destroy();
+            Scene s = scene;
+            _sprite.color = Color.White;
+            playAnimation(Animation.Explode);
+            Core.schedule(1f, timer =>
+            {
+                destroy();
+            });
+
         }
     }
 }
