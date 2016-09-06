@@ -9,9 +9,8 @@ using System.Timers;
 
 namespace Cute_RTS.Units
 {
-    class UnitBehaviorTree : Component
+    class UnitBehaviorTree : Component, IUpdatable
     {
-        public float UpdateInterval { get; set; } = 0.03f;
         private BehaviorTree<UnitBehaviorTree> _tree;
         private BaseUnit _baseunit;
         private PathMover _pathmover;
@@ -77,6 +76,7 @@ namespace Cute_RTS.Units
 
             builder.endComposite();
             _tree = builder.build();
+            _tree.updatePeriod = 0.03f;
         }
 
         private TaskStatus checkArriveOnRange(Vector2 target, float range)
@@ -207,38 +207,21 @@ namespace Cute_RTS.Units
 
         public override void onAddedToEntity()
         {
-            buildTree();
-            enabled = true;
-            RunTick();
-
             base.onAddedToEntity();
+            buildTree();
         }
 
-        public override void onRemovedFromEntity()
-        {
-            enabled = false;
-            base.onRemovedFromEntity();
-        }
-
-        public override void onEnabled()
-        {
-            RunTick();
-            base.onEnabled();
-        }
-
-        private void RunTick()
-        {
-            if (!enabled) return;
-
-            _tree.tick();
-
-            Core.schedule(UpdateInterval, timer => RunTick());
-        }
 
         private void _attackTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _isAttacking = false;
             _attackTimer.Stop();
+        }
+
+        void IUpdatable.update()
+        {
+            if (_tree != null)
+                _tree.tick();
         }
     }
 }
