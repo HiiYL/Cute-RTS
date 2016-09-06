@@ -177,16 +177,26 @@ namespace Cute_RTS.Scenes
                 addEntity(captureflag);
             }
 
-            BaseUnit kitty = giveMeCat();
-            kitty.transform.position = new Vector2(100, 200);
+            //BaseUnit kitty = giveMeCat();
+            //kitty.transform.position = new Vector2(100, 200);
 
-            //giveMeCat().transform.position = new Vector2(150, 250);
+
+            for (int i = 0; i < 5; i++)
+            {
+                giveMeCat().transform.position = new Vector2(150, 250);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                giveEnemyCat().transform.position = new Vector2(700, 250);
+            }
             /*
             kitty = giveMeCat();
             kitty.FullHealth = 150;
             kitty.transform.position = new Vector2(150, 230);
             */
 
+            /*
             var enemyCat = giveEnemyCat();
             enemyCat.transform.position = new Vector2(700, 200);
 
@@ -195,6 +205,7 @@ namespace Cute_RTS.Scenes
 
             var enemyCat2 = giveEnemyCat();
             enemyCat2.transform.position = new Vector2(750, 200);
+            */
 
 
             /*

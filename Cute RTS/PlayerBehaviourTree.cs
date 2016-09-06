@@ -91,7 +91,6 @@ namespace Cute_RTS
             if(!walkingToFlag)
             {
                 walkingToFlag = true;
-                var i = 0;
                 var captureFlags = ((GameScene)entity.scene).captureFlags;
                 foreach (Attackable unit in _player.Units)
                 {
@@ -107,7 +106,6 @@ namespace Cute_RTS
                         }
                     }
                 }
-                return TaskStatus.Running;
             }
             else
             {
@@ -124,7 +122,7 @@ namespace Cute_RTS
                     }
                 }
             }
-             return TaskStatus.Running;
+            return TaskStatus.Running;
         }
 
         public override void onAddedToEntity()
