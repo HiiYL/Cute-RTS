@@ -35,7 +35,7 @@ namespace Cute_RTS
             
             builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
             builder.sequence()
-                .logAction("Enemy is WEAKER! CHARRGGEEE")
+                .logAction("No enemies Left! Time to get some flags!")
                 .action(b => b.captureFlag())
                 .endComposite(); 
             
@@ -76,6 +76,7 @@ namespace Cute_RTS
                         BaseUnit u = unit as BaseUnit;
                         if (u.ActiveCommand != BaseUnit.UnitCommand.AttackUnit)
                         {
+                            walkingToEnemy = false;
                             return TaskStatus.Success;
                         }
                     }
@@ -89,7 +90,6 @@ namespace Cute_RTS
 
             if(!walkingToFlag)
             {
-                Console.WriteLine("Walking To Flag!");
                 walkingToFlag = true;
                 var i = 0;
                 var captureFlags = ((GameScene)entity.scene).captureFlags;

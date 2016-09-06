@@ -179,6 +179,8 @@ namespace Cute_RTS.Scenes
 
             BaseUnit kitty = giveMeCat();
             kitty.transform.position = new Vector2(100, 200);
+
+            //giveMeCat().transform.position = new Vector2(150, 250);
             /*
             kitty = giveMeCat();
             kitty.FullHealth = 150;

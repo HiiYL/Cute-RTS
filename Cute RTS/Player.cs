@@ -17,6 +17,8 @@ namespace Cute_RTS
 
         private List<Attackable> _units;
 
+        private int gold { get; set; } = 0;
+
         public Player(Color color, string name)
         {
             _units = new List<Attackable>();
