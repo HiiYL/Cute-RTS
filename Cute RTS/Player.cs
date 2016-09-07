@@ -14,10 +14,25 @@ namespace Cute_RTS
         public List<Attackable> Units { get { return _units; } }
         public string Name { get; set; }
         public Player Opponent { get; set; }
+        public int Gold {
+            get { return _gold; }
+            set
+            {
+                if (value < 0) throw new Exception("DUDE. No negative currency bruh!");
+                if (value != _gold)
+                {
+                    _gold = value;
+                    OnGoldChange?.Invoke(_gold);
+                }
+            }
+        }
+
+        public delegate void OnGoldChangeHandler(int amount);
+        public event OnGoldChangeHandler OnGoldChange;
 
         private List<Attackable> _units;
 
-        private int gold { get; set; } = 0;
+        private int _gold = 0;
 
         public Player(Color color, string name)
         {

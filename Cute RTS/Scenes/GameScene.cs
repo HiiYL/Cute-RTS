@@ -50,9 +50,10 @@ namespace Cute_RTS.Scenes
             _resourceTable.setFillParent(true).top().left();
 
             var coinTex = content.Load<Texture2D>("coin");
+            var goldLbl = new Label("Gold: 0");
 
             _resourceTable.add(new Image(coinTex));
-            _resourceTable.add(new Label("Gold: 50"));
+            _resourceTable.add(goldLbl);
 
 
             _resourceTable = canvas.stage.addElement(new Table());
@@ -101,6 +102,10 @@ namespace Cute_RTS.Scenes
             float angle = MathHelper.ToRadians(270);
 
             myself = new Player(Color.Aqua, "Robert Baratheon");
+            myself.OnGoldChange += delegate(int amount)
+            {
+                goldLbl.setText("Gold: " + amount.ToString());
+            };
             enemy = new AIPlayer(Color.Orchid, "Enemy AI", myself);
             myself.Opponent = enemy;
             //enemy.Opponent = myself;

@@ -15,11 +15,13 @@ namespace Cute_RTS.Structures
     class CaptureFlag : Entity
     {
         public Player Capturer { get; set; }
-        public BaseUnit CapturingBaseUnit { get { return _capturingBaseUnit; }
+        public BaseUnit CapturingBaseUnit
+        {
+            get { return _capturingBaseUnit; }
             set
             {
                 // you can only capture if no one is capturing
-                if (_capturingBaseUnit == null 
+                if (_capturingBaseUnit == null
                     && value.UnitPlayer != Capturer
                     && value.ActiveCommand == BaseUnit.UnitCommand.CaptureFlag)
                 {
@@ -39,6 +41,7 @@ namespace Cute_RTS.Structures
         public Selectable Select { get { return _selectable; } }
         public float CaptureRange { get; set; } = 70;
         public float CaptureDuration { get; set; } = 5000; // miliseconds
+        public int GoldIncrease { get; set; } = 10;
 
         private BoxCollider _collider;
         private Selectable _selectable;
@@ -46,7 +49,9 @@ namespace Cute_RTS.Structures
         private Text _displayText;
         private BaseUnit _capturingBaseUnit;
         private Timer _captureTimer;
+        private Timer _goldTimer;
         private const float _UPDATE_INTERVAL = 250;
+        private const float _GOLD_INTERVAL = 2000;
         private float _captureProgress = 0;
         private float _deflagProgress = 0;
 
@@ -54,6 +59,8 @@ namespace Cute_RTS.Structures
         {
             _captureTimer = new Timer(_UPDATE_INTERVAL); // update every quarter second.
             _captureTimer.Elapsed += _captureTimer_Elapsed;
+            _goldTimer = new Timer(_GOLD_INTERVAL);
+            _goldTimer.Elapsed += _goldTimer_Elapsed;
 
             var textureOffset = new Vector2(33, -5);
 
@@ -65,7 +72,7 @@ namespace Cute_RTS.Structures
             _selectable = new Selectable(s);
             _selectable.setSelectionColor(Color.Yellow);
 
-            _collider = new BoxCollider(32,32);
+            _collider = new BoxCollider(32, 32);
             Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
             colliders.add(_collider);
 
@@ -78,10 +85,25 @@ namespace Cute_RTS.Structures
             addComponent(_displayText);
         }
 
+        private void _goldTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (Capturer == null)
+            {
+                _goldTimer.Stop();
+                return;
+            }
+
+            if (_capturingBaseUnit != null) return; // no gold when an enemy is capturing your flag
+
+            Capturer.Gold += 10;
+            _displayText.setText(String.Format("+{0}", GoldIncrease));
+            Core.schedule(0.5f, t => { _displayText.setText(""); });
+        }
+
         private void _captureTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // capture becomes invalid when unit dies or its active command is not capture flag
-            if (_capturingBaseUnit == null 
+            if (_capturingBaseUnit == null
                 || _capturingBaseUnit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
             {
                 endCapture();
@@ -89,15 +111,16 @@ namespace Cute_RTS.Structures
             }
 
             // update capture progress
-            float percentageIncrease =_UPDATE_INTERVAL / CaptureDuration;
+            float percentageIncrease = _UPDATE_INTERVAL / CaptureDuration;
             _captureProgress += percentageIncrease;
-            _displayText.setText(String.Format("{0} : {1:P0}", _capturingBaseUnit.UnitPlayer.Name,  _captureProgress));
+            _displayText.setText(String.Format("{0} : {1:P0}", _capturingBaseUnit.UnitPlayer.Name, _captureProgress));
 
             // capture complete!
             if (_captureProgress >= 1)
             {
                 Capturer = _capturingBaseUnit.UnitPlayer;
                 _flagTex.setColor(Capturer.PlayerColor);
+                _goldTimer.Start(); // let the gold come in!
 
                 endCapture();
             }
