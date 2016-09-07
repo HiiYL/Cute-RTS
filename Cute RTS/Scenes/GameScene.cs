@@ -53,6 +53,8 @@ namespace Cute_RTS.Scenes
 
             var coinTex = content.Load<Texture2D>("coin");
             var goldLbl = new Label("Gold: 0");
+            goldLbl.setFontColor(Color.Black);
+            goldLbl.setFontScale(2f);
 
             _resourceTable.add(new Image(coinTex));
             _resourceTable.add(goldLbl);
