@@ -84,6 +84,7 @@ namespace Cute_RTS.Structures
             if (UnitPlayer.Gold >= 50)
             {
                 _trainTimer.Start();
+                _sprite.play(Animation.BuildingUnit);
                 UnitPlayer.Gold -= 50;
             }
         }
@@ -111,6 +112,7 @@ namespace Cute_RTS.Structures
 
         private void _trainTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            _sprite.play(Animation.Default);
             TextureAtlas catTexture = scene.content.Load<TextureAtlas>("CatAtlas");
             Texture2D catSelection = scene.content.Load<Texture2D>("Units/Cat/cat-selection");
             var enem = new BaseUnit(catTexture, catSelection, UnitPlayer, UnitTileMap, "collision");
