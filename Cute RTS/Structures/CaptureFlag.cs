@@ -96,7 +96,7 @@ namespace Cute_RTS.Structures
             if (_capturingBaseUnit != null) return; // no gold when an enemy is capturing your flag
 
             Capturer.Gold += 10;
-            _displayText.setText(String.Format("+{0}", GoldIncrease));
+            _displayText.setText(String.Format("+{0} Gold", GoldIncrease));
             Core.schedule(0.5f, t => { _displayText.setText(""); });
         }
 
