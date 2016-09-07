@@ -1,15 +1,19 @@
 ﻿using Cute_RTS.Components;
+using Cute_RTS.Scenes;
+using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Nez;
 using Nez.Sprites;
 using Nez.TextureAtlases;
 using Nez.Tiled;
+using Nez.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace Cute_RTS.Structures
 {
@@ -18,6 +22,12 @@ namespace Cute_RTS.Structures
         private Sprite<Animation> _sprite;
         private BoxCollider _collider;
         private Animation _animation;
+
+        private Player _player;
+
+
+
+        private Timer _trainTimer;
 
         public enum Animation
         {
@@ -47,6 +57,11 @@ namespace Cute_RTS.Structures
             colliders.add(_collider);
 
             OnUnitDied += MainBase_OnUnitDied;
+
+            _trainTimer = new Timer(1000);
+            _trainTimer.Elapsed += _trainTimer_Elapsed;
+
+            _player = player;
         }
 
         public override void onAddedToScene()
@@ -61,6 +76,15 @@ namespace Cute_RTS.Structures
             {
                 _animation = anim;
                 _sprite.play(_animation);
+            }
+        }
+
+        public void trainUnit(Button button)
+        {
+            if (UnitPlayer.Gold >= 50)
+            {
+                _trainTimer.Start();
+                UnitPlayer.Gold -= 50;
             }
         }
 
@@ -82,7 +106,18 @@ namespace Cute_RTS.Structures
             {
                 destroy();
             });
+        }
 
+
+        private void _trainTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            TextureAtlas catTexture = scene.content.Load<TextureAtlas>("CatAtlas");
+            Texture2D catSelection = scene.content.Load<Texture2D>("Units/Cat/cat-selection");
+            var enem = new BaseUnit(catTexture, catSelection, UnitPlayer, UnitTileMap, "collision");
+            enem.transform.position = transform.position + new Vector2(0,64);
+            enem.Select.setSelectionColor(Color.Red);
+            _trainTimer.Stop();
+            scene.addEntity(enem);
         }
     }
 }

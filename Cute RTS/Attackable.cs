@@ -54,6 +54,7 @@ namespace Cute_RTS
         public delegate void OnHealthChangeHandler(float healthpercentage);
         public event OnHealthChangeHandler OnHealthChange;
         public Player UnitPlayer { get { return _player; } }
+        public TiledMap UnitTileMap { get { return _tilemap; }  }
         public Selectable Select { get { return _selectable; } }
 
         private Player _player;

@@ -35,6 +35,8 @@ namespace Cute_RTS.Scenes
         public bool isAttackBtnClicked = false;
         private Player myself;
         private Player enemy;
+        private ImageButton _catBtn;
+        private ProgressBar _unitTrainingBar;
 
         public GameScene():base()
         {
@@ -76,6 +78,18 @@ namespace Cute_RTS.Scenes
     new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex)));
             _selectedUnitTable.add(_stopBtn).setMinWidth(100).setMinHeight(30);
 
+
+            /*
+            var catTex = content.Load<Texture2D>("train-cat");
+
+            _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+    new SubtextureDrawable(catTex), new SubtextureDrawable(catTex), new SubtextureDrawable(catTex)));
+            _selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
+            */
+
+            //_unitTrainingBar = new ProgressBar(0, 1, 0.05f, false, ProgressBarStyle.create(Color.Green, Color.Red));
+            //_selectedUnitTable.add(_unitTrainingBar);
+
             _selectedUnitTable.setVisible(false);
 
             Console.WriteLine("Init before");
@@ -84,6 +98,7 @@ namespace Cute_RTS.Scenes
 
             _stopBtn.onClicked += Selector.getSelector().onStopMovingBtnPressed;
             _attackBtn.onClicked += Selector.getSelector().onAttackBtnPressed;
+
 
 
             var tiledEntity = createEntity("tiled-map-entity");
@@ -159,7 +174,7 @@ namespace Cute_RTS.Scenes
             makeBase(startlocations.ElementAt(0), myself);
             makeBase(startlocations.ElementAt(1), enemy);
 
-            List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
+            List <TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
             var flagTexture = content.Load<Texture2D>("flag");
             var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
             CaptureFlag captureflag;
@@ -191,7 +206,7 @@ namespace Cute_RTS.Scenes
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 1; i++)
             {
                 giveEnemyCat().transform.position = new Vector2(700, 250);
             }

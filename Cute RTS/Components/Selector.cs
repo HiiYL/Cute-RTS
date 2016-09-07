@@ -37,7 +37,7 @@ namespace Cute_RTS
         private bool _displayTarget = false;
         private Vector2 _displayTargetPoint;
         private Timer _targetTexTimer;
-
+        private ImageButton _catBtn;
 
         public IReadOnlyList<Selectable> Selectables {
             get { return _selectables.AsReadOnly(); }
@@ -118,6 +118,11 @@ namespace Cute_RTS
         {
             Console.WriteLine("Attack Btn Changed!");
             isAttackBtnClicked = !isAttackBtnClicked;
+        }
+
+        public void onTrainBtnPressed(Button button)
+        {
+            Console.WriteLine("Attack Btn Changed!");
         }
 
 
@@ -234,6 +239,22 @@ namespace Cute_RTS
                     Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
                     if (v != null)
                     {
+                        Console.WriteLine("IS IT MAIN BASE?");
+                        if (v.entity is MainBase)
+                        {
+                            Console.WriteLine("YES!!");
+                            var catTex = entity.scene.content.Load<Texture2D>("train-cat");
+
+                            _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+                                new SubtextureDrawable(catTex), new SubtextureDrawable(catTex), new SubtextureDrawable(catTex)));
+                            ((GameScene)entity.scene)._selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
+                            _catBtn.onClicked += ((MainBase)v.entity).trainUnit;
+                        }
+                        else
+                        {
+                           
+                            Console.WriteLine("NO!!");
+                        }
                         var s = v.entity.getComponent<Selectable>();
                         if (s != null)
                         {
@@ -242,7 +263,6 @@ namespace Cute_RTS
                     }
                 } else
                 {
-
                     RectangleF selectionBoundaryF = new RectangleF(
                         _selectionBoundary.X,
                         _selectionBoundary.Y,
