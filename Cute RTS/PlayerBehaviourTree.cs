@@ -1,5 +1,7 @@
 ﻿using Cute_RTS.Scenes;
+using Cute_RTS.Structures;
 using Cute_RTS.Units;
+using Microsoft.Xna.Framework;
 using Nez;
 using Nez.AI.BehaviorTrees;
 using System;
@@ -33,18 +35,34 @@ namespace Cute_RTS
             builder.selector(AbortTypes.Self);
 
             
-            builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
+            /*builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
             builder.sequence()
                 .logAction("No enemies Left! Time to get some flags!")
                 .action(b => b.captureFlag())
-                .endComposite(); 
-            
+                .endComposite(); */
+            /*
             builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action( b => b.attackEnemy())
                 .endComposite();
-            
+            */
+
+            builder.conditionalDecorator(b => b._player.Units.Count < b._opponent.Units.Count);
+            builder.sequence()
+                .logAction("I am Weaker, Better Find a flag!")
+                .action(b => b.captureNearestFlag())
+                .endComposite();
+
+
+            /*
+            builder.conditionalDecorator(b => b._player.Gold > 50);
+            builder.sequence()
+                .logAction("I am Weaker, Better Find a flag!")
+                .action(b => b.attackEnemy())
+                .endComposite(); */
+
+
 
             builder.endComposite();
             _tree = builder.build();
@@ -104,6 +122,60 @@ namespace Cute_RTS
                                 u.captureFlag(flag);
                             }
                         }
+                    }
+                }
+            }
+            else
+            {
+                foreach (Attackable unit in _player.Units)
+                {
+                    if (unit is BaseUnit)
+                    {
+                        BaseUnit u = unit as BaseUnit;
+                        if (u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                        {
+                            walkingToFlag = false;
+                            //return TaskStatus.Success;
+                        }
+                    }
+                }
+            }
+            return TaskStatus.Running;
+        }
+
+        private TaskStatus captureNearestFlag()
+        {
+            if (!walkingToFlag)
+            {
+                walkingToFlag = true;
+                var captureFlags = ((GameScene)entity.scene).captureFlags;
+                foreach (Attackable unit in _player.Units)
+                {
+                    if (unit is BaseUnit)
+                    {
+                        BaseUnit u = unit as BaseUnit;
+                        float nearestDist = 999999;
+                        var nearestIndex = -1;
+                        var currentIndex = 0;
+                        foreach (var flag in captureFlags)
+                        {
+                            if (flag != null && flag.Capturer != entity)
+                            {
+                                var dist = Vector2.Distance(u.transform.position, flag.transform.position);
+                                if (nearestIndex != currentIndex && nearestDist > dist)
+                                {
+                                    nearestDist = dist;
+                                    nearestIndex = currentIndex;
+                                }
+                            }
+                            currentIndex++;
+                        }
+                        Console.WriteLine("Capturing Flag #" + nearestIndex);
+                        bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
+                        Console.WriteLine("Found Path? - " + foundPath);
+                        if(captureFlags[nearestIndex].Capturer != null)
+                          Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
+                          Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
                     }
                 }
             }
