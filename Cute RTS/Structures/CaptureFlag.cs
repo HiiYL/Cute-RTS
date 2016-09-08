@@ -103,7 +103,7 @@ namespace Cute_RTS.Structures
         private void _captureTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             // capture becomes invalid when unit dies or its active command is not capture flag
-            if (_capturingBaseUnit == null
+            if (!_capturingBaseUnit.isAlive
                 || _capturingBaseUnit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
             {
                 endCapture();
