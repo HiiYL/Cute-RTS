@@ -18,11 +18,22 @@ namespace Cute_RTS.Components
         public Vector2 PositionOffset { get; set; } = Vector2.Zero;
 
         private ProgressBar _healthbar;
+        private const int _HEALTHBAR_THICKNESS = 2;
 
         public HealthBar(Attackable attackable)
         {   
             attackable.OnHealthChange += _attackable_OnHealthChange;
-            _healthbar = new ProgressBar(0, 1, 0.05f, false, ProgressBarStyle.create(Color.Green, Color.Red));
+
+            var knobBefore = new PrimitiveDrawable(Color.Green);
+            knobBefore.minWidth = knobBefore.minHeight = _HEALTHBAR_THICKNESS;
+            var knobAfter = new PrimitiveDrawable(Color.Red);
+            knobAfter.minWidth = knobAfter.minHeight = _HEALTHBAR_THICKNESS;
+
+            _healthbar = new ProgressBar(0, 1, 0.05f, false, new ProgressBarStyle
+            {
+                knobBefore = knobBefore,
+                knobAfter = knobAfter
+            });
             _healthbar.setValue(attackable.HealthPercentage);
             _healthbar.setWidth(64);
         }

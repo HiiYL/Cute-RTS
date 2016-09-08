@@ -106,7 +106,7 @@ namespace Cute_RTS.Units
 
             setupAnimation(atlas);
             var h = new HealthBar(this);
-            h.PositionOffset = new Vector2(32, 32);
+            h.PositionOffset = new Vector2(32, 25);
             addComponent(h);
             addComponent(_sprite);
             addComponent(_pathmover);
