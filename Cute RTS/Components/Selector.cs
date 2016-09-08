@@ -277,7 +277,9 @@ namespace Cute_RTS
         private void setupUI(Entity entity)
         {
             if (_catBtn != null)
-                _catBtn.remove();
+            {
+                _catBtn.setIsVisible((entity is MainBase));
+            }else
             if (entity is MainBase)
             {
                 Console.WriteLine("YES!!");
