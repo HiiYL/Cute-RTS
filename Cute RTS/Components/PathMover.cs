@@ -204,6 +204,8 @@ namespace Cute_RTS
             Point source = _tilemap.worldToTilePosition(entity.transform.position);
 
             target = _tilemap.worldToTilePosition(target.ToVector2());
+
+            Console.WriteLine(source + " " + target);
             _astarSearchPath = _astarGraph.search(source, target);
 
             if (_astarSearchPath != null)

@@ -1,4 +1,5 @@
-﻿using Cute_RTS.Units;
+﻿using Cute_RTS.Structures;
+using Cute_RTS.Units;
 using Microsoft.Xna.Framework;
 using Nez;
 using System;
@@ -12,6 +13,7 @@ namespace Cute_RTS
     {
         public Color PlayerColor { get; set; }
         public List<Attackable> Units { get { return _units; } }
+        public MainBase mainBase { get; set; }
         public string Name { get; set; }
         public Player Opponent { get; set; }
         public int Gold {

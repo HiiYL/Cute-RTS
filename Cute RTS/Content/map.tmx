@@ -109,10 +109,10 @@
   <object id="6" name="Flag" type="Flag" x="32" y="143" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="7" name="Flag" type="Flag" x="500" y="440" width="32" height="32">
+  <object id="7" name="Flag" type="Flag" x="342" y="227" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="8" name="Flag" type="Flag" x="213" y="46" width="32" height="32">
+  <object id="8" name="Flag" type="Flag" x="223" y="28" width="32" height="32">
    <ellipse/>
   </object>
   <object id="9" name="Flag" type="Flag" x="714.333" y="345" width="32" height="32">

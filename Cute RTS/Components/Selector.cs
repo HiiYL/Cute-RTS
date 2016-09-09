@@ -288,7 +288,7 @@ namespace Cute_RTS
                 _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
                     new SubtextureDrawable(catTex), new SubtextureDrawable(catTex), new SubtextureDrawable(catTex)));
                 ((GameScene)entity.scene)._selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
-                _catBtn.onClicked += ((MainBase)entity).trainUnit;
+                _catBtn.onClicked += ((MainBase)entity).onTrainUnitBtnPressed;
             }
 
         }

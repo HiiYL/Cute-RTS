@@ -23,6 +23,9 @@ namespace Cute_RTS.Structures
         private BoxCollider _collider;
         private Animation _animation;
 
+        private int _UPDATE_INTERVAL = 250;
+        private int _TRAIN_TIME = 1000;
+
         private Player _player;
 
 
@@ -58,7 +61,7 @@ namespace Cute_RTS.Structures
 
             OnUnitDied += MainBase_OnUnitDied;
 
-            _trainTimer = new Timer(1000);
+            _trainTimer = new Timer(5000);
             _trainTimer.Elapsed += _trainTimer_Elapsed;
 
             _player = player;
@@ -79,16 +82,20 @@ namespace Cute_RTS.Structures
             }
         }
 
-        public void trainUnit(Button button)
+        public void onTrainUnitBtnPressed(Button button)
         {
-            if (UnitPlayer.Gold >= 50)
+            trainUnit();
+
+        }
+        public void trainUnit()
+        {
+            if (UnitPlayer.Gold >= 50 && !_trainTimer.Enabled)
             {
                 _trainTimer.Start();
                 _sprite.play(Animation.BuildingUnit);
                 UnitPlayer.Gold -= 50;
             }
         }
-
         private void setupAnimation(TextureAtlas atlas)
         {
             _sprite.addAnimation(Animation.Default, atlas.getSpriteAnimation("idle"));

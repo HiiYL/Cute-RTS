@@ -32,35 +32,39 @@ namespace Cute_RTS
         private void buildTree()
         {
             var builder = BehaviorTreeBuilder<PlayerBehaviourTree>.begin(this);
-            builder.selector(AbortTypes.Self);
+            builder.sequence(AbortTypes.Self);
 
-            
+
             /*builder.conditionalDecorator(b => b._opponent.Units.Count <= 0);
             builder.sequence()
                 .logAction("No enemies Left! Time to get some flags!")
                 .action(b => b.captureFlag())
                 .endComposite(); */
-            /*
+            //builder.parallel();
+            
+
             builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action( b => b.attackEnemy())
                 .endComposite();
-            */
+
+            /*
+
+            builder.conditionalDecorator(b => b._player.Gold >= 50).untilFail();
+            builder.sequence()
+                .logAction("Building muh units!")
+                .action(b => b.trainUnit())
+                .endComposite();
 
             builder.conditionalDecorator(b => b._player.Units.Count < b._opponent.Units.Count);
             builder.sequence()
                 .logAction("I am Weaker, Better Find a flag!")
                 .action(b => b.captureNearestFlag())
                 .endComposite();
+            builder.endComposite();
+            */
 
-
-            /*
-            builder.conditionalDecorator(b => b._player.Gold > 50);
-            builder.sequence()
-                .logAction("I am Weaker, Better Find a flag!")
-                .action(b => b.attackEnemy())
-                .endComposite(); */
 
 
 
@@ -77,10 +81,10 @@ namespace Cute_RTS
 
                 foreach (Attackable unit in _player.Units)
                 {
-                    if (unit is BaseUnit)
+                    if (unit != null && unit is BaseUnit)
                     {
                         BaseUnit u = unit as BaseUnit;
-                        u.attackUnit(_opponent.Units[0]);
+                        u.attackLocation(_opponent.Units[0].transform.position.ToPoint());
                     }
                     
                 }
@@ -92,11 +96,12 @@ namespace Cute_RTS
                     if (unit is BaseUnit)
                     {
                         BaseUnit u = unit as BaseUnit;
-                        if (u.ActiveCommand != BaseUnit.UnitCommand.AttackUnit)
+                        if (u.ActiveCommand != BaseUnit.UnitCommand.AttackLocation)
                         {
                             walkingToEnemy = false;
                             return TaskStatus.Success;
                         }
+                       
                     }
                 }
                 return TaskStatus.Running;
@@ -195,6 +200,13 @@ namespace Cute_RTS
                 }
             }
             return TaskStatus.Running;
+        }
+
+        private TaskStatus trainUnit()
+        {
+            Console.WriteLine("Training units " + _player.Gold);
+            _player.mainBase.trainUnit();
+            return TaskStatus.Success;
         }
 
         public override void onAddedToEntity()
