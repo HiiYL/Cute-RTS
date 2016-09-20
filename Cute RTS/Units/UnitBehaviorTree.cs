@@ -108,7 +108,7 @@ namespace Cute_RTS.Units
 
         private TaskStatus radarCheck(BaseUnit.UnitCommand returnCommand = BaseUnit.UnitCommand.None)
         {
-            BaseUnit enemy = _baseunit.Radar.detectEnemyInArea();
+            Attackable enemy = _baseunit.Radar.detectEnemyInArea();
             if (enemy != null)
             {
                 Player p = enemy.UnitPlayer;

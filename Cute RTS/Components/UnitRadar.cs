@@ -44,13 +44,13 @@ namespace Cute_RTS
         }
 
         // finds the first enemy to step into your field of vision
-        public BaseUnit detectEnemyInArea()
+        public Attackable detectEnemyInArea()
         {
             int count = Physics.overlapCircleAll(entity.transform.position, Radius, _colliders, layerMask: (int) RTSCollisionLayer.Map);
 
             for (int i = 0; i < count; i++)
             {
-                BaseUnit bu = _colliders[i].entity as BaseUnit;
+                Attackable bu = _colliders[i].entity as Attackable;
                 if (bu == null || bu == entity || _player.isMyUnit(bu)) continue;
                 return bu;
             }
