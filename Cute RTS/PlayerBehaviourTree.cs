@@ -84,7 +84,10 @@ namespace Cute_RTS
                     if (unit != null && unit is BaseUnit && _opponent.Units.Count > 0)
                     {
                         BaseUnit u = unit as BaseUnit;
-                        u.attackLocation(_opponent.Units[0].transform.position.ToPoint());
+                        if (u.ActiveCommand == BaseUnit.UnitCommand.Idle)
+                        {
+                            u.attackLocation(_opponent.Units[0].transform.position.ToPoint());
+                        }
                     }
                     
                 }
