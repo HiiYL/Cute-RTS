@@ -56,14 +56,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AIPlayer.cs" />
-    <Compile Include="AI\Agent.cs" />
-    <Compile Include="AI\HeadingSmoother.cs" />
-    <Compile Include="AI\SteeringBehaviours.cs" />
-    <Compile Include="Components\Attackable.cs" />
-    <Compile Include="Components\Controllable.cs" />
+    <Compile Include="AI\PlayerAI.cs" />
+    <Compile Include="AI\UtilityPlayerAI.cs" />
+    <Compile Include="Attackable.cs" />
     <Compile Include="Components\HealthBar.cs" />
-    <Compile Include="PlayerBehaviourTree.cs" />
     <Compile Include="Structures\BaseStructure.cs" />
     <Compile Include="Structures\CaptureFlag.cs" />
     <Compile Include="Components\UnitRadar.cs" />
@@ -197,6 +193,10 @@
     <ProjectReference Include="..\Nez\Nez-PCL\Nez.csproj">
       <Project>{60b7197d-d0d5-405c-90a2-a56903e9b039}</Project>
       <Name>Nez</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nez\Nez.PipelineImporter\Nez.PipelineImporter.csproj">
+      <Project>{63e831f4-b847-4150-b5af-cbe059ee27b8}</Project>
+      <Name>Nez.PipelineImporter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

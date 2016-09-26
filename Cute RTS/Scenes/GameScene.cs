@@ -24,8 +24,7 @@ namespace Cute_RTS.Scenes
         private Table _resourceTable;
 
         public Table _selectedUnitTable { get; set; }
-
-    private readonly List<Agent> agents = new List<Agent>();
+        
         public ImageButton _attackBtn { get; set; }
         public ImageButton _stopBtn { get; set; }
 
@@ -35,6 +34,8 @@ namespace Cute_RTS.Scenes
         public bool isAttackBtnClicked = false;
         private Player myself;
         private Player enemy;
+        private TiledMap tiledmap;
+
         private ImageButton _catBtn;
         private ProgressBar _unitTrainingBar;
 
@@ -100,17 +101,7 @@ namespace Cute_RTS.Scenes
 
             _stopBtn.onClicked += Selector.getSelector().onStopMovingBtnPressed;
             _attackBtn.onClicked += Selector.getSelector().onAttackBtnPressed;
-
-
-
-            var tiledEntity = createEntity("tiled-map-entity");
-            var tiledmap = content.Load<TiledMap>("map");
-            var tmc = new TiledMapComponent(tiledmap, "collision");
-
-            var tiledMapComponent = tiledEntity.addComponent(tmc);
-            Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int)RTSCollisionLayer.Map);
-            tiledMapComponent.renderLayer = 10;
-
+            
             TextureAtlas catTexture = content.Load<TextureAtlas>("CatAtlas");
             Texture2D catSelection = content.Load<Texture2D>("Units/Cat/cat-selection");
 
@@ -119,19 +110,17 @@ namespace Cute_RTS.Scenes
             float angle = MathHelper.ToRadians(270);
 
             myself = new Player(Color.Aqua, "Robert Baratheon");
-            myself.OnGoldChange += delegate(int amount)
+            myself.OnGoldChange += delegate (int amount)
             {
                 goldLbl.setText("Gold: " + amount.ToString());
             };
-            enemy = new AIPlayer(Color.Orchid, "Enemy AI", myself);
+            enemy = new PlayerAI(Color.Orchid, "Enemy AI", myself);
             myself.Opponent = enemy;
             //enemy.Opponent = myself;
 
             addEntity(enemy);
 
-            Selector.getSelector().ActivePlayer = myself;
-            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
-            selectionComponent.renderLayer = -5;
+            setupTiledMap();
 
             Func<BaseUnit> giveMeCat = delegate
             {
@@ -154,10 +143,31 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
+            for (int i = 0; i < 5; i++)
+            {
+                giveMeCat().transform.position = new Vector2(150, 250);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                giveEnemyCat().transform.position = new Vector2(700, 250);
+            }
+        }
+
+        private Entity setupTiledMap()
+        {
+            var tiledEntity = createEntity("tiled-map-entity");
+            tiledmap = content.Load<TiledMap>("map");
+            var tmc = new TiledMapComponent(tiledmap, "collision");
+
+            var tiledMapComponent = tiledEntity.addComponent(tmc);
+            Flags.setFlagExclusive(ref tiledMapComponent.physicsLayer, (int)RTSCollisionLayer.Map);
+            tiledMapComponent.renderLayer = 10;
+
             List<TiledObject> startlocations = tiledmap.getObjectGroup("objects").objectsWithName("StartLocation");
             TextureAtlas mainBaseAtlas = content.Load<TextureAtlas>("MainBaseAtlas");
             Texture2D mainBaseSelection = content.Load<Texture2D>("Structures/MainBase/MainBase-selection");
-            Func<TiledObject, Player, MainBase> makeBase = delegate(TiledObject obj, Player pl)
+            Func<TiledObject, Player, MainBase> makeBase = delegate (TiledObject obj, Player pl)
             {
                 MainBase playerbase = new MainBase(tiledmap, mainBaseAtlas, mainBaseSelection, pl);
                 // place base at center of elipse marker
@@ -165,19 +175,20 @@ namespace Cute_RTS.Scenes
                 if (pl == myself)
                 {
                     playerbase.Select.setSelectionColor(Color.LawnGreen);
-                } else
+                }
+                else
                 {
                     playerbase.Select.setSelectionColor(Color.Red);
                 }
                 pl.mainBase = playerbase;
-                
+
                 return addEntity(playerbase);
             };
 
             makeBase(startlocations.ElementAt(0), myself);
             makeBase(startlocations.ElementAt(1), enemy);
 
-            List <TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
+            List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
             var flagTexture = content.Load<Texture2D>("flag");
             var flagSelectionTexture = content.Load<Texture2D>("flag-selection");
             CaptureFlag captureflag;
@@ -200,42 +211,11 @@ namespace Cute_RTS.Scenes
                 addEntity(captureflag);
             }
 
-            //BaseUnit kitty = giveMeCat();
-            //kitty.transform.position = new Vector2(100, 200);
+            Selector.getSelector().ActivePlayer = myself;
+            var selectionComponent = tiledEntity.addComponent(Selector.getSelector());
+            selectionComponent.renderLayer = -5;
 
-
-            for (int i = 0; i < 5; i++)
-            {
-                giveMeCat().transform.position = new Vector2(150, 250);
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                giveEnemyCat().transform.position = new Vector2(700, 250);
-            }
-            /*
-            kitty = giveMeCat();
-            kitty.FullHealth = 150;
-            kitty.transform.position = new Vector2(150, 230);
-            */
-
-            /*
-            var enemyCat = giveEnemyCat();
-            enemyCat.transform.position = new Vector2(700, 200);
-
-            var enemyCat3 = giveEnemyCat();
-            enemyCat3.transform.position = new Vector2(700, 250);
-
-            var enemyCat2 = giveEnemyCat();
-            enemyCat2.transform.position = new Vector2(750, 200);
-            */
-
-
-            /*
-            var enemyCatStructure = giveEnemyCatStructure();
-            enemyCatStructure.transform.position = new Vector2(650, 300);
-            enemyCatStructure.MoveSpeed = 0;
-            */
+            return tiledEntity;
         }
     }
 }
