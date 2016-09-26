@@ -58,7 +58,8 @@
   <ItemGroup>
     <Compile Include="AI\PlayerAI.cs" />
     <Compile Include="AI\UtilityPlayerAI.cs" />
-    <Compile Include="Attackable.cs" />
+    <Compile Include="Components\Attackable.cs" />
+    <Compile Include="Components\Controllable.cs" />
     <Compile Include="Components\HealthBar.cs" />
     <Compile Include="Structures\BaseStructure.cs" />
     <Compile Include="Structures\CaptureFlag.cs" />
