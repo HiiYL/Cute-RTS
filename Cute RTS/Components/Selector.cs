@@ -239,6 +239,11 @@ namespace Cute_RTS
                     Collider v = Physics.overlapCircle(Input.mousePosition, 5f, layerMask: (int)RTSCollisionLayer.Map);
                     if (v != null)
                     {
+                        // prevent you from selecting (and thus controlling) enemy units
+                        var ent = v.entity as Attackable;
+                        if (ent != null && ent.UnitPlayer != ActivePlayer) return;
+                        if (v.entity is CaptureFlag) return;
+
                         Console.WriteLine("IS IT MAIN BASE?");
                         setupUI(v.entity);
                         var s = v.entity.getComponent<Selectable>();
@@ -260,6 +265,11 @@ namespace Cute_RTS
                     {
                         foreach (var v in colliders)
                         {
+                            // prevent you from selecting (and thus controlling) enemy units
+                            var ent = v.entity as Attackable;
+                            if (ent != null && ent.UnitPlayer != ActivePlayer) continue;
+                            if (v.entity is CaptureFlag) continue;
+
                             setupUI(v.entity);
                             var selectable = v.entity.getComponent<Selectable>();
                             if (selectable != null)
