@@ -23,11 +23,15 @@ namespace Cute_RTS.Structures
         private BoxCollider _collider;
         private Animation _animation;
 
-        private int _UPDATE_INTERVAL = 250;
-        private int _TRAIN_TIME = 1000;
+        private int _UPDATE_INTERVAL = 50;
+        private int _TRAIN_TIME = 5000;
+
+        private int _UPDATE_COUNT;
+        private int _CURRENT_UPDATE_COUNT = 0;
 
         private Player _player;
 
+        private ProgressBar _trainingBar;
 
 
         private Timer _trainTimer;
@@ -43,6 +47,8 @@ namespace Cute_RTS.Structures
         public MainBase(TiledMap tmc, TextureAtlas atlas, Texture2D selectTex, Player player) :
             base(tmc, new Sprite(selectTex), player)
         {
+
+            _UPDATE_COUNT = _TRAIN_TIME / _UPDATE_INTERVAL;
             FullHealth = 100;
             transform.scale = new Vector2(0.7f, 0.7f);
 
@@ -61,7 +67,7 @@ namespace Cute_RTS.Structures
 
             OnUnitDied += MainBase_OnUnitDied;
 
-            _trainTimer = new Timer(5000);
+            _trainTimer = new Timer(_UPDATE_INTERVAL);
             _trainTimer.Elapsed += _trainTimer_Elapsed;
 
             _player = player;
@@ -89,6 +95,16 @@ namespace Cute_RTS.Structures
         }
         public void trainUnit()
         {
+            if(_trainingBar != null)
+            {
+                _trainingBar.setVisible(true);
+
+            }else
+            {
+                _trainingBar = new ProgressBar(0, 1, 0.05f, false, ProgressBarStyle.create(Color.Green, Color.Red));
+            }
+           
+            ((GameScene)scene)._selectedUnitTable.add(_trainingBar);
             if (UnitPlayer.Gold >= 50 && !_trainTimer.Enabled)
             {
                 _trainTimer.Start();
@@ -119,14 +135,27 @@ namespace Cute_RTS.Structures
 
         private void _trainTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            _sprite.play(Animation.Default);
-            TextureAtlas catTexture = scene.content.Load<TextureAtlas>("CatAtlas");
-            Texture2D catSelection = scene.content.Load<Texture2D>("Units/Cat/cat-selection");
-            var enem = new BaseUnit(catTexture, catSelection, UnitPlayer, UnitTileMap, "collision");
-            enem.transform.position = transform.position + new Vector2(0,64);
-            enem.Select.setSelectionColor(Color.Red);
-            _trainTimer.Stop();
-            scene.addEntity(enem);
+            if(_CURRENT_UPDATE_COUNT > _UPDATE_COUNT)
+            {
+                _sprite.play(Animation.Default);
+                TextureAtlas catTexture = scene.content.Load<TextureAtlas>("CatAtlas");
+                Texture2D catSelection = scene.content.Load<Texture2D>("Units/Cat/cat-selection");
+                var enem = new BaseUnit(catTexture, catSelection, UnitPlayer, UnitTileMap, "collision");
+                enem.transform.position = transform.position + new Vector2(0, 64);
+                enem.Select.setSelectionColor(Color.Red);
+                _trainTimer.Stop();
+                scene.addEntity(enem);
+                _CURRENT_UPDATE_COUNT = 0;
+                _trainingBar.setVisible(false);
+            }
+            else
+            {
+                Console.WriteLine(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
+                _CURRENT_UPDATE_COUNT++;
+                _trainingBar.setValue(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
+
+            }
+
         }
     }
 }

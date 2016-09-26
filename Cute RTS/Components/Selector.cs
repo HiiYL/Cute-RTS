@@ -300,7 +300,6 @@ namespace Cute_RTS
                 ((GameScene)entity.scene)._selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
                 _catBtn.onClicked += ((MainBase)entity).onTrainUnitBtnPressed;
             }
-
         }
 
         private void _targetTexTimer_Elapsed(object sender, ElapsedEventArgs e)

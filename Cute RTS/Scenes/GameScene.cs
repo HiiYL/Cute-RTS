@@ -90,8 +90,8 @@ namespace Cute_RTS.Scenes
             _selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
             */
 
-            //_unitTrainingBar = new ProgressBar(0, 1, 0.05f, false, ProgressBarStyle.create(Color.Green, Color.Red));
-            //_selectedUnitTable.add(_unitTrainingBar);
+            
+            _selectedUnitTable.add(_unitTrainingBar);
 
             _selectedUnitTable.setVisible(false);
 
@@ -116,7 +116,6 @@ namespace Cute_RTS.Scenes
             };
             enemy = new PlayerAI(Color.Orchid, "Enemy AI", myself);
             myself.Opponent = enemy;
-            //enemy.Opponent = myself;
 
             addEntity(enemy);
 
