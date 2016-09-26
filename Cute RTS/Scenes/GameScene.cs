@@ -209,7 +209,7 @@ namespace Cute_RTS.Scenes
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 giveEnemyCat().transform.position = new Vector2(700, 250);
             }

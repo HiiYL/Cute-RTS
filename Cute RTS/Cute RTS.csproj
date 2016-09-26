@@ -197,10 +197,6 @@
       <Project>{60b7197d-d0d5-405c-90a2-a56903e9b039}</Project>
       <Name>Nez</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Nez\Nez.PipelineImporter\Nez.PipelineImporter.csproj">
-      <Project>{63e831f4-b847-4150-b5af-cbe059ee27b8}</Project>
-      <Name>Nez.PipelineImporter</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
