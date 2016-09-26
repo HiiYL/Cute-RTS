@@ -35,6 +35,9 @@ namespace Cute_RTS.Structures
 
 
         private Timer _trainTimer;
+        private float _TRAINBAR_WIDTH = 100;
+        private float _TRAINBAR_HEIGHT = 20;
+        private Text _displayText;
 
         public enum Animation
         {
@@ -70,6 +73,12 @@ namespace Cute_RTS.Structures
             _trainTimer = new Timer(_UPDATE_INTERVAL);
             _trainTimer.Elapsed += _trainTimer_Elapsed;
 
+            _displayText = new Text(Graphics.instance.bitmapFont, "", new Vector2(5, -40), Color.LightGoldenrodYellow);
+            _displayText.setText("DIE DIE DIE!");
+            _displayText.setRenderLayer(-10);
+
+            addComponent(_displayText);
+
             _player = player;
         }
 
@@ -101,7 +110,17 @@ namespace Cute_RTS.Structures
 
             }else
             {
-                _trainingBar = new ProgressBar(0, 1, 0.05f, false, ProgressBarStyle.create(Color.Green, Color.Red));
+                var knobBefore = new PrimitiveDrawable(Color.Green);
+                knobBefore.minWidth = _TRAINBAR_WIDTH;
+                knobBefore.minHeight = _TRAINBAR_HEIGHT;
+                var knobAfter = new PrimitiveDrawable(Color.Red);
+                knobAfter.minWidth = _TRAINBAR_WIDTH;
+                knobAfter.minHeight = _TRAINBAR_HEIGHT;
+                _trainingBar = new ProgressBar(0, 1, 0.05f, false, new ProgressBarStyle
+                {
+                    knobBefore = knobBefore,
+                    knobAfter = knobAfter
+                });
             }
            
             ((GameScene)scene)._selectedUnitTable.add(_trainingBar);
@@ -152,7 +171,10 @@ namespace Cute_RTS.Structures
             {
                 Console.WriteLine(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
                 _CURRENT_UPDATE_COUNT++;
-                _trainingBar.setValue(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
+                var progress = _CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT;
+                _trainingBar.setValue(progress);
+
+                _displayText.setText(String.Format("Training : {0:P0}", progress));
 
             }
 

@@ -77,7 +77,7 @@ namespace Cute_RTS.Structures
             colliders.add(_collider);
 
             _displayText = new Text(Graphics.instance.bitmapFont, "", new Vector2(5, -40), Color.LightGoldenrodYellow);
-            //_displayText.setText("DIE DIE DIE!");
+            _displayText.setText("DIE DIE DIE!");
             _displayText.setRenderLayer(-10);
 
             addComponent(_flagTex);
