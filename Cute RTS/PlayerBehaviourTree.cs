@@ -81,7 +81,7 @@ namespace Cute_RTS
 
                 foreach (Attackable unit in _player.Units)
                 {
-                    if (unit != null && unit is BaseUnit)
+                    if (unit != null && unit is BaseUnit && _opponent.Units.Count > 0)
                     {
                         BaseUnit u = unit as BaseUnit;
                         u.attackLocation(_opponent.Units[0].transform.position.ToPoint());
