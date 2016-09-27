@@ -108,7 +108,7 @@ namespace Cute_RTS
 
         public void onStopMovingBtnPressed(Button button)
         {
-            foreach (var s in _selectables)
+            foreach (var s in _cachedSelectables)
             {
                 var b = s.entity as BaseUnit;
                 if (b != null)
