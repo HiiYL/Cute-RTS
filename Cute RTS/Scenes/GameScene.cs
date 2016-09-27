@@ -38,6 +38,7 @@ namespace Cute_RTS.Scenes
 
         private ImageButton _catBtn;
         private ProgressBar _unitTrainingBar;
+        private Label _goldLbl;
 
         public GameScene():base()
         {
@@ -48,52 +49,7 @@ namespace Cute_RTS.Scenes
         {
             base.initialize();
 
-
-            _resourceTable = canvas.stage.addElement(new Table());
-            _resourceTable.setFillParent(true).top().left();
-
-            var coinTex = content.Load<Texture2D>("coin");
-            var goldLbl = new Label("Gold: 0");
-            goldLbl.setFontColor(Color.Black);
-            goldLbl.setFontScale(2f);
-
-            _resourceTable.add(new Image(coinTex));
-            _resourceTable.add(goldLbl);
-
-
-            _resourceTable = canvas.stage.addElement(new Table());
-            _resourceTable.setFillParent(true).top().left();
-
-
-            _selectedUnitTable = canvas.stage.addElement(new Table());
-
-            _selectedUnitTable.setFillParent(true).bottom().left();
-
-            var attackTex = content.Load<Texture2D>("attack");
-            _attackBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
-                new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex)));
-            _selectedUnitTable.add(_attackBtn).setMinWidth(100).setMinHeight(30);
-
-
-            var stopTex = content.Load<Texture2D>("stop");
-
-            _stopBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
-    new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex)));
-            _selectedUnitTable.add(_stopBtn).setMinWidth(100).setMinHeight(30);
-
-
-            /*
-            var catTex = content.Load<Texture2D>("train-cat");
-
-            _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
-    new SubtextureDrawable(catTex), new SubtextureDrawable(catTex), new SubtextureDrawable(catTex)));
-            _selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
-            */
-
-            
-            _selectedUnitTable.add(_unitTrainingBar);
-
-            _selectedUnitTable.setVisible(false);
+            setupUI();
 
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
@@ -112,7 +68,7 @@ namespace Cute_RTS.Scenes
             myself = new Player(Color.Aqua, "Robert Baratheon");
             myself.OnGoldChange += delegate (int amount)
             {
-                goldLbl.setText("Gold: " + amount.ToString());
+                _goldLbl.setText("Gold: " + amount.ToString());
             };
             enemy = new PlayerAI(Color.Orchid, "Enemy AI", myself);
             myself.Opponent = enemy;
@@ -215,6 +171,55 @@ namespace Cute_RTS.Scenes
             selectionComponent.renderLayer = -5;
 
             return tiledEntity;
+        }
+
+        private void setupUI()
+        {
+            _resourceTable = canvas.stage.addElement(new Table());
+            _resourceTable.setFillParent(true).top().left();
+
+            var coinTex = content.Load<Texture2D>("coin");
+            _goldLbl = new Label("Gold: 0");
+            _goldLbl.setFontColor(Color.Black);
+            _goldLbl.setFontScale(2f);
+
+            _resourceTable.add(new Image(coinTex));
+            _resourceTable.add(_goldLbl);
+
+
+            _resourceTable = canvas.stage.addElement(new Table());
+            _resourceTable.setFillParent(true).top().left();
+
+
+            _selectedUnitTable = canvas.stage.addElement(new Table());
+
+            _selectedUnitTable.setFillParent(true).bottom().left();
+
+            var attackTex = content.Load<Texture2D>("attack");
+            _attackBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+                new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex), new SubtextureDrawable(attackTex)));
+            _selectedUnitTable.add(_attackBtn).setMinWidth(100).setMinHeight(30);
+
+
+            var stopTex = content.Load<Texture2D>("stop");
+
+            _stopBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+    new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex), new SubtextureDrawable(stopTex)));
+            _selectedUnitTable.add(_stopBtn).setMinWidth(100).setMinHeight(30);
+
+
+            /*
+            var catTex = content.Load<Texture2D>("train-cat");
+
+            _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),
+    new SubtextureDrawable(catTex), new SubtextureDrawable(catTex), new SubtextureDrawable(catTex)));
+            _selectedUnitTable.add(_catBtn).setMinWidth(100).setMinHeight(30);
+            */
+
+
+            _selectedUnitTable.add(_unitTrainingBar);
+
+            _selectedUnitTable.setVisible(false);
         }
     }
 }
