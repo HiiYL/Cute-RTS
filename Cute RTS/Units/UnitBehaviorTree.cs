@@ -60,10 +60,9 @@ namespace Cute_RTS.Units
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.AttackLocation);
             builder.sequence()
-                .action(b => radarCheck())
-                //.action(b => _pathmover.setTargetLocation(_baseunit.AttackLocation))
-                //.action(b => doNothing())
-                //.action(b => becomeIdle())
+                .action(b => radarCheck(BaseUnit.UnitCommand.AttackLocation))
+                .action(b => checkArrivalOnTargetLoc())
+                .action(b => becomeIdle())
                 .endComposite();
 
             builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.CaptureFlag);
@@ -78,9 +77,20 @@ namespace Cute_RTS.Units
             _tree = builder.build();
             _tree.updatePeriod = 0.03f;
         }
-        private TaskStatus doNothing()
+
+        private TaskStatus checkArrivalOnTargetLoc()
         {
-            return TaskStatus.Success;
+            if (!_pathmover.isTargetLocation(_baseunit.AttackLocation))
+            {
+                _pathmover.setTargetLocation(_baseunit.AttackLocation);  
+            }
+
+            if (_pathmover.HasArrived)
+            {
+                return TaskStatus.Success;
+            }
+
+            return TaskStatus.Failure;
         }
 
         private TaskStatus checkArriveOnRange(Vector2 target, float range)

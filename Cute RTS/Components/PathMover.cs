@@ -223,6 +223,12 @@ namespace Cute_RTS
             }
         }
 
+        public bool isTargetLocation(Point target)
+        {
+            var loc = _tilemap.worldToTilePosition(target.ToVector2());
+            return loc == this._target;
+        }
+
 
         public bool retryRoute()
         {

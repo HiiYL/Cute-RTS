@@ -29,7 +29,7 @@ namespace Cute_RTS
         public override void onAddedToEntity()
         {
             base.onAddedToEntity();
-            var bu = entity as BaseUnit;
+            var bu = entity as Attackable;
             _player = bu.UnitPlayer;
         }
 
@@ -56,6 +56,24 @@ namespace Cute_RTS
             }
 
             return null;
+        }
+
+        // this function is a little out of context... but.... I don't really care (:
+        public List<Attackable> getEnemiesInArea()
+        {
+            List<Attackable> enemies = new List<Attackable>();
+            int count = Physics.overlapCircleAll(entity.transform.position, Radius, _colliders, layerMask: (int)RTSCollisionLayer.Map);
+
+            for (int i = 0; i < count; i++)
+            {
+                Attackable bu = _colliders[i].entity as Attackable;
+                if (bu != null && !_player.isMyUnit(bu))
+                {
+                    enemies.Add(bu);
+                }
+            }
+
+            return enemies;
         }
     }
 }
