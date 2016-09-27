@@ -11,7 +11,7 @@ namespace Cute_RTS.AI
     {
         public PlayerAI(Color color, string name, Player enemy) : base(color, name)
         {
-            addComponent(new UtilityPlayerAI());
+            addComponent(new PlayerBehaviourTree(enemy));
         }
 
         

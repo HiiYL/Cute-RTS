@@ -98,12 +98,12 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 7; i++)
             {
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 3; i++)
             {
                 giveEnemyCat().transform.position = new Vector2(700, 250);
             }

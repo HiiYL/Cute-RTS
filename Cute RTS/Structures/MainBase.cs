@@ -74,7 +74,7 @@ namespace Cute_RTS.Structures
             _trainTimer.Elapsed += _trainTimer_Elapsed;
 
             _displayText = new Text(Graphics.instance.bitmapFont, "", new Vector2(5, -40), Color.LightGoldenrodYellow);
-            _displayText.setText("DIE DIE DIE!");
+            //_displayText.setText("DIE DIE DIE!");
             _displayText.setRenderLayer(-10);
 
             addComponent(_displayText);

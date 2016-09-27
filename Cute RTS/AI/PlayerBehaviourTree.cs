@@ -14,19 +14,40 @@ namespace Cute_RTS
     class PlayerBehaviourTree : Component, IUpdatable
     {
         private BehaviorTree<PlayerBehaviourTree> _tree;
-        private AIPlayer _player;
+        private Player _player;
         private Player _opponent;
 
         bool walkingToEnemy = false;
         bool walkingToFlag = false;
 
-        private Stack<AIPlayer.UnitCommand> _commandStack;
+        //private Stack<AIPlayer.UnitCommand> _commandStack;
 
-        public PlayerBehaviourTree(AIPlayer player, Player opponent)
+        public PlayerBehaviourTree(Player opponent)
         {
+            _opponent = opponent;
             //_commandStack = new Stack<AIPlayer.UnitCommand>();
             //_player = player;
-            _opponent = opponent;
+
+        }
+
+        public override void onAddedToEntity()
+        {
+            base.onAddedToEntity();
+
+            _player = entity as Player;
+
+            buildTree();
+        }
+
+        public override void onRemovedFromEntity()
+        {
+            base.onRemovedFromEntity();
+        }
+
+        public void update()
+        {
+            if (_tree != null)
+                _tree.tick();
         }
 
         private void buildTree()
@@ -41,15 +62,15 @@ namespace Cute_RTS
                 .action(b => b.captureFlag())
                 .endComposite(); */
             //builder.parallel();
-            
 
+            builder.parallelSelector();
             builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
             builder.sequence()
                 .logAction("Enemy is WEAKER! CHARRGGEEE")
                 .action( b => b.attackEnemy())
                 .endComposite();
 
-            /*
+            
 
             builder.conditionalDecorator(b => b._player.Gold >= 50).untilFail();
             builder.sequence()
@@ -57,36 +78,17 @@ namespace Cute_RTS
                 .action(b => b.trainUnit())
                 .endComposite();
 
+            
             builder.conditionalDecorator(b => b._player.Units.Count < b._opponent.Units.Count);
             builder.sequence()
                 .logAction("I am Weaker, Better Find a flag!")
                 .action(b => b.captureNearestFlag())
                 .endComposite();
             builder.endComposite();
-            */
-
-
-
-
             builder.endComposite();
+
+
             _tree = builder.build();
-        }
-
-        public override void onAddedToEntity()
-        {
-            buildTree();
-            base.onAddedToEntity();
-        }
-
-        public override void onRemovedFromEntity()
-        {
-            base.onRemovedFromEntity();
-        }
-
-        public void update()
-        {
-            if (_tree != null)
-                _tree.tick();
         }
 
         private TaskStatus attackEnemy()
@@ -228,5 +230,7 @@ namespace Cute_RTS
             _player.mainBase.trainUnit();
             return TaskStatus.Success;
         }
+
+
     }
 }
