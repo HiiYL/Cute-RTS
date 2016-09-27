@@ -34,6 +34,7 @@ namespace Cute_RTS
         private Color _selectionColor;
         private static Selector selector;
         private List<Selectable> _selectables;
+        private List<Selectable> _cachedSelectables;
         private bool _displayTarget = false;
         private Vector2 _displayTargetPoint;
         private Timer _targetTexTimer;
@@ -69,6 +70,7 @@ namespace Cute_RTS
 
         public void deselectAll()
         {
+            _cachedSelectables = new List<Selectable>(_selectables);
             if (_selectables.Count == 0) return;
 
             foreach (var s in _selectables.ToList())
@@ -118,11 +120,8 @@ namespace Cute_RTS
         {
             Console.WriteLine("Attack Btn Changed!");
             isAttackBtnClicked = !isAttackBtnClicked;
-        }
-
-        public void onTrainBtnPressed(Button button)
-        {
-            Console.WriteLine("Attack Btn Changed!");
+            _selectables = new List<Selectable>(_cachedSelectables);
+            
         }
 
 
@@ -204,7 +203,6 @@ namespace Cute_RTS
                 return;
             }
 
-            
 
             if (Input.isKeyReleased(Keys.S))
             {
@@ -229,9 +227,11 @@ namespace Cute_RTS
                     (int) Math.Min(_initialPos.Y, Input.mousePosition.Y),
                     (int) Math.Abs(Input.mousePosition.X - _initialPos.X),
                     (int) Math.Abs(Input.mousePosition.Y - _initialPos.Y));
-            } else if (Input.leftMouseButtonReleased && !isAttackBtnClicked)
+            } else if (Input.leftMouseButtonReleased)
             {
-                getSelector().deselectAll();
+                Console.WriteLine("DESELECTED! " + isAttackBtnClicked);
+                if(!isAttackBtnClicked)
+                    getSelector().deselectAll();
                 _isSelectionBox = false;
                 if (_initialPos == Input.mousePosition)
                 {
