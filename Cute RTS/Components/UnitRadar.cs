@@ -14,7 +14,7 @@ namespace Cute_RTS
         public override float width { get { return 1000; } }
         public override float height { get { return 1000; } }
         
-        public bool ShowArea { get; set; } = true;
+        public bool ShowArea { get; set; } = false;
         public int Radius { get; set; }
 
         private Player _player;
