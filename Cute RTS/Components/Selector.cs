@@ -40,6 +40,8 @@ namespace Cute_RTS
         private Timer _targetTexTimer;
         private ImageButton _catBtn;
 
+        private Rectangle selectableRect = new Rectangle(new Point(0, 0), new Point(800, 480));
+
         public IReadOnlyList<Selectable> Selectables {
             get { return _selectables.AsReadOnly(); }
         }
@@ -120,7 +122,6 @@ namespace Cute_RTS
         {
             Console.WriteLine("Attack Btn Changed!");
             isAttackBtnClicked = !isAttackBtnClicked;
-            _selectables = new List<Selectable>(_cachedSelectables);
             
         }
 
@@ -230,7 +231,7 @@ namespace Cute_RTS
             } else if (Input.leftMouseButtonReleased)
             {
                 Console.WriteLine("DESELECTED! " + isAttackBtnClicked);
-                if(!isAttackBtnClicked)
+                if (selectableRect.Contains(Input.mousePosition))
                     getSelector().deselectAll();
                 _isSelectionBox = false;
                 if (_initialPos == Input.mousePosition)
@@ -281,8 +282,6 @@ namespace Cute_RTS
                     }
                 }
             }
-
-            
         }
         private void setupUI(Entity entity)
         {
