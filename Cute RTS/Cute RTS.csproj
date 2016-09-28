@@ -59,6 +59,7 @@
     <Compile Include="AI\GOAPPlayerAI.cs" />
     <Compile Include="AI\PlayerAI.cs" />
     <Compile Include="AI\PlayerBehaviourTree.cs" />
+    <Compile Include="AI\PlayerState.cs" />
     <Compile Include="AI\UtilityPlayerAI.cs" />
     <Compile Include="Components\Attackable.cs" />
     <Compile Include="Components\Controllable.cs" />

@@ -24,7 +24,7 @@ namespace Cute_RTS.Structures
         private Animation _animation;
 
         private int _UPDATE_INTERVAL = 50;
-        private int _TRAIN_TIME = 5000;
+        private int _TRAIN_TIME = 2000;
 
         private int _UPDATE_COUNT;
         private int _CURRENT_UPDATE_COUNT = 0;
@@ -32,6 +32,7 @@ namespace Cute_RTS.Structures
         private Player _player;
 
         private ProgressBar _trainingBar;
+        private UnitRadar _radar;
 
 
         private Timer _trainTimer;
@@ -64,6 +65,9 @@ namespace Cute_RTS.Structures
             setupAnimation(atlas);
             addComponent(_sprite);
 
+            _radar = new UnitRadar(200);
+            addComponent(_radar);
+
             _collider = new BoxCollider(-17, -35, 35, 70);
             Flags.setFlagExclusive(ref _collider.physicsLayer, (int)RTSCollisionLayer.Units);
             colliders.add(_collider);
@@ -80,6 +84,13 @@ namespace Cute_RTS.Structures
             addComponent(_displayText);
 
             _player = player;
+        }
+
+        public List<Attackable> getSurroundingEnemies()
+        {
+            if (!isAlive) return new List<Attackable>();
+
+            return _radar.getEnemiesInArea();
         }
 
         public override void onAddedToScene()
@@ -164,8 +175,16 @@ namespace Cute_RTS.Structures
                 TextureAtlas catTexture = scene.content.Load<TextureAtlas>("CatAtlas");
                 Texture2D catSelection = scene.content.Load<Texture2D>("Units/Cat/cat-selection");
                 var enem = new BaseUnit(catTexture, catSelection, UnitPlayer, UnitTileMap, "collision");
+                
                 enem.transform.position = transform.position + new Vector2(0, 64);
-                enem.Select.setSelectionColor(Color.Red);
+                if (Selector.getSelector().ActivePlayer == UnitPlayer)
+                {
+                    enem.Select.setSelectionColor(Color.LawnGreen);
+                } else
+                {
+                    enem.Select.setSelectionColor(Color.Red);
+                }
+                
                 _trainTimer.Stop();
                 scene.addEntity(enem);
                 _CURRENT_UPDATE_COUNT = 0;

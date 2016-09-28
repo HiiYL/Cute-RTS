@@ -34,7 +34,7 @@ namespace Cute_RTS
 
         private List<Attackable> _units;
 
-        private int _gold = 150;
+        private int _gold = 50;
 
         public Player(Color color, string name)
         {
