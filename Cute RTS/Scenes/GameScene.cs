@@ -72,6 +72,7 @@ namespace Cute_RTS.Scenes
             float angle = MathHelper.ToRadians(270);
 
             myself = new Player(Color.Aqua, "Robert Baratheon");
+            _goldLbl.setText("Gold: " + myself.Gold.ToString());
             myself.OnGoldChange += delegate (int amount)
             {
                 _goldLbl.setText("Gold: " + amount.ToString());
@@ -104,12 +105,12 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 3; i++)
             {
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 giveEnemyCat().transform.position = new Vector2(700, 250);
             }
