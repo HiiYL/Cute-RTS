@@ -192,7 +192,7 @@ namespace Cute_RTS.Structures
             }
             else
             {
-                Console.WriteLine(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
+                //Console.WriteLine(_CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT);
                 _CURRENT_UPDATE_COUNT++;
                 var progress = _CURRENT_UPDATE_COUNT / (float)_UPDATE_COUNT;
                 _trainingBar.setValue(progress);

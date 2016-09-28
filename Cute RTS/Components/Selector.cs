@@ -120,7 +120,7 @@ namespace Cute_RTS
 
         public void onAttackBtnPressed(Button button)
         {
-            Console.WriteLine("Attack Btn Changed!");
+            //Console.WriteLine("Attack Btn Changed!");
             isAttackBtnClicked = !isAttackBtnClicked;
             
         }
@@ -230,7 +230,6 @@ namespace Cute_RTS
                     (int) Math.Abs(Input.mousePosition.Y - _initialPos.Y));
             } else if (Input.leftMouseButtonReleased)
             {
-                Console.WriteLine("DESELECTED! " + isAttackBtnClicked);
                 if (selectableRect.Contains(Input.mousePosition))
                     getSelector().deselectAll();
                 _isSelectionBox = false;
@@ -245,7 +244,7 @@ namespace Cute_RTS
                         if (ent != null && ent.UnitPlayer != ActivePlayer) return;
                         if (v.entity is CaptureFlag) return;
 
-                        Console.WriteLine("IS IT MAIN BASE?");
+                        //Console.WriteLine("IS IT MAIN BASE?");
                         setupUI(v.entity);
                         var s = v.entity.getComponent<Selectable>();
                         if (s != null)
@@ -291,7 +290,7 @@ namespace Cute_RTS
             }else
             if (entity is MainBase)
             {
-                Console.WriteLine("YES!!");
+                //Console.WriteLine("YES!!");
                 var catTex = entity.scene.content.Load<Texture2D>("train-cat");
 
                 _catBtn = new ImageButton(new ImageButtonStyle(new PrimitiveDrawable(Color.Red), new PrimitiveDrawable(Color.Black), new PrimitiveDrawable(Color.Blue),

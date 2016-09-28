@@ -196,11 +196,11 @@ namespace Cute_RTS.AI
                         bool foundPath = u.enemyCaptureFlag(captureFlags[nearestIndex]);
                         Console.WriteLine("Found Path? - " + foundPath);
 
-                        if (captureFlags[nearestIndex].Capturer != null)
-                        { 
-                            Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
-                            Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
-                        }
+                        //if (captureFlags[nearestIndex].Capturer != null)
+                        //{ 
+                        //    Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
+                        //    Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                        //}
                         
                         captureFlags.Remove(captureFlags[nearestIndex]);
                         nearestIndex = -1;
@@ -216,7 +216,7 @@ namespace Cute_RTS.AI
 
         private TaskStatus trainUnit()
         {
-            Console.WriteLine("Training units " + _player.Gold);
+            Console.WriteLine("Training units... Current Gold: " + _player.Gold);
             _player.mainBase.trainUnit();
             return TaskStatus.Success;
         }

@@ -276,7 +276,7 @@ namespace Cute_RTS.Units
         {
             if (TargetUnit == null) return;
 
-            Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.CurrentHealth.ToString());
+            //Console.WriteLine("ATTACK ENEMY! Health on target: " + TargetUnit.CurrentHealth.ToString());
 
             Vector2 diff = transform.position - TargetUnit.transform.position;
 

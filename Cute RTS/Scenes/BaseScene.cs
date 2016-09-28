@@ -37,7 +37,7 @@ namespace Cute_RTS.Scenes
         }
         public override void initialize()
         {
-            Console.WriteLine("Called!");
+            //Console.WriteLine("Called!");
             // create our canvas and put it on the screen space render layer
             canvas = createEntity("ui").addComponent(new UICanvas());
             canvas.isFullScreen = true;

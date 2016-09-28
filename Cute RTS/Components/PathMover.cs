@@ -205,7 +205,7 @@ namespace Cute_RTS
 
             target = _tilemap.worldToTilePosition(target.ToVector2());
 
-            Console.WriteLine(source + " " + target);
+            //Console.WriteLine(source + " " + target);
             _astarSearchPath = _astarGraph.search(source, target);
 
             if (_astarSearchPath != null)
@@ -263,6 +263,7 @@ namespace Cute_RTS
 
         public override void render(Graphics graphics, Camera camera)
         {
+            /*
             if (_isDone) return;
 
             if (IsRenderPath && _astarSearchPath != null)
@@ -284,6 +285,7 @@ namespace Cute_RTS
                 new Point(_tilemap.tileWidth, _tilemap.tileHeight)),
                 Color.Blue);
             }
+            */
         }
     }
 }

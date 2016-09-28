@@ -130,7 +130,7 @@ namespace Cute_RTS.Units
             if (enemy != null)
             {
                 Player p = enemy.UnitPlayer;
-                Console.WriteLine("Enemy Detected!");
+                //Console.WriteLine("Enemy Detected!");
                 _baseunit.attackUnit(enemy);
                 if (returnCommand != BaseUnit.UnitCommand.None)
                 {

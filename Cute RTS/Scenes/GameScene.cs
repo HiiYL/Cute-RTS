@@ -46,7 +46,7 @@ namespace Cute_RTS.Scenes
 
         public GameScene():base()
         {
-            Console.WriteLine("Init after");
+            //Console.WriteLine("Init after");
         }
 
         public override void initialize()
@@ -57,7 +57,7 @@ namespace Cute_RTS.Scenes
 
             //showGameState(false);
 
-            Console.WriteLine("Init before");
+            //Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
             Selector.getSelector().TargetTex = targettex;
 
@@ -173,9 +173,9 @@ namespace Cute_RTS.Scenes
                 int xNearestTile = (int)Math.Round((f.x / (double)tileSize), MidpointRounding.AwayFromZero) * tileSize;
                 int yNearestTile = (int)Math.Round((f.y / (double)tileSize), MidpointRounding.AwayFromZero) * tileSize;
                 captureflag.transform.position = new Vector2(xNearestTile, yNearestTile);
-                Console.WriteLine(xNearestTile);
-                Console.WriteLine(yNearestTile);
-                Console.WriteLine("");
+                //Console.WriteLine(xNearestTile);
+                //Console.WriteLine(yNearestTile);
+                //Console.WriteLine("");
                 captureFlags.Add(captureflag);
                 addEntity(captureflag);
             }
