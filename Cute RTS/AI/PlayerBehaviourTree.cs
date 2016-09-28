@@ -197,12 +197,18 @@ namespace Cute_RTS
                             }
                             currentIndex++;
                         }
-                        Console.WriteLine("Capturing Flag #" + nearestIndex);
-                        bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
-                        Console.WriteLine("Found Path? - " + foundPath);
-                        if(captureFlags[nearestIndex].Capturer != null)
-                          Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
-                          Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                        if (nearestIndex != -1)
+                        {
+                            Console.WriteLine("Capturing Flag #" + nearestIndex);
+                            bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
+                            Console.WriteLine("Found Path? - " + foundPath);
+                            if (captureFlags[nearestIndex].Capturer != null)
+                                Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
+                            Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                        }else
+                        {
+                            return TaskStatus.Failure;
+                        }
                     }
                 }
             }
