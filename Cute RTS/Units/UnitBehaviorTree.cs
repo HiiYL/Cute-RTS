@@ -72,6 +72,14 @@ namespace Cute_RTS.Units
                 .action(b => becomeIdle())
                 .endComposite();
 
+            // duplicate of capture flag, cause we need enemy units to retaliate.
+            // it's messy I know! Don't judge me! D:
+            builder.conditionalDecorator(b => b._baseunit.ActiveCommand == BaseUnit.UnitCommand.EnemyCaptureFlag);
+            builder.sequence()
+                .action(b => checkArriveOnRange(b._baseunit.TargetFlag.getPosition(), b._baseunit.TargetFlag.CaptureRange))
+                .action(b => captureFlag())
+                .action(b => becomeIdle())
+                .endComposite();
 
             builder.endComposite();
             _tree = builder.build();

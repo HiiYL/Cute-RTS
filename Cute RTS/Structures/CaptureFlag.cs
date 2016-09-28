@@ -23,7 +23,8 @@ namespace Cute_RTS.Structures
                 // you can only capture if no one is capturing
                 if (_capturingBaseUnit == null
                     && value.UnitPlayer != Capturer
-                    && value.ActiveCommand == BaseUnit.UnitCommand.CaptureFlag)
+                    && (value.ActiveCommand == BaseUnit.UnitCommand.CaptureFlag ||
+                    value.ActiveCommand == BaseUnit.UnitCommand.EnemyCaptureFlag))
                 {
                     // can only capture if within capture range
                     float distance = Vector2.Distance(value.transform.position, getPosition());
@@ -104,7 +105,8 @@ namespace Cute_RTS.Structures
         {
             // capture becomes invalid when unit dies or its active command is not capture flag
             if (!_capturingBaseUnit.isAlive
-                || _capturingBaseUnit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                || (_capturingBaseUnit.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag &&
+                _capturingBaseUnit.ActiveCommand != BaseUnit.UnitCommand.EnemyCaptureFlag))
             {
                 endCapture();
                 return;

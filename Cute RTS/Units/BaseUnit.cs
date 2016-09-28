@@ -44,7 +44,10 @@ namespace Cute_RTS.Units
         public Attackable TargetUnit { get; set; }
         public UnitCommand ActiveCommand { get; set; } = UnitCommand.Idle;
         public UnitRadar Radar { get { return _radar; } }
-        
+
+        public delegate void OnAttackedWhenCapturingHandler(BaseUnit attacker);
+        public event OnAttackedWhenCapturingHandler OnAttackedWhenCapturing;
+
         public Point AttackLocation { get; set; }
         public CaptureFlag TargetFlag { get; set; } = null;
         
@@ -75,7 +78,8 @@ namespace Cute_RTS.Units
             Follow,
             AttackUnit,
             AttackLocation,
-            CaptureFlag
+            CaptureFlag,
+            EnemyCaptureFlag
         }
 
         // components
@@ -89,6 +93,8 @@ namespace Cute_RTS.Units
             FullHealth = 40;
 
             OnUnitDied += BaseUnit_OnUnitDied;
+            // only used by enemy AI
+            OnAttackedWhenCapturing += (attacker) => { attackUnit(attacker); };
             
             _sprite = new Sprite<Animation>();
             _pathmover = new PathMover(tmc, collisionlayer, _selectable);
@@ -222,6 +228,18 @@ namespace Cute_RTS.Units
             return true;
         }
 
+        public bool enemyCaptureFlag(CaptureFlag flag)
+        {
+            Point p = flag.getPosition().ToPoint();
+            bool r = _pathmover.setTargetLocation(p);
+            if (r == false) return r;
+
+            TargetFlag = flag;
+            ActiveCommand = UnitCommand.EnemyCaptureFlag;
+
+            return true;
+        }
+
         public override void onAddedToScene()
         {
             playAnimation(Animation.Idle);
@@ -282,6 +300,16 @@ namespace Cute_RTS.Units
 
             bool killedTarget = Damage >= TargetUnit.CurrentHealth;
             TargetUnit.CurrentHealth -= Damage;
+
+            if (TargetUnit is BaseUnit)
+            {
+                var tu = TargetUnit as BaseUnit;
+                if (tu.ActiveCommand == UnitCommand.EnemyCaptureFlag)
+                {
+                    tu.OnAttackedWhenCapturing?.Invoke(this);
+                }
+            }
+            
 
             if (killedTarget)
             {

@@ -116,6 +116,7 @@ namespace Cute_RTS.AI
                 return TaskStatus.Success;
             } else
             {
+                _state.Defenders.ForEach(defenders => defenders.stopMoving());
                 return TaskStatus.Failure;
             }
         }
@@ -159,46 +160,6 @@ namespace Cute_RTS.AI
             }
         }
 
-        private TaskStatus captureFlag()
-        {
-
-            if(!walkingToFlag)
-            {
-                walkingToFlag = true;
-                var captureFlags = ((GameScene)entity.scene).captureFlags;
-                foreach (Attackable unit in _player.Units)
-                {
-                    if (unit is BaseUnit)
-                    {
-                        BaseUnit u = unit as BaseUnit;
-                        foreach (var flag in captureFlags)
-                        {
-                            if (flag != null && flag.Capturer != entity)
-                            {
-                                u.captureFlag(flag);
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (Attackable unit in _player.Units)
-                {
-                    if (unit is BaseUnit)
-                    {
-                        BaseUnit u = unit as BaseUnit;
-                        if (u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
-                        {
-                            walkingToFlag = false;
-                            //return TaskStatus.Success;
-                        }
-                    }
-                }
-            }
-            return TaskStatus.Success;
-        }
-
         private TaskStatus captureNearestFlag()
         {
             walkingToFlag = true;
@@ -209,6 +170,10 @@ namespace Cute_RTS.AI
                 if (unit is BaseUnit)
                 {
                     BaseUnit u = unit as BaseUnit;
+
+                    // unit shouldn't be tasked to capture flag when it is busy
+                    if (u.ActiveCommand != BaseUnit.UnitCommand.Idle) continue;
+
                     float nearestDist = 999999;
                     var nearestIndex = -1;
                     var currentIndex = 0;
@@ -225,14 +190,18 @@ namespace Cute_RTS.AI
                         }
                         currentIndex++;
                     }
-                    if (nearestIndex != -1 && u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
+                    if (nearestIndex != -1 && u.ActiveCommand != BaseUnit.UnitCommand.EnemyCaptureFlag)
                     {
                         Console.WriteLine("Capturing Flag #" + nearestIndex);
-                        bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
+                        bool foundPath = u.enemyCaptureFlag(captureFlags[nearestIndex]);
                         Console.WriteLine("Found Path? - " + foundPath);
+
                         if (captureFlags[nearestIndex].Capturer != null)
+                        { 
                             Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
-                        Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                            Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                        }
+                        
                         captureFlags.Remove(captureFlags[nearestIndex]);
                         nearestIndex = -1;
                     }
