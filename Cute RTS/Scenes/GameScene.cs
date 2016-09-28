@@ -105,7 +105,7 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 1; i++)
             {
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
