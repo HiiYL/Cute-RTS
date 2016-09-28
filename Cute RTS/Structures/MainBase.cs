@@ -156,6 +156,8 @@ namespace Cute_RTS.Structures
 
         private void _trainTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (!isAlive) return;
+
             if(_CURRENT_UPDATE_COUNT > _UPDATE_COUNT)
             {
                 _sprite.play(Animation.Default);
