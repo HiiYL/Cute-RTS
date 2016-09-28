@@ -8,13 +8,15 @@ namespace Cute_RTS
     /// </summary>
     public static class Program
     {
+
+        public static MainGame game;
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
-            using (var game = new MainGame())
+            using (game = new MainGame())
                 game.Run();
         }
     }

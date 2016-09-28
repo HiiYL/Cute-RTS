@@ -39,6 +39,10 @@ namespace Cute_RTS.Scenes
         private ImageButton _catBtn;
         private ProgressBar _unitTrainingBar;
         private Label _goldLbl;
+        private Table _gameStatusTable;
+        private TextButton _continueBtn;
+        private Label _statusLabel;
+        private TextButton _quitBtn;
 
         public GameScene():base()
         {
@@ -50,6 +54,8 @@ namespace Cute_RTS.Scenes
             base.initialize();
 
             setupUI();
+
+            //showGameState(false);
 
             Console.WriteLine("Init before");
             var targettex = content.Load<Texture2D>("target");
@@ -98,7 +104,7 @@ namespace Cute_RTS.Scenes
                 return addEntity(enem);
             };
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 0; i++)
             {
                 giveMeCat().transform.position = new Vector2(150, 250);
             }
@@ -142,6 +148,12 @@ namespace Cute_RTS.Scenes
 
             makeBase(startlocations.ElementAt(0), myself);
             makeBase(startlocations.ElementAt(1), enemy);
+
+            myself.mainBase.OnUnitDied += showGameState;
+
+            
+
+
 
             List<TiledObject> flags = tiledmap.getObjectGroup("objects").objectsWithName("Flag");
             var flagTexture = content.Load<Texture2D>("flag");
@@ -220,6 +232,47 @@ namespace Cute_RTS.Scenes
             _selectedUnitTable.add(_unitTrainingBar);
 
             _selectedUnitTable.setVisible(false);
+        }
+
+        private void showGameState(Attackable attackable)
+        {
+            _gameStatusTable = canvas.stage.addElement(new Table());
+            _gameStatusTable.setFillParent(true).center();
+
+            if (true)
+            {
+                _statusLabel = new Label("Victory!");
+                
+            }else
+            {
+                _statusLabel = new Label("Defeat!");
+
+            }
+
+            _statusLabel.setFontScale(5f);
+            _gameStatusTable.add(_statusLabel);
+
+            _continueBtn = new TextButton("Retry", TextButtonStyle.create(Color.Black,Color.Black,Color.FloralWhite));
+
+            _continueBtn.onClicked += onContinueBtnClicked;
+
+            _gameStatusTable.add(_continueBtn);
+
+            _quitBtn = new TextButton("Quit", TextButtonStyle.create(Color.Black, Color.Black, Color.FloralWhite));
+
+            _quitBtn.onClicked += onQuitBtnClicked;
+
+            _gameStatusTable.add(_quitBtn);
+
+
+        }
+        private void onContinueBtnClicked(Button button)
+        {
+        }
+
+        private void onQuitBtnClicked(Button button)
+        {
+            Program.game.Exit();
         }
     }
 }
