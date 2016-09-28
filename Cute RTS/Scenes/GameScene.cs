@@ -32,8 +32,8 @@ namespace Cute_RTS.Scenes
         public List<CaptureFlag> captureFlags;
 
         public bool isAttackBtnClicked = false;
-        private Player myself;
-        private Player enemy;
+        private PlayerAI myself;
+        private PlayerAI enemy;
         private TiledMap tiledmap;
 
         private ImageButton _catBtn;
@@ -71,16 +71,18 @@ namespace Cute_RTS.Scenes
 
             float angle = MathHelper.ToRadians(270);
 
-            myself = new Player(Color.Aqua, "Robert Baratheon");
+            myself = new PlayerAI(Color.Aqua, "Robert Baratheon");
             _goldLbl.setText("Gold: " + myself.Gold.ToString());
             myself.OnGoldChange += delegate (int amount)
             {
                 _goldLbl.setText("Gold: " + amount.ToString());
             };
-            enemy = new PlayerAI(Color.Orchid, "Enemy AI", myself);
+            enemy = new PlayerAI(Color.Orchid, "Enemy AI");
             myself.Opponent = enemy;
+            enemy.Opponent = myself;
 
             addEntity(enemy);
+            //addEntity(myself);
 
             setupTiledMap();
 

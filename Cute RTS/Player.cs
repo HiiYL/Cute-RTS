@@ -15,7 +15,6 @@ namespace Cute_RTS
         public List<Attackable> Units { get { return _units; } }
         public MainBase mainBase { get; set; }
         public string Name { get; set; }
-        public Player Opponent { get; set; }
         public int Gold {
             get { return _gold; }
             set

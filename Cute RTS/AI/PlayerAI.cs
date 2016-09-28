@@ -9,9 +9,17 @@ namespace Cute_RTS.AI
 {
     class PlayerAI : Player
     {
-        public PlayerAI(Color color, string name, Player enemy) : base(color, name)
+        public Player Opponent {
+            get { return _tree.Opponent;  }
+            set { _tree.Opponent = value; }
+        }
+
+        private PlayerBehaviourTree _tree;
+
+        public PlayerAI(Color color, string name) : base(color, name)
         {
-            addComponent(new PlayerBehaviourTree(enemy));
+            _tree = new PlayerBehaviourTree();
+            addComponent(_tree);
         }
 
         

@@ -15,7 +15,7 @@ namespace Cute_RTS.AI
     {
         private BehaviorTree<PlayerBehaviourTree> _tree;
         private Player _player;
-        private Player _opponent;
+        public Player Opponent { get; set; }
         private PlayerState _state;
 
         bool walkingToEnemy = false;
@@ -25,9 +25,8 @@ namespace Cute_RTS.AI
 
         //private Stack<AIPlayer.UnitCommand> _commandStack;
 
-        public PlayerBehaviourTree(Player opponent)
+        public PlayerBehaviourTree()
         {
-            _opponent = opponent;
             
             //_commandStack = new Stack<AIPlayer.UnitCommand>();
             //_player = player;
@@ -73,7 +72,7 @@ namespace Cute_RTS.AI
                 .action(b => defendIfBaseThreatened())
                     .selector()
                         // attack enemy when I have more units...
-                        .conditionalDecorator(b => _player.Units.Count > _opponent.Units.Count)
+                        .conditionalDecorator(b => _player.Units.Count > Opponent.Units.Count)
                             .action(b => attackEnemy())
                         // ...otherwise capture flags
                         .action(b => b.captureNearestFlag())
@@ -130,12 +129,12 @@ namespace Cute_RTS.AI
 
                 foreach (Attackable unit in _player.Units)
                 {
-                    if (unit != null && unit is BaseUnit && _opponent.Units.Count > 0)
+                    if (unit != null && unit is BaseUnit && Opponent.Units.Count > 0)
                     {
                         BaseUnit u = unit as BaseUnit;
                         if (u.ActiveCommand == BaseUnit.UnitCommand.Idle)
                         {
-                            u.attackLocation(_opponent.Units[0].transform.position.ToPoint());
+                            u.attackLocation(Opponent.Units[0].transform.position.ToPoint());
                         }
                     }
                     
