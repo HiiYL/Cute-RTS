@@ -151,6 +151,7 @@ namespace Cute_RTS.Scenes
             makeBase(startlocations.ElementAt(1), enemy);
 
             myself.mainBase.OnUnitDied += showGameState;
+            enemy.mainBase.OnUnitDied += showGameState;
 
             
 
@@ -240,7 +241,7 @@ namespace Cute_RTS.Scenes
             _gameStatusTable = canvas.stage.addElement(new Table());
             _gameStatusTable.setFillParent(true).center();
 
-            if (true)
+            if (attackable != myself.mainBase)
             {
                 _statusLabel = new Label("Victory!");
                 
