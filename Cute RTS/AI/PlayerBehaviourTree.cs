@@ -68,25 +68,19 @@ namespace Cute_RTS.AI
             builder.selector(AbortTypes.Self);
             builder.parallelSelector();
 
-            //builder.conditionalDecorator(b => b._player.Units.Count >= b._opponent.Units.Count);
-            //builder.sequence()
-            //    .logAction("Enemy is WEAKER! CHARRGGEEE")
-            //    .action( b => attackEnemy())
-            //    .endComposite();
-
-
             builder.selector()
+                // defend base it priority #1!!
                 .action(b => defendIfBaseThreatened())
                     .selector()
-                        .conditionalDecorator(b => _player.Units.Count >= _opponent.Units.Count)
+                        // attack enemy when I have more units...
+                        .conditionalDecorator(b => _player.Units.Count > _opponent.Units.Count)
                             .action(b => attackEnemy())
+                        // ...otherwise capture flags
                         .action(b => b.captureNearestFlag())
                     .endComposite()
                 .endComposite();
 
-
-            
-
+            // always choose to build units when resource is available
             builder.conditionalDecorator(b => b._player.Gold >= 50).untilFail();
             builder.sequence()
                 .logAction("Building muh units!")
@@ -94,13 +88,6 @@ namespace Cute_RTS.AI
                 .endComposite();
 
             
-            //builder.conditionalDecorator(b => b._player.Units.Count < b._opponent.Units.Count);
-            //builder.sequence()
-            //    .logAction("I am Weaker, Better Find a flag!")
-            //    .action(b => b.captureNearestFlag())
-            //    .endComposite();
-            //builder.endComposite();
-
             builder.endComposite();
             builder.endComposite();
 
@@ -214,61 +201,44 @@ namespace Cute_RTS.AI
 
         private TaskStatus captureNearestFlag()
         {
-            if (!walkingToFlag)
+            walkingToFlag = true;
+            List<CaptureFlag> captureFlags = new List<CaptureFlag>();
+            ((GameScene)entity.scene).captureFlags.ForEach(item => captureFlags.Add(item));
+            foreach (Attackable unit in _player.Units)
             {
-                walkingToFlag = true;
-                var captureFlags = ((GameScene)entity.scene).captureFlags;
-                foreach (Attackable unit in _player.Units)
+                if (unit is BaseUnit)
                 {
-                    if (unit is BaseUnit)
+                    BaseUnit u = unit as BaseUnit;
+                    float nearestDist = 999999;
+                    var nearestIndex = -1;
+                    var currentIndex = 0;
+                    foreach (var flag in captureFlags)
                     {
-                        BaseUnit u = unit as BaseUnit;
-                        float nearestDist = 999999;
-                        var nearestIndex = -1;
-                        var currentIndex = 0;
-                        foreach (var flag in captureFlags)
+                        if (flag != null && flag.Capturer != entity)
                         {
-                            if (flag != null && flag.Capturer != entity)
+                            var dist = Vector2.Distance(u.transform.position, flag.transform.position);
+                            if (nearestIndex != currentIndex && nearestDist > dist)
                             {
-                                var dist = Vector2.Distance(u.transform.position, flag.transform.position);
-                                if (nearestIndex != currentIndex && nearestDist > dist)
-                                {
-                                    nearestDist = dist;
-                                    nearestIndex = currentIndex;
-                                }
+                                nearestDist = dist;
+                                nearestIndex = currentIndex;
                             }
-                            currentIndex++;
                         }
-                        if (nearestIndex != -1)
-                        {
-                            Console.WriteLine("Capturing Flag #" + nearestIndex);
-                            bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
-                            Console.WriteLine("Found Path? - " + foundPath);
-                            if (captureFlags[nearestIndex].Capturer != null)
-                                Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
-                            Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
-                            captureFlags.Remove(captureFlags[nearestIndex]);
-                            nearestIndex = -1;
-                        }
-                        else
-                        {
-                            return TaskStatus.Failure;
-                        }
+                        currentIndex++;
                     }
-                }
-            }
-            else
-            {
-                foreach (Attackable unit in _player.Units)
-                {
-                    if (unit is BaseUnit)
+                    if (nearestIndex != -1 && u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
                     {
-                        BaseUnit u = unit as BaseUnit;
-                        if (u.ActiveCommand != BaseUnit.UnitCommand.CaptureFlag)
-                        {
-                            walkingToFlag = false;
-                            //return TaskStatus.Success;
-                        }
+                        Console.WriteLine("Capturing Flag #" + nearestIndex);
+                        bool foundPath = u.captureFlag(captureFlags[nearestIndex]);
+                        Console.WriteLine("Found Path? - " + foundPath);
+                        if (captureFlags[nearestIndex].Capturer != null)
+                            Console.WriteLine(captureFlags[nearestIndex].Capturer.Name);
+                        Console.WriteLine(captureFlags[nearestIndex].Capturer == entity);
+                        captureFlags.Remove(captureFlags[nearestIndex]);
+                        nearestIndex = -1;
+                    }
+                    else
+                    {
+                        return TaskStatus.Failure;
                     }
                 }
             }

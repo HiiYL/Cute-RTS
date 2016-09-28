@@ -24,7 +24,7 @@ namespace Cute_RTS.Structures
         private Animation _animation;
 
         private int _UPDATE_INTERVAL = 50;
-        private int _TRAIN_TIME = 5000;
+        private int _TRAIN_TIME = 2000;
 
         private int _UPDATE_COUNT;
         private int _CURRENT_UPDATE_COUNT = 0;
