@@ -104,6 +104,8 @@ namespace Cute_RTS.Structures
         }
         public void trainUnit()
         {
+            if (!isAlive) return;
+
             if(_trainingBar != null)
             {
                 _trainingBar.setVisible(true);
