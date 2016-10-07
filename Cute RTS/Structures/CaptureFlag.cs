@@ -42,7 +42,7 @@ namespace Cute_RTS.Structures
         public Selectable Select { get { return _selectable; } }
         public float CaptureRange { get; set; } = 70;
         public float CaptureDuration { get; set; } = 5000; // miliseconds
-        public int GoldIncrease { get; set; } = 10;
+        public int GoldIncrease { get; set; } = 5;
 
         private BoxCollider _collider;
         private Selectable _selectable;
@@ -96,7 +96,7 @@ namespace Cute_RTS.Structures
 
             if (_capturingBaseUnit != null) return; // no gold when an enemy is capturing your flag
 
-            Capturer.Gold += 10;
+            Capturer.Gold += GoldIncrease;
             _displayText.setText(String.Format("+{0} Gold", GoldIncrease));
             Core.schedule(0.5f, t => { _displayText.setText(""); });
         }

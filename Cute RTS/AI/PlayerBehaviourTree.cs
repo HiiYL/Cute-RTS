@@ -74,17 +74,30 @@ namespace Cute_RTS.AI
                     .selector()
                         // attack enemy when I have more units...
                         .conditionalDecorator(b => _player.Units.Count > _opponent.Units.Count)
-                            .action(b => attackEnemy())
+                            .action(b => {
+                                // 50% chance the AI won't attack you
+                                if (Nez.Random.nextFloat() > 0.50f)
+                                    return attackEnemy();
+                                return TaskStatus.Success;
+                            })
                         // ...otherwise capture flags
                         .action(b => b.captureNearestFlag())
                     .endComposite()
                 .endComposite();
 
-            // always choose to build units when resource is available
+            // decide to build units when resource is available
             builder.conditionalDecorator(b => b._player.Gold >= 50).untilFail();
             builder.sequence()
                 .logAction("Building muh units!")
-                .action(b => b.trainUnit())
+                .action(b => {
+                    // if base if threatened, train like crazy!
+                    if (_state.getThreatLevel() > 0)
+                        return b.trainUnit();
+                    // only 30% chance of training unit
+                    else if (Nez.Random.nextFloat() > 0.65f)
+                        return b.trainUnit(); 
+                    return TaskStatus.Success;
+                })
                 .endComposite();
 
             
@@ -140,7 +153,7 @@ namespace Cute_RTS.AI
                     }
                     
                 }
-                return TaskStatus.Running;
+                return TaskStatus.Success;
             }else
             {
                 foreach (Attackable unit in _player.Units)
@@ -156,7 +169,7 @@ namespace Cute_RTS.AI
                        
                     }
                 }
-                return TaskStatus.Running;
+                return TaskStatus.Success;
             }
         }
 
